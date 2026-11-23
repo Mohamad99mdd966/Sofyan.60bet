@@ -3,129 +3,103 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>صوفیان بت | پلتفرم زنده کازینو، چت و فوتبال</title>
+  <title>صوفیان بت • SOFYAN LIVE</title>
   <style>
     :root {
-      --bg-main: #050811;
-      --bg-panel: #0c1324;
-      --bg-card: #121c33;
-      --bg-soft: #1a2744;
-      --border: #273759;
+      --bg-main: #060913;
+      --bg-panel: #0e1628;
+      --bg-card: #141f38;
+      --bg-soft: #1b2847;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
+      --border: #273554;
       --gold: #f59e0b;
       --gold-bright: #fbbf24;
       --emerald: #10b981;
       --emerald-bright: #34d399;
       --rose: #ef4444;
       --rose-bright: #f87171;
-      --cyan: #06b6d4;
+      --cyan: #0ea5e9;
       --cyan-bright: #38bdf8;
       --purple: #8b5cf6;
-      --bg-photo: url("https://surfacelux.co.uk/wp-content/uploads/2023/11/image-pitch-lighting-bristol-1024x731.jpg");
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html, body { max-width: 100%; overflow-x: hidden; scroll-behavior: smooth; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: Tahoma, "Vazirmatn", system-ui, sans-serif;
+      font-family: Tahoma, "Vazirmatn", sans-serif;
       background:
-        linear-gradient(180deg, rgba(5, 8, 17, 0.88), rgba(6, 10, 22, 0.94)),
-        radial-gradient(circle at 12% 8%, rgba(245, 158, 11, 0.16), transparent 36%),
-        radial-gradient(circle at 88% 14%, rgba(16, 185, 129, 0.15), transparent 42%),
-        var(--bg-photo) center / cover fixed no-repeat,
+        radial-gradient(circle at 12% 8%, rgba(245, 158, 11, 0.14), transparent 36%),
+        radial-gradient(circle at 88% 12%, rgba(56, 189, 248, 0.14), transparent 38%),
+        radial-gradient(circle at 50% 92%, rgba(16, 185, 129, 0.10), transparent 45%),
         var(--bg-main);
       color: var(--text-main);
       min-height: 100vh;
-      line-height: 1.55;
+      line-height: 1.5;
     }
 
     body.admin-workspace {
       background:
-        linear-gradient(180deg, rgba(10, 7, 24, 0.9), rgba(5, 7, 16, 0.96)),
-        radial-gradient(circle at 15% 10%, rgba(139, 92, 246, 0.22), transparent 40%),
-        var(--bg-photo) center / cover fixed no-repeat,
-        #05070f;
+        radial-gradient(circle at 14% 10%, rgba(139, 92, 246, 0.2), transparent 38%),
+        radial-gradient(circle at 86% 14%, rgba(245, 158, 11, 0.16), transparent 40%),
+        #050711;
     }
-    body.admin-workspace .topbar {
-      background: rgba(15, 12, 32, 0.96);
-      border-bottom: 1px solid rgba(245, 158, 11, 0.5);
-    }
-    body.admin-workspace .brand-badge {
-      background: linear-gradient(135deg, #a78bfa, #f59e0b);
-      color: #070911;
-    }
-    body.admin-workspace .panel {
-      background: linear-gradient(160deg, rgba(17, 22, 42, 0.96), rgba(12, 16, 32, 0.98));
-      border-color: rgba(139, 92, 246, 0.45);
-    }
-
-    button, input, select, textarea { font-family: inherit; color: inherit; }
-    button { cursor: pointer; border: none; background: transparent; touch-action: manipulation; transition: transform 0.14s ease, filter 0.15s ease, box-shadow 0.2s ease, background 0.15s ease; }
-    button:active:not(:disabled) { transform: scale(0.97); }
-    button:disabled { opacity: 0.42; cursor: not-allowed; }
-
-    input, select, textarea {
-      background: #080e1c;
-      color: var(--text-main);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px 10px;
-      width: 100%;
-      font-size: 13px;
-      outline: none;
-      box-shadow: inset 0 2px 6px rgba(0,0,0,0.35);
-    }
-    input:focus, select:focus, textarea:focus { border-color: var(--gold-bright); box-shadow: 0 0 0 2px rgba(245,158,11,0.18); }
-
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; direction: ltr; unicode-bidi: isolate; }
 
     .maint-overlay {
-      position: fixed; inset: 0; background: rgba(5, 8, 16, 0.96); z-index: 140;
-      display: none; align-items: center; justify-content: center; padding: 20px; text-align: center;
+      position: fixed; inset: 0; z-index: 150;
+      background: rgba(5, 8, 16, 0.96);
+      display: none; align-items: center; justify-content: center; padding: 18px;
     }
     .maint-overlay.show { display: flex; }
     .maint-box {
-      background: var(--bg-panel); border: 1px solid var(--gold); border-radius: 18px;
-      padding: 30px 22px; max-width: 440px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+      max-width: 440px; width: 100%; text-align: center;
+      background: var(--bg-panel); border: 1px solid var(--gold);
+      border-radius: 16px; padding: 22px;
     }
+
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; direction: ltr; unicode-bidi: embed; }
+    button, input, select, textarea { font-family: inherit; }
+    button { cursor: pointer; border: none; transition: 0.18s ease; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    input, select, textarea {
+      width: 100%; background: #080d19; color: var(--text-main);
+      border: 1px solid var(--border); border-radius: 10px; padding: 7px 9px; font-size: 0.82rem;
+    }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.16); }
 
     .topbar {
-      background: rgba(10, 16, 30, 0.92);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding: 9px 14px;
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;
-      position: sticky; top: 0; z-index: 50;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+      position: sticky; top: 0; z-index: 40;
+      background: rgba(6, 10, 20, 0.94); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 7px 12px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
     }
-    .brand { display: flex; align-items: center; gap: 9px; }
+    .brand { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .brand-badge {
-      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
-      background: linear-gradient(135deg, #fde047, #d97706);
-      color: #080c14; display: grid; place-items: center; font-weight: 900; font-size: 1.2rem;
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      color: #090d16; font-weight: 900; font-size: 1rem; display: grid; place-items: center;
       box-shadow: 0 0 22px rgba(245, 158, 11, 0.45);
     }
-    .brand-title { font-weight: 900; font-size: 1rem; color: var(--gold-bright); letter-spacing: 0.3px; }
-    .brand-sub { font-size: 0.68rem; color: var(--text-muted); }
+    .brand-title { font-weight: 900; font-size: 0.98rem; color: var(--gold-bright); letter-spacing: 0.3px; }
+    .brand-sub { font-size: 0.66rem; color: var(--text-muted); }
 
     .status-pill {
-      font-size: 0.7rem; padding: 3px 9px; border-radius: 999px;
+      font-size: 0.68rem; padding: 3px 9px; border-radius: 999px;
       background: rgba(16, 185, 129, 0.16); border: 1px solid rgba(16, 185, 129, 0.5);
       color: var(--emerald-bright); font-weight: 700;
     }
     .admin-pill {
-      font-size: 0.7rem; padding: 3px 9px; border-radius: 999px;
+      font-size: 0.68rem; padding: 3px 9px; border-radius: 999px;
       background: rgba(139, 92, 246, 0.24); border: 1px solid rgba(167, 139, 250, 0.6);
       color: #ddd6fe; font-weight: 800;
     }
     .banned-pill {
-      font-size: 0.7rem; padding: 2px 8px; border-radius: 999px;
+      font-size: 0.68rem; padding: 2px 8px; border-radius: 999px;
       background: rgba(239, 68, 68, 0.22); border: 1px solid rgba(248, 113, 113, 0.55);
       color: var(--rose-bright); font-weight: 800;
     }
     .live-pill {
-      font-size: 0.7rem; padding: 3px 9px; border-radius: 999px;
+      font-size: 0.68rem; padding: 3px 9px; border-radius: 999px;
       background: rgba(56, 189, 248, 0.16); border: 1px solid rgba(56, 189, 248, 0.5);
       color: var(--cyan-bright); font-weight: 700;
     }
@@ -133,19 +107,19 @@
     .top-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
     .wallet-box {
       background: linear-gradient(145deg, #13203b, #0c1427); border: 1px solid rgba(52, 211, 153, 0.4);
-      padding: 6px 11px; border-radius: 10px; font-size: 0.78rem; font-weight: 800;
+      padding: 5px 10px; border-radius: 10px; font-size: 0.76rem; font-weight: 800;
       color: var(--emerald-bright); white-space: nowrap; box-shadow: 0 4px 14px rgba(16,185,129,0.12);
     }
     .mode-switch {
       display: inline-flex; background: #070b14; border: 1px solid var(--border);
       border-radius: 10px; overflow: hidden; padding: 2px;
     }
-    .mode-btn { padding: 5px 10px; border-radius: 8px; font-size: 0.74rem; font-weight: 800; color: var(--text-muted); }
+    .mode-btn { padding: 4px 9px; border-radius: 8px; font-size: 0.72rem; font-weight: 800; color: var(--text-muted); }
     .mode-btn.active-demo { background: var(--cyan-bright); color: #051622; }
     .mode-btn.active-real { background: var(--emerald); color: #052014; }
 
     .btn {
-      padding: 8px 12px; border-radius: 10px; font-weight: 800; font-size: 0.78rem;
+      padding: 7px 11px; border-radius: 10px; font-weight: 800; font-size: 0.76rem;
       display: inline-flex; align-items: center; justify-content: center; gap: 5px;
       box-shadow: 0 4px 14px rgba(0,0,0,0.28);
     }
@@ -161,7 +135,7 @@
     .nav-btn {
       flex: 1 1 auto; text-align: center; padding: 6px 9px; border-radius: 9px;
       background: linear-gradient(180deg, rgba(22,34,61,0.94), rgba(15,23,43,0.96)); border: 1px solid var(--border);
-      color: #e2e8f0; font-size: 0.74rem; font-weight: 800;
+      color: #e2e8f0; font-size: 0.73rem; font-weight: 800;
     }
     .nav-btn.active { background: linear-gradient(135deg, #fbbf24, #d97706); color: #090d16; border-color: var(--gold-bright); box-shadow: 0 0 16px rgba(245, 158, 11, 0.35); }
     .nav-btn.football-featured { border-color: rgba(52, 211, 153, 0.65); color: var(--emerald-bright); background: linear-gradient(180deg, rgba(16,185,129,0.24), rgba(6,78,59,0.25)); }
@@ -170,7 +144,21 @@
     .nav-btn.admin-only.visible { display: inline-block; }
     .nav-btn.admin-only.active { background: linear-gradient(135deg, #a78bfa, #f59e0b); color: #080b14; }
 
-    .container { width: 100%; max-width: 1480px; margin: 0 auto; padding: 12px; }
+    .live-ticker-bar {
+      display: flex; align-items: center; gap: 8px; overflow: hidden;
+      background: rgba(8, 13, 25, 0.92); border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 11px; padding: 6px 10px; margin-bottom: 10px; font-size: 0.72rem;
+    }
+    .ticker-tag {
+      background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(251, 191, 36, 0.45);
+      color: var(--gold-bright); padding: 2px 7px; border-radius: 7px; font-weight: 800; white-space: nowrap;
+    }
+    .ticker-items { display: flex; gap: 14px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+    .ticker-items::-webkit-scrollbar { display: none; }
+    .ticker-pill { color: #cbd5e1; }
+    .ticker-pill strong { color: var(--emerald-bright); }
+
+    .container { width: 100%; max-width: 1480px; margin: 0 auto; padding: 10px 12px; }
     .section { display: none; }
     .section.active { display: block; animation: fadeIn 0.22s ease; }
     @keyframes fadeIn { from { opacity: 0.35; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -179,50 +167,50 @@
       background: linear-gradient(165deg, rgba(16, 25, 46, 0.94), rgba(9, 15, 29, 0.96));
       backdrop-filter: blur(8px);
       border: 1px solid rgba(56, 78, 122, 0.48);
-      border-radius: 16px; padding: 14px; margin-bottom: 12px;
+      border-radius: 15px; padding: 12px; margin-bottom: 10px;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
 
     .game-logo-header {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
-      padding: 8px 10px; border-radius: 12px;
-      background: linear-gradient(90deg, rgba(245, 158, 11, 0.14), rgba(15, 23, 42, 0.75));
-      border: 1px solid rgba(251, 191, 36, 0.25);
+      display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+      padding: 7px 10px; border-radius: 12px;
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.16), rgba(56, 189, 248, 0.08), rgba(15, 23, 42, 0.78));
+      border: 1px solid rgba(251, 191, 36, 0.28);
     }
     .game-logo-badge {
-      width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
-      display: grid; place-items: center; font-size: 1.25rem;
-      background: linear-gradient(135deg, rgba(251, 191, 36, 0.26), rgba(56, 189, 248, 0.18));
-      border: 1px solid rgba(251, 191, 36, 0.5);
-      box-shadow: 0 0 16px rgba(245, 158, 11, 0.25);
+      width: 36px; height: 36px; border-radius: 11px; flex-shrink: 0;
+      display: grid; place-items: center; font-size: 1.2rem;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.28), rgba(139, 92, 246, 0.22));
+      border: 1px solid rgba(251, 191, 36, 0.55);
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.28);
     }
-    .game-logo-title { font-size: 0.96rem; font-weight: 900; color: var(--gold-bright); }
-    .game-logo-sub { font-size: 0.7rem; color: var(--text-muted); }
+    .game-logo-title { font-size: 0.92rem; font-weight: 900; color: var(--gold-bright); }
+    .game-logo-sub { font-size: 0.68rem; color: var(--text-muted); }
 
     .admin-banner {
       background: linear-gradient(135deg, rgba(124, 58, 237, 0.28), rgba(245, 158, 11, 0.18));
       border: 1px solid rgba(251, 191, 36, 0.55);
-      border-radius: 16px; padding: 12px 14px; margin-bottom: 12px;
+      border-radius: 15px; padding: 11px 14px; margin-bottom: 10px;
       display: none; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
     }
     .admin-banner.show { display: flex; }
 
     .arena { display: grid; grid-template-columns: minmax(290px, 370px) minmax(0, 1fr); gap: 12px; align-items: start; }
     .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
-    .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; font-size: 0.8rem; color: #cbd5e1; }
-    .quick-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+    .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 7px; font-size: 0.78rem; color: #cbd5e1; }
+    .quick-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
     .q-chip {
-      padding: 3px 7px; border-radius: 7px; font-size: 0.7rem; font-weight: 700;
+      padding: 3px 7px; border-radius: 7px; font-size: 0.67rem; font-weight: 700;
       background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted);
     }
-    .q-chip:hover { border-color: var(--gold); color: var(--gold-bright); }
+    .q-chip:hover, .q-chip.active-mult { border-color: var(--gold); color: var(--gold-bright); background: rgba(245, 158, 11, 0.16); }
 
     .vip-strip {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 8px; margin-bottom: 12px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 8px; margin-bottom: 10px;
     }
     .vip-box {
       background: linear-gradient(145deg, rgba(17, 27, 50, 0.95), rgba(11, 18, 34, 0.96));
-      border: 1px solid rgba(56, 78, 122, 0.48); border-radius: 13px; padding: 10px 12px;
+      border: 1px solid rgba(56, 78, 122, 0.48); border-radius: 12px; padding: 9px 11px;
       display: flex; align-items: center; justify-content: space-between; gap: 8px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.32);
     }
@@ -233,39 +221,38 @@
       height: 100%; background: linear-gradient(90deg, var(--gold), var(--emerald-bright)); width: 0%; transition: width 0.25s ease;
     }
 
-    /* Live Football Stadium, Broadcast Camera & Audio Deck */
+    /* Live World Football Stadium */
     .fb-layout { display: grid; grid-template-columns: minmax(0, 1.62fr) minmax(310px, 1fr); gap: 12px; align-items: start; }
-    .matches-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; margin-bottom: 12px; }
+    .matches-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; margin-bottom: 10px; }
     .match-card {
-      background: linear-gradient(155deg, rgba(19, 30, 54, 0.95), rgba(13, 21, 39, 0.96)); border: 1px solid var(--border); border-radius: 13px; padding: 10px 12px;
-      text-align: right; display: flex; flex-direction: column; gap: 5px;
+      background: linear-gradient(155deg, rgba(19, 30, 54, 0.95), rgba(13, 21, 39, 0.96)); border: 1px solid var(--border); border-radius: 13px; padding: 9px 11px;
+      text-align: right; display: flex; flex-direction: column; gap: 4px;
     }
-    .match-card.selected { border-color: var(--emerald-bright); box-shadow: 0 0 22px rgba(16, 185, 129, 0.24); background: linear-gradient(155deg, rgba(19, 41, 56, 0.96), rgba(14, 23, 41, 0.98)); }
+    .match-card.selected { border-color: var(--emerald-bright); box-shadow: 0 0 22px rgba(16, 185, 129, 0.26); background: linear-gradient(155deg, rgba(19, 41, 56, 0.96), rgba(14, 23, 41, 0.98)); }
+    .league-tag { font-size: 0.65rem; color: var(--gold-bright); font-weight: 800; }
     .stadium-box {
-      background:
-        linear-gradient(180deg, rgba(6, 16, 29, 0.86), rgba(5, 10, 20, 0.94)),
-        var(--bg-photo) center / cover no-repeat;
-      border: 1px solid rgba(52, 211, 153, 0.45); border-radius: 15px; padding: 12px; margin-bottom: 10px;
+      background: linear-gradient(180deg, rgba(6, 16, 29, 0.88), rgba(5, 10, 20, 0.95));
+      border: 1px solid rgba(52, 211, 153, 0.45); border-radius: 15px; padding: 10px; margin-bottom: 10px;
     }
     .fb-broadcast-bar {
       display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .cam-switch { display: inline-flex; flex-wrap: wrap; gap: 5px; }
     .cam-btn {
-      padding: 5px 10px; border-radius: 8px; font-size: 0.72rem; font-weight: 800;
+      padding: 4px 9px; border-radius: 8px; font-size: 0.7rem; font-weight: 800;
       background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border); color: #cbd5e1;
     }
     .cam-btn.active { background: linear-gradient(135deg, #34d399, #059669); color: #051610; border-color: var(--emerald-bright); }
 
     .scoreboard-bar {
       display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px;
-      background: rgba(6, 11, 22, 0.9); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px;
-      padding: 10px 12px; margin-bottom: 10px; text-align: center;
+      background: rgba(6, 11, 22, 0.92); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px;
+      padding: 8px 12px; margin-bottom: 8px; text-align: center;
     }
-    .score-num { font-size: 1.5rem; font-weight: 900; color: var(--gold-bright); padding: 2px 11px; background: #101a30; border-radius: 10px; border: 1px solid rgba(245,158,11,0.45); box-shadow: 0 0 18px rgba(245,158,11,0.2); }
+    .score-num { font-size: 1.42rem; font-weight: 900; color: var(--gold-bright); padding: 2px 11px; background: #101a30; border-radius: 10px; border: 1px solid rgba(245,158,11,0.45); box-shadow: 0 0 18px rgba(245,158,11,0.2); }
     .pitch-wrap {
-      position: relative; width: 100%; height: 225px; border-radius: 13px; overflow: hidden;
+      position: relative; width: 100%; height: 210px; border-radius: 13px; overflow: hidden;
       border: 2px solid rgba(167, 243, 208, 0.55);
       box-shadow: inset 0 0 45px rgba(0, 0, 0, 0.55), 0 12px 28px rgba(0, 0, 0, 0.5);
     }
@@ -273,62 +260,71 @@
     .stadium-feed-banner {
       display: none;
       background: rgba(7, 13, 24, 0.92); border: 1px solid rgba(56, 189, 248, 0.4);
-      border-radius: 12px; padding: 10px 12px; margin-top: 8px; font-size: 0.78rem;
+      border-radius: 12px; padding: 9px 11px; margin-top: 8px; font-size: 0.76rem;
     }
     .stadium-feed-banner.show { display: block; }
 
     .fb-telemetry {
-      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin-top: 9px;
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 8px;
     }
     .fb-tele-box {
-      background: rgba(8, 14, 28, 0.92); border: 1px solid var(--border); border-radius: 10px; padding: 7px 6px; text-align: center;
+      background: rgba(8, 14, 28, 0.92); border: 1px solid var(--border); border-radius: 10px; padding: 6px; text-align: center;
     }
-    .market-group-title { font-size: 0.73rem; color: var(--text-muted); margin: 7px 0 5px; font-weight: 800; }
-    .odds-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 7px; }
+    .market-group-title { font-size: 0.72rem; color: var(--text-muted); margin: 6px 0 4px; font-weight: 800; }
+    .odds-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 6px; }
     .odd-btn {
-      background: linear-gradient(180deg, #16223d, #0f172a); border: 1px solid var(--border); border-radius: 10px; padding: 8px 6px;
+      background: linear-gradient(180deg, #16223d, #0f172a); border: 1px solid var(--border); border-radius: 10px; padding: 7px 5px;
       display: flex; flex-direction: column; align-items: center; gap: 2px;
     }
     .odd-btn.active-pick { border-color: var(--gold-bright); background: linear-gradient(145deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.14)); box-shadow: 0 0 14px rgba(245, 158, 11, 0.24); }
-    .odd-val { font-size: 0.92rem; font-weight: 900; color: var(--emerald-bright); }
+    .odd-val { font-size: 0.88rem; font-weight: 900; color: var(--emerald-bright); }
     .match-events-feed {
-      max-height: 145px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;
+      max-height: 135px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;
       background: #070b14; border: 1px solid #1e293b; border-radius: 12px; padding: 8px;
     }
-    .ev-row { font-size: 0.76rem; padding: 5px 8px; border-radius: 8px; background: var(--bg-card); border-right: 3px solid var(--emerald-bright); }
+    .ev-row { font-size: 0.75rem; padding: 5px 8px; border-radius: 8px; background: var(--bg-card); border-right: 3px solid var(--emerald-bright); }
     .ev-row.goal-ev { border-right-color: var(--gold-bright); background: rgba(245, 158, 11, 0.14); color: var(--gold-bright); font-weight: 800; }
 
-    /* Crash High-Graphics Stage */
+    /* Crash TakBet-Style Mobile Stage */
     .crash-grid { display: grid; grid-template-columns: minmax(0, 1.85fr) minmax(275px, 1fr); gap: 12px; align-items: start; }
     .crash-top-bar {
-      display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
-      margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap;
+      margin-bottom: 6px;
     }
     .mobile-chat-toggle-btn { display: none; }
     .crash-stage {
-      background: radial-gradient(circle at 50% 35%, rgba(245, 158, 11, 0.2), rgba(4, 7, 16, 0.95) 74%);
-      border: 1px solid rgba(251, 191, 36, 0.35); border-radius: 13px;
-      padding: 8px; margin-bottom: 10px; position: relative;
-      box-shadow: inset 0 0 30px rgba(245, 158, 11, 0.08);
+      background: radial-gradient(circle at 50% 35%, rgba(245, 158, 11, 0.22), rgba(4, 7, 16, 0.96) 74%);
+      border: 1px solid rgba(251, 191, 36, 0.38); border-radius: 13px;
+      padding: 6px; margin-bottom: 8px; position: relative;
+      box-shadow: inset 0 0 28px rgba(245, 158, 11, 0.08);
     }
     .crash-canvas-wrap {
-      position: relative; width: 100%; height: 215px; border-radius: 11px; overflow: hidden;
+      position: relative; width: 100%; height: 205px; border-radius: 11px; overflow: hidden;
       background: #050913; border: 1px solid #1e2c4a;
     }
     canvas#crashCanvas { width: 100%; height: 100%; display: block; }
     .crash-hud {
       inset: 0; position: absolute;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      pointer-events: none; text-align: center; padding: 8px;
+      pointer-events: none; text-align: center; padding: 6px;
     }
-    .crash-mult { font-size: clamp(1.9rem, 7vw, 3.3rem); font-weight: 900; line-height: 1.08; color: var(--gold-bright); text-shadow: 0 0 26px rgba(251, 191, 36, 0.5); }
-    .crash-mult.crashed { color: var(--rose-bright); text-shadow: 0 0 26px rgba(248, 113, 113, 0.55); }
-    .crash-mult.won { color: var(--emerald-bright); text-shadow: 0 0 26px rgba(52, 211, 153, 0.55); }
+    .crash-mult { font-size: clamp(1.85rem, 7.2vw, 3.25rem); font-weight: 900; line-height: 1.05; color: var(--gold-bright); text-shadow: 0 0 26px rgba(251, 191, 36, 0.55); }
+    .crash-mult.crashed { color: var(--rose-bright); text-shadow: 0 0 26px rgba(248, 113, 113, 0.6); }
+    .crash-mult.won { color: var(--emerald-bright); text-shadow: 0 0 26px rgba(52, 211, 153, 0.6); }
+    .crash-live-profit {
+      margin-top: 3px; font-size: 0.74rem; font-weight: 800; color: var(--emerald-bright);
+      background: rgba(5, 15, 25, 0.78); padding: 2px 9px; border-radius: 999px;
+      border: 1px solid rgba(52, 211, 153, 0.38); display: none;
+    }
+    .crash-live-profit.show { display: inline-block; }
 
-    .dual-bets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 8px; }
-    .bet-box { background: linear-gradient(160deg, rgba(21,33,59,0.95), rgba(14,22,41,0.96)); border: 1px solid var(--border); border-radius: 11px; padding: 9px; display: flex; flex-direction: column; gap: 6px; }
-    .history-bar { display: flex; flex-wrap: wrap; gap: 5px; }
-    .h-pill { padding: 3px 9px; border-radius: 999px; font-size: 0.72rem; font-weight: 800; background: var(--bg-card); border: 1px solid var(--border); }
+    .dual-bets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; margin-bottom: 6px; }
+    .bet-box { background: linear-gradient(160deg, rgba(21,33,59,0.95), rgba(14,22,41,0.96)); border: 1px solid var(--border); border-radius: 11px; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
+    .auto-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 0.68rem; color: #cbd5e1; }
+    .auto-toggle-lbl { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; font-weight: 700; white-space: nowrap; }
+    .auto-toggle-lbl input[type="checkbox"] { width: auto; accent-color: var(--emerald-bright); cursor: pointer; }
+    .history-bar { display: flex; flex-wrap: wrap; gap: 4px; }
+    .h-pill { padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 800; background: var(--bg-card); border: 1px solid var(--border); }
     .h-pill.good { color: var(--emerald-bright); border-color: rgba(16, 185, 129, 0.55); box-shadow: 0 0 10px rgba(16,185,129,0.16); }
     .h-pill.bad { color: var(--rose-bright); border-color: rgba(239, 68, 68, 0.5); }
 
@@ -360,7 +356,7 @@
     .dice-stage, .roulette-stage, .slots-stage {
       background: radial-gradient(circle at 50% 30%, rgba(56, 189, 248, 0.16), rgba(5, 9, 19, 0.94) 76%);
       border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 15px;
-      padding: 18px 12px; text-align: center; margin-bottom: 10px;
+      padding: 16px 12px; text-align: center; margin-bottom: 10px;
       box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.55);
     }
     .dice-val { font-size: clamp(2.1rem, 6.5vw, 3.2rem); font-weight: 900; color: var(--cyan-bright); text-shadow: 0 0 24px rgba(56, 189, 248, 0.45); }
@@ -368,15 +364,15 @@
     .dice-val.lose { color: var(--rose-bright); text-shadow: 0 0 26px rgba(248, 113, 113, 0.5); }
 
     .roulette-wheel-ring {
-      width: 118px; height: 118px; border-radius: 50%; margin: 0 auto 10px; padding: 9px;
+      width: 116px; height: 116px; border-radius: 50%; margin: 0 auto 10px; padding: 9px;
       background: conic-gradient(#ef4444 0deg 45deg, #111827 45deg 90deg, #10b981 90deg 135deg, #ef4444 135deg 180deg, #111827 180deg 225deg, #f59e0b 225deg 270deg, #ef4444 270deg 315deg, #111827 315deg 360deg);
       box-shadow: 0 0 26px rgba(245, 158, 11, 0.35), inset 0 0 12px rgba(0,0,0,0.6);
       display: grid; place-items: center;
       transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .roulette-pocket {
-      width: 82px; height: 82px; border-radius: 50%;
-      display: grid; place-items: center; font-size: 1.55rem; font-weight: 900;
+      width: 80px; height: 80px; border-radius: 50%;
+      display: grid; place-items: center; font-size: 1.5rem; font-weight: 900;
       border: 3px solid var(--gold-bright); background: var(--bg-card);
       box-shadow: inset 0 0 14px rgba(0,0,0,0.65);
     }
@@ -393,8 +389,8 @@
       max-width: 370px;
     }
     .reel-box {
-      height: 82px; border-radius: 12px; background: linear-gradient(180deg, #0f172a, #1e293b 50%, #0f172a);
-      border: 2px solid var(--gold-bright); display: grid; place-items: center; font-size: 2.2rem;
+      height: 80px; border-radius: 12px; background: linear-gradient(180deg, #0f172a, #1e293b 50%, #0f172a);
+      border: 2px solid var(--gold-bright); display: grid; place-items: center; font-size: 2.1rem;
       box-shadow: inset 0 0 14px rgba(0,0,0,0.6), 0 4px 12px rgba(245,158,11,0.2);
     }
 
@@ -403,11 +399,11 @@
       border: 2px solid rgba(52, 211, 153, 0.4); border-radius: 15px; padding: 14px 12px; margin-bottom: 10px;
       box-shadow: inset 0 0 36px rgba(0,0,0,0.6);
     }
-    .cards-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; min-height: 76px; align-items: center; margin: 8px 0; }
+    .cards-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; min-height: 74px; align-items: center; margin: 8px 0; }
     .playing-card {
-      width: 56px; height: 78px; border-radius: 10px; background: linear-gradient(160deg, #ffffff, #e2e8f0); color: #090d16;
+      width: 54px; height: 76px; border-radius: 10px; background: linear-gradient(160deg, #ffffff, #e2e8f0); color: #090d16;
       border: 1px solid #94a3b8; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      font-weight: 900; font-size: 1rem; box-shadow: 0 8px 18px rgba(0,0,0,0.45);
+      font-weight: 900; font-size: 0.98rem; box-shadow: 0 8px 18px rgba(0,0,0,0.45);
     }
     .playing-card.red-suit { color: #dc2626; }
 
@@ -426,7 +422,7 @@
     }
 
     /* Moderated Live Chat */
-    .chat-box { display: flex; flex-direction: column; height: 500px; }
+    .chat-box { display: flex; flex-direction: column; height: 480px; }
     .chat-toolbar {
       display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px;
       margin-bottom: 8px;
@@ -496,30 +492,31 @@
 
     @media (min-width: 900px) {
       .nav-row { width: auto; order: 0; }
-      .nav-btn { flex: 0 0 auto; font-size: 0.74rem; }
-      .container { padding: 14px 20px; }
+      .nav-btn { flex: 0 0 auto; font-size: 0.73rem; }
+      .container { padding: 12px 20px; }
     }
     @media (max-width: 960px) {
-      .arena, .crash-grid, .fb-layout { grid-template-columns: 1fr; gap: 8px; }
+      .arena, .crash-grid, .fb-layout { grid-template-columns: 1fr; gap: 7px; }
       .arena .game-stage-panel { order: -1; }
       .arena .game-control-panel { order: 0; }
       .mobile-chat-toggle-btn { display: inline-flex; }
       .crash-chat-panel { display: none; }
       .crash-chat-panel.mobile-open { display: flex; }
-      .chat-box { height: 260px; }
-      .crash-canvas-wrap { height: clamp(148px, 24vh, 185px); }
-      .pitch-wrap { height: 175px; }
+      .chat-box { height: 250px; }
+      .crash-canvas-wrap { height: clamp(142px, 23vh, 176px); }
+      .pitch-wrap { height: 170px; }
       .dice-stage, .roulette-stage, .slots-stage, .bj-stage { padding: 12px 10px; margin-bottom: 8px; }
       .mines-grid { gap: 6px; padding: 8px; max-width: 280px; }
       .playing-card { width: 46px; height: 64px; font-size: 0.9rem; }
     }
     @media (max-width: 540px) {
-      .container { padding: 8px; }
-      .panel { padding: 10px; border-radius: 13px; margin-bottom: 8px; }
-      .dual-bets, .odds-grid, .fb-telemetry { grid-template-columns: 1fr; gap: 6px; }
-      .bet-box { padding: 7px 8px; gap: 4px; }
-      .wallet-box { font-size: 0.72rem; padding: 5px 8px; }
-      .btn { padding: 6px 9px; font-size: 0.73rem; }
+      .container { padding: 7px; }
+      .panel { padding: 9px; border-radius: 13px; margin-bottom: 7px; }
+      .vip-strip { display: none; }
+      .dual-bets, .odds-grid, .fb-telemetry { grid-template-columns: 1fr; gap: 5px; }
+      .bet-box { padding: 7px; gap: 4px; }
+      .wallet-box { font-size: 0.71rem; padding: 5px 8px; }
+      .btn { padding: 6px 8px; font-size: 0.72rem; }
       .roulette-wheel-ring { width: 96px; height: 96px; }
       .roulette-pocket { width: 66px; height: 66px; font-size: 1.25rem; }
       .reels-row { grid-template-columns: repeat(3, minmax(60px, 84px)); gap: 6px; padding: 8px; }
@@ -550,7 +547,7 @@
     </div>
 
     <div class="top-actions">
-      <button type="button" class="btn btn-gray" id="soundToggleBtn" onclick="toggleSoundEngine()">🔊 صدای زنده: روشن</button>
+      <button type="button" class="btn btn-gray" id="soundToggleBtn" onclick="toggleSoundEngine()">🔊 صدا: روشن</button>
       <div class="mode-switch">
         <button type="button" class="mode-btn active-demo" id="modeDemoBtn" onclick="setWalletMode('demo')">دمو</button>
         <button type="button" class="mode-btn" id="modeRealBtn" onclick="setWalletMode('real')">واقعی</button>
@@ -562,8 +559,8 @@
     </div>
 
     <div class="nav-row">
-      <button class="nav-btn football-featured" id="navFootballBtn" onclick="showTab('football', this)">⚽ فوتبال زنده</button>
       <button class="nav-btn active" onclick="showTab('crash', this)">🚀 انفجار</button>
+      <button class="nav-btn football-featured" id="navFootballBtn" onclick="showTab('football', this)">⚽ فوتبال جهانی</button>
       <button class="nav-btn" onclick="showTab('mines', this)">💣 مین‌روب</button>
       <button class="nav-btn" onclick="showTab('dice', this)">🎲 تاس</button>
       <button class="nav-btn" onclick="showTab('roulette', this)">🎡 رولت</button>
@@ -584,6 +581,11 @@
   </header>
 
   <main class="container">
+    <div class="live-ticker-bar">
+      <span class="ticker-tag">⚡ بردهای زنده</span>
+      <div class="ticker-items" id="liveWinnersTicker"></div>
+    </div>
+
     <div class="admin-banner" id="adminCommandBanner">
       <div>
         <div style="font-size:0.92rem;font-weight:900;color:var(--gold-bright);">⚡ محیط مدیریت مستقل سایت (Admin Command Center)</div>
@@ -648,7 +650,125 @@
       </div>
     </div>
 
-    <!-- 0. LIVE FOOTBALL PREDICTION & BROADCAST -->
+    <!-- 1. CRASH (TakBet-Style Mobile Viewport Fit + Quick Auto Cashout Presets) -->
+    <section class="section active" id="tab-crash">
+      <div class="crash-grid">
+        <div>
+          <div class="panel">
+            <div class="game-logo-header">
+              <div class="game-logo-badge">🚀</div>
+              <div>
+                <div class="game-logo-title">انفجار تک‌بِتی صوفیان (Crash Pro)</div>
+                <div class="game-logo-sub">برداشت سریع خودکار (1.5x / 2x / 3x / 5x)، سود لحظه‌ای و کلید Space</div>
+              </div>
+            </div>
+
+            <div class="crash-top-bar">
+              <div class="history-bar" id="historyPills"></div>
+              <button type="button" class="btn btn-blue mobile-chat-toggle-btn" id="mobileChatToggleBtn" style="padding:4px 9px;font-size:0.7rem;" onclick="toggleMobileCrashChat()">💬 چت</button>
+            </div>
+
+            <div class="crash-stage">
+              <div class="crash-canvas-wrap">
+                <canvas id="crashCanvas"></canvas>
+                <div class="crash-hud">
+                  <div class="crash-mult mono" id="crashMultText">1.00x</div>
+                  <div class="crash-live-profit mono" id="crashLiveProfitBadge">سود فعلی: +0 تومان</div>
+                  <div id="crashStatusText" style="color:#cbd5e1;font-size:0.76rem;margin-top:2px;">در حال آماده‌سازی راند...</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dual-bets">
+              <div class="bet-box">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <strong style="color:var(--gold-bright);font-size:0.78rem;">شرط ۱ (Space)</strong>
+                  <span style="font-size:0.66rem;color:var(--text-muted);" id="estWin1">برد: ۲۰۰ه</span>
+                </div>
+                <input type="number" id="betAmt1" value="100000" min="1000" oninput="updateCrashEstPreview()" />
+                <div class="quick-chips">
+                  <button type="button" class="q-chip" onclick="setBetVal('betAmt1', 50000);updateCrashEstPreview()">۵۰ه</button>
+                  <button type="button" class="q-chip" onclick="setBetVal('betAmt1', 250000);updateCrashEstPreview()">۲۵۰ه</button>
+                  <button type="button" class="q-chip" onclick="halfDoubleBet('betAmt1', 0.5);updateCrashEstPreview()">½</button>
+                  <button type="button" class="q-chip" onclick="halfDoubleBet('betAmt1', 2);updateCrashEstPreview()">2x</button>
+                </div>
+                <div class="auto-row">
+                  <label class="auto-toggle-lbl">
+                    <input type="checkbox" id="autoCashEnabled1" checked onchange="updateCrashEstPreview()" />
+                    <span>برداشت خودکار</span>
+                  </label>
+                  <span class="mono" style="color:var(--emerald-bright);" id="autoProfitPreview1">+100ه</span>
+                </div>
+                <input type="number" id="autoCash1" value="2.00" min="1.05" step="0.05" placeholder="برداشت خودکار" oninput="updateCrashEstPreview()" />
+                <div class="quick-chips">
+                  <button type="button" class="q-chip" id="autoChip1_15" onclick="setAutoPreset(1, 1.5)">1.5x</button>
+                  <button type="button" class="q-chip active-mult" id="autoChip1_20" onclick="setAutoPreset(1, 2.0)">2x</button>
+                  <button type="button" class="q-chip" id="autoChip1_30" onclick="setAutoPreset(1, 3.0)">3x</button>
+                  <button type="button" class="q-chip" id="autoChip1_50" onclick="setAutoPreset(1, 5.0)">5x</button>
+                </div>
+                <button class="btn btn-gold" id="btnSlot1" onclick="handleSlot(1)">ثبت شرط ۱</button>
+              </div>
+
+              <div class="bet-box">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <strong style="color:var(--cyan-bright);font-size:0.78rem;">شرط ۲</strong>
+                  <span style="font-size:0.66rem;color:var(--text-muted);" id="estWin2">برد: ۱۵۰ه</span>
+                </div>
+                <input type="number" id="betAmt2" value="50000" min="1000" oninput="updateCrashEstPreview()" />
+                <div class="quick-chips">
+                  <button type="button" class="q-chip" onclick="setBetVal('betAmt2', 50000);updateCrashEstPreview()">۵۰ه</button>
+                  <button type="button" class="q-chip" onclick="setBetVal('betAmt2', 250000);updateCrashEstPreview()">۲۵۰ه</button>
+                  <button type="button" class="q-chip" onclick="halfDoubleBet('betAmt2', 0.5);updateCrashEstPreview()">½</button>
+                  <button type="button" class="q-chip" onclick="halfDoubleBet('betAmt2', 2);updateCrashEstPreview()">2x</button>
+                </div>
+                <div class="auto-row">
+                  <label class="auto-toggle-lbl">
+                    <input type="checkbox" id="autoCashEnabled2" checked onchange="updateCrashEstPreview()" />
+                    <span>برداشت خودکار</span>
+                  </label>
+                  <span class="mono" style="color:var(--emerald-bright);" id="autoProfitPreview2">+100ه</span>
+                </div>
+                <input type="number" id="autoCash2" value="3.00" min="1.05" step="0.05" placeholder="برداشت خودکار" oninput="updateCrashEstPreview()" />
+                <div class="quick-chips">
+                  <button type="button" class="q-chip" id="autoChip2_15" onclick="setAutoPreset(2, 1.5)">1.5x</button>
+                  <button type="button" class="q-chip" id="autoChip2_20" onclick="setAutoPreset(2, 2.0)">2x</button>
+                  <button type="button" class="q-chip active-mult" id="autoChip2_30" onclick="setAutoPreset(2, 3.0)">3x</button>
+                  <button type="button" class="q-chip" id="autoChip2_50" onclick="setAutoPreset(2, 5.0)">5x</button>
+                </div>
+                <button class="btn btn-gold" id="btnSlot2" onclick="handleSlot(2)">ثبت شرط ۲</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3 style="margin-bottom:8px;font-size:0.88rem;">جدول تاریخچه راندهای انفجار</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>راند</th><th>ضریب</th><th>هش SHA-256</th><th>زمان</th></tr></thead>
+                <tbody id="roundsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel chat-box crash-chat-panel" id="crashChatPanel">
+          <div class="chat-toolbar">
+            <h3 style="font-size:0.88rem;">💬 چت زنده بازیکنان <span class="live-pill" id="chatStateBadge">باز</span></h3>
+            <div id="adminChatModBar" style="display:none;gap:5px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-gray" style="padding:4px 8px;font-size:0.7rem;" id="toggleChatLockBtn" onclick="toggleChatLockAdmin()">قفل چت</button>
+              <button type="button" class="btn btn-red" style="padding:4px 8px;font-size:0.7rem;" onclick="clearAllChatAdmin()">پاک کردن چت</button>
+            </div>
+          </div>
+          <div class="chat-list" id="chatList"></div>
+          <form onsubmit="sendChat(event)" style="display:flex;gap:6px;">
+            <input type="text" id="chatInput" placeholder="پیام خود را بنویسید..." style="flex:1;" />
+            <button type="submit" class="btn btn-gold" id="chatSendBtn">ارسال</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. WORLD LIVE FOOTBALL PREDICTION & BROADCAST -->
     <section class="section" id="tab-football">
       <div class="matches-strip" id="footballMatchesStrip"></div>
 
@@ -657,16 +777,16 @@
           <div class="game-logo-header">
             <div class="game-logo-badge">⚽</div>
             <div>
-              <div class="game-logo-title">پخش زنده استادیوم فوتبال و پیش‌بینی لحظه‌ای</div>
-              <div class="game-logo-sub">نمای راداری زنده، صدای استادیوم و سوت داور + بازارهای 1X2، کرنر و نتیجه دقیق</div>
+              <div class="game-logo-title">پخش زنده استادیوم فوتبال جهانی</div>
+              <div class="game-logo-sub">باشگاه‌های مطرح دنیا، رادار زنده حرکت توپ، صدای استادیوم و بازارهای 1X2، کرنر و نتیجه دقیق</div>
             </div>
           </div>
 
           <div class="stadium-box">
             <div class="fb-broadcast-bar">
               <div class="cam-switch">
-                <button type="button" class="cam-btn active" id="camBtnPitch" onclick="setFootballViewMode('pitch')">🎥 دوربین زمین زنده</button>
-                <button type="button" class="cam-btn" id="camBtnCam" onclick="setFootballViewMode('stadium_cam')">🏟️ دوربین فوقانی و لحظات</button>
+                <button type="button" class="cam-btn active" id="camBtnPitch" onclick="setFootballViewMode('pitch')">🎥 رادار زنده زمین</button>
+                <button type="button" class="cam-btn" id="camBtnCam" onclick="setFootballViewMode('stadium_cam')">🏟️ گزارش لحظه‌ای استادیوم</button>
                 <button type="button" class="cam-btn" id="camBtnAudio" onclick="setFootballViewMode('audio_booth')">🎧 اتاق صدای استادیوم</button>
               </div>
               <div style="display:flex;gap:5px;flex-wrap:wrap;">
@@ -677,16 +797,16 @@
 
             <div class="scoreboard-bar">
               <div>
-                <div style="font-size:0.9rem;font-weight:900;color:#f8fafc;" id="fbHomeName">Sofyan United</div>
-                <div style="font-size:0.7rem;color:var(--emerald-bright);">میزبان</div>
+                <div style="font-size:0.9rem;font-weight:900;color:#f8fafc;" id="fbHomeName">Real Madrid</div>
+                <div style="font-size:0.68rem;color:var(--emerald-bright);">میزبان</div>
               </div>
               <div>
                 <div class="score-num mono" id="fbScoreText">1 - 0</div>
-                <div class="mono" style="font-size:0.74rem;color:var(--cyan-bright);margin-top:3px;" id="fbMinuteText">LIVE 34'</div>
+                <div class="mono" style="font-size:0.72rem;color:var(--cyan-bright);margin-top:2px;" id="fbMinuteText">LIVE 34'</div>
               </div>
               <div>
-                <div style="font-size:0.9rem;font-weight:900;color:#f8fafc;" id="fbAwayName">Tehran Royals</div>
-                <div style="font-size:0.7rem;color:var(--gold-bright);">مهمان</div>
+                <div style="font-size:0.9rem;font-weight:900;color:#f8fafc;" id="fbAwayName">Manchester City</div>
+                <div style="font-size:0.68rem;color:var(--gold-bright);">مهمان</div>
               </div>
             </div>
 
@@ -698,25 +818,25 @@
 
             <div class="fb-telemetry">
               <div class="fb-tele-box">
-                <div style="font-size:0.68rem;color:var(--text-muted);">وضعیت زمین</div>
-                <div style="font-size:0.78rem;font-weight:800;color:var(--emerald-bright);" id="fbAttackStatus">حمله میزبان</div>
+                <div style="font-size:0.66rem;color:var(--text-muted);">وضعیت زمین</div>
+                <div style="font-size:0.76rem;font-weight:800;color:var(--emerald-bright);" id="fbAttackStatus">حمله میزبان</div>
               </div>
               <div class="fb-tele-box">
-                <div style="font-size:0.68rem;color:var(--text-muted);">مالکیت توپ</div>
-                <div class="mono" style="font-size:0.78rem;font-weight:800;color:var(--gold-bright);" id="fbPossessionText">54% - 46%</div>
+                <div style="font-size:0.66rem;color:var(--text-muted);">مالکیت توپ</div>
+                <div class="mono" style="font-size:0.76rem;font-weight:800;color:var(--gold-bright);" id="fbPossessionText">55% - 45%</div>
               </div>
               <div class="fb-tele-box">
-                <div style="font-size:0.68rem;color:var(--text-muted);">شوت در چارچوب</div>
-                <div class="mono" style="font-size:0.78rem;font-weight:800;color:var(--cyan-bright);" id="fbShotsText">5 - 3</div>
+                <div style="font-size:0.66rem;color:var(--text-muted);">شوت در چارچوب</div>
+                <div class="mono" style="font-size:0.76rem;font-weight:800;color:var(--cyan-bright);" id="fbShotsText">5 - 3</div>
               </div>
               <div class="fb-tele-box">
-                <div style="font-size:0.68rem;color:var(--text-muted);">کرنرها</div>
-                <div class="mono" style="font-size:0.78rem;font-weight:800;color:#c4b5fd;" id="fbCornersText">4 - 2</div>
+                <div style="font-size:0.66rem;color:var(--text-muted);">کرنرها</div>
+                <div class="mono" style="font-size:0.76rem;font-weight:800;color:#c4b5fd;" id="fbCornersText">4 - 2</div>
               </div>
             </div>
           </div>
 
-          <h3 style="font-size:0.88rem;margin-bottom:6px;">📡 گزارش لحظه‌ای رویدادهای مسابقه</h3>
+          <h3 style="font-size:0.86rem;margin-bottom:6px;">📡 گزارش لحظه‌ای رویدادهای مسابقه</h3>
           <div class="match-events-feed" id="fbEventsFeed"></div>
         </div>
 
@@ -725,38 +845,38 @@
             <div class="game-logo-badge">🎟️</div>
             <div>
               <div class="game-logo-title">تیکت پیش‌بینی زنده فوتبال</div>
-              <div class="game-logo-sub" id="fbSelectedMatchLabel">مسابقه انتخاب‌شده: Sofyan United vs Tehran Royals</div>
+              <div class="game-logo-sub" id="fbSelectedMatchLabel">مسابقه: Real Madrid vs Manchester City</div>
             </div>
           </div>
 
           <div class="market-group-title">نتیجه نهایی مسابقه (1X2)</div>
           <div class="odds-grid">
             <button type="button" class="odd-btn active-pick" id="oddBtn-home" onclick="selectFootballMarket('home')">
-              <span style="font-size:0.7rem;color:#cbd5e1;">برد میزبان (1)</span>
-              <span class="odd-val mono" id="oddVal-home">1.85</span>
+              <span style="font-size:0.68rem;color:#cbd5e1;">برد میزبان (1)</span>
+              <span class="odd-val mono" id="oddVal-home">1.95</span>
             </button>
             <button type="button" class="odd-btn" id="oddBtn-draw" onclick="selectFootballMarket('draw')">
-              <span style="font-size:0.7rem;color:#cbd5e1;">مساوی (X)</span>
-              <span class="odd-val mono" id="oddVal-draw">3.40</span>
+              <span style="font-size:0.68rem;color:#cbd5e1;">مساوی (X)</span>
+              <span class="odd-val mono" id="oddVal-draw">3.35</span>
             </button>
             <button type="button" class="odd-btn" id="oddBtn-away" onclick="selectFootballMarket('away')">
-              <span style="font-size:0.7rem;color:#cbd5e1;">برد مهمان (2)</span>
-              <span class="odd-val mono" id="oddVal-away">4.10</span>
+              <span style="font-size:0.68rem;color:#cbd5e1;">برد مهمان (2)</span>
+              <span class="odd-val mono" id="oddVal-away">2.85</span>
             </button>
           </div>
 
           <div class="market-group-title">مجموع گل و مجموع کرنر</div>
           <div class="odds-grid">
             <button type="button" class="odd-btn" id="oddBtn-over25" onclick="selectFootballMarket('over25')">
-              <span style="font-size:0.7rem;color:#cbd5e1;">گل بالای 2.5</span>
-              <span class="odd-val mono" id="oddVal-over25">1.92</span>
+              <span style="font-size:0.68rem;color:#cbd5e1;">گل بالای 2.5</span>
+              <span class="odd-val mono" id="oddVal-over25">1.76</span>
             </button>
             <button type="button" class="odd-btn" id="oddBtn-cornersOver" onclick="selectFootballMarket('cornersOver')">
-              <span style="font-size:0.7rem;color:#cbd5e1;">کرنر بالای 8.5</span>
+              <span style="font-size:0.68rem;color:#cbd5e1;">کرنر بالای 8.5</span>
               <span class="odd-val mono" id="oddVal-cornersOver">1.88</span>
             </button>
             <button type="button" class="odd-btn" id="oddBtn-cornersUnder" onclick="selectFootballMarket('cornersUnder')">
-              <span style="font-size:0.7rem;color:#cbd5e1;">کرنر زیر 8.5</span>
+              <span style="font-size:0.68rem;color:#cbd5e1;">کرنر زیر 8.5</span>
               <span class="odd-val mono" id="oddVal-cornersUnder">1.94</span>
             </button>
           </div>
@@ -764,27 +884,27 @@
           <div class="market-group-title">نتیجه دقیق مسابقه (Exact Score)</div>
           <div class="odds-grid" id="fbExactScoreGrid">
             <button type="button" class="odd-btn" id="oddBtn-score_1_0" onclick="selectFootballMarket('score_1_0')">
-              <span class="mono" style="font-size:0.72rem;color:#cbd5e1;">1 - 0</span>
+              <span class="mono" style="font-size:0.7rem;color:#cbd5e1;">1 - 0</span>
               <span class="odd-val mono" id="oddVal-score_1_0">5.50</span>
             </button>
             <button type="button" class="odd-btn" id="oddBtn-score_2_0" onclick="selectFootballMarket('score_2_0')">
-              <span class="mono" style="font-size:0.72rem;color:#cbd5e1;">2 - 0</span>
+              <span class="mono" style="font-size:0.7rem;color:#cbd5e1;">2 - 0</span>
               <span class="odd-val mono" id="oddVal-score_2_0">7.20</span>
             </button>
             <button type="button" class="odd-btn" id="oddBtn-score_2_1" onclick="selectFootballMarket('score_2_1')">
-              <span class="mono" style="font-size:0.72rem;color:#cbd5e1;">2 - 1</span>
+              <span class="mono" style="font-size:0.7rem;color:#cbd5e1;">2 - 1</span>
               <span class="odd-val mono" id="oddVal-score_2_1">6.80</span>
             </button>
             <button type="button" class="odd-btn" id="oddBtn-score_1_1" onclick="selectFootballMarket('score_1_1')">
-              <span class="mono" style="font-size:0.72rem;color:#cbd5e1;">1 - 1</span>
+              <span class="mono" style="font-size:0.7rem;color:#cbd5e1;">1 - 1</span>
               <span class="odd-val mono" id="oddVal-score_1_1">5.90</span>
             </button>
             <button type="button" class="odd-btn" id="oddBtn-score_0_0" onclick="selectFootballMarket('score_0_0')">
-              <span class="mono" style="font-size:0.72rem;color:#cbd5e1;">0 - 0</span>
+              <span class="mono" style="font-size:0.7rem;color:#cbd5e1;">0 - 0</span>
               <span class="odd-val mono" id="oddVal-score_0_0">8.50</span>
             </button>
             <button type="button" class="odd-btn" id="oddBtn-score_1_2" onclick="selectFootballMarket('score_1_2')">
-              <span class="mono" style="font-size:0.72rem;color:#cbd5e1;">1 - 2</span>
+              <span class="mono" style="font-size:0.7rem;color:#cbd5e1;">1 - 2</span>
               <span class="odd-val mono" id="oddVal-score_1_2">9.40</span>
             </button>
           </div>
@@ -800,113 +920,21 @@
             </div>
           </div>
 
-          <div style="background:#080e1c;border:1px solid var(--border);border-radius:10px;padding:9px;margin-bottom:10px;font-size:0.78rem;">
+          <div style="background:#080e1c;border:1px solid var(--border);border-radius:10px;padding:8px;margin-bottom:8px;font-size:0.76rem;">
             <div>بازار انتخابی: <strong style="color:var(--cyan-bright);" id="fbPickedLabel">برد میزبان (1)</strong></div>
-            <div>ضریب لحظه‌ای: <span class="mono" style="color:var(--gold-bright);" id="fbPickedOdd">1.85</span></div>
-            <div>برد احتمالی: <strong style="color:var(--emerald-bright);" id="fbPotentialPayout">277,500 تومان</strong></div>
+            <div>ضریب لحظه‌ای: <span class="mono" style="color:var(--gold-bright);" id="fbPickedOdd">1.95</span></div>
+            <div>برد احتمالی: <strong style="color:var(--emerald-bright);" id="fbPotentialPayout">292,500 تومان</strong></div>
           </div>
 
-          <button type="button" class="btn btn-green" style="width:100%;margin-bottom:10px;" onclick="placeFootballBet()">ثبت پیش‌بینی زنده</button>
+          <button type="button" class="btn btn-green" style="width:100%;margin-bottom:8px;" onclick="placeFootballBet()">ثبت پیش‌بینی زنده</button>
 
-          <h3 style="font-size:0.84rem;margin-bottom:6px;">پیش‌بینی‌های من</h3>
+          <h3 style="font-size:0.82rem;margin-bottom:6px;">پیش‌بینی‌های من</h3>
           <div id="fbMyBetsBox" style="display:flex;flex-direction:column;gap:6px;"></div>
         </div>
       </div>
     </section>
 
-    <!-- 1. CRASH -->
-    <section class="section active" id="tab-crash">
-      <div class="crash-grid">
-        <div>
-          <div class="panel">
-            <div class="game-logo-header">
-              <div class="game-logo-badge">🚀</div>
-              <div>
-                <div class="game-logo-title">انفجار زنده صوفیان (Crash Live)</div>
-                <div class="game-logo-sub">نمودار فشرده یک‌قاب + برداشت آنی و خودکار دوپنله با صدای پرواز</div>
-              </div>
-            </div>
-
-            <div class="crash-top-bar">
-              <div style="font-size:0.74rem;color:var(--text-muted);">ضرایب اخیر:</div>
-              <button type="button" class="btn btn-blue mobile-chat-toggle-btn" id="mobileChatToggleBtn" style="padding:5px 10px;font-size:0.72rem;" onclick="toggleMobileCrashChat()">💬 چت زنده</button>
-            </div>
-            <div class="history-bar" id="historyPills" style="margin-bottom:8px;"></div>
-
-            <div class="crash-stage">
-              <div class="crash-canvas-wrap">
-                <canvas id="crashCanvas"></canvas>
-                <div class="crash-hud">
-                  <div class="crash-mult mono" id="crashMultText">1.00x</div>
-                  <div id="crashStatusText" style="color:#cbd5e1;font-size:0.78rem;margin-top:2px;">در حال آماده‌سازی راند...</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="dual-bets">
-              <div class="bet-box">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <strong style="color:var(--gold-bright);font-size:0.8rem;">پنل شرط ۱</strong>
-                  <span style="font-size:0.68rem;color:var(--text-muted);">مبلغ</span>
-                </div>
-                <input type="number" id="betAmt1" value="100000" min="1000" />
-                <div class="quick-chips">
-                  <button type="button" class="q-chip" onclick="setBetVal('betAmt1', 50000)">۵۰ه</button>
-                  <button type="button" class="q-chip" onclick="setBetVal('betAmt1', 250000)">۲۵۰ه</button>
-                  <button type="button" class="q-chip" onclick="halfDoubleBet('betAmt1', 0.5)">½</button>
-                  <button type="button" class="q-chip" onclick="halfDoubleBet('betAmt1', 2)">2x</button>
-                </div>
-                <input type="number" id="autoCash1" value="2.00" min="1.05" step="0.05" placeholder="برداشت خودکار" />
-                <button class="btn btn-gold" id="btnSlot1" onclick="handleSlot(1)">ثبت شرط پنل ۱</button>
-              </div>
-
-              <div class="bet-box">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <strong style="color:var(--cyan-bright);font-size:0.8rem;">پنل شرط ۲</strong>
-                  <span style="font-size:0.68rem;color:var(--text-muted);">مبلغ</span>
-                </div>
-                <input type="number" id="betAmt2" value="50000" min="1000" />
-                <div class="quick-chips">
-                  <button type="button" class="q-chip" onclick="setBetVal('betAmt2', 50000)">۵۰ه</button>
-                  <button type="button" class="q-chip" onclick="setBetVal('betAmt2', 250000)">۲۵۰ه</button>
-                  <button type="button" class="q-chip" onclick="halfDoubleBet('betAmt2', 0.5)">½</button>
-                  <button type="button" class="q-chip" onclick="halfDoubleBet('betAmt2', 2)">2x</button>
-                </div>
-                <input type="number" id="autoCash2" value="3.00" min="1.05" step="0.05" placeholder="برداشت خودکار" />
-                <button class="btn btn-gold" id="btnSlot2" onclick="handleSlot(2)">ثبت شرط پنل ۲</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="panel">
-            <h3 style="margin-bottom:8px;font-size:0.9rem;">جدول تاریخچه راندهای انفجار</h3>
-            <div class="table-wrap">
-              <table>
-                <thead><tr><th>راند</th><th>ضریب</th><th>هش SHA-256</th><th>زمان</th></tr></thead>
-                <tbody id="roundsTableBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel chat-box crash-chat-panel" id="crashChatPanel">
-          <div class="chat-toolbar">
-            <h3 style="font-size:0.9rem;">💬 چت زنده بازیکنان <span class="live-pill" id="chatStateBadge">باز</span></h3>
-            <div id="adminChatModBar" style="display:none;gap:5px;flex-wrap:wrap;">
-              <button type="button" class="btn btn-gray" style="padding:4px 8px;font-size:0.7rem;" id="toggleChatLockBtn" onclick="toggleChatLockAdmin()">قفل چت</button>
-              <button type="button" class="btn btn-red" style="padding:4px 8px;font-size:0.7rem;" onclick="clearAllChatAdmin()">پاک کردن چت</button>
-            </div>
-          </div>
-          <div class="chat-list" id="chatList"></div>
-          <form onsubmit="sendChat(event)" style="display:flex;gap:6px;">
-            <input type="text" id="chatInput" placeholder="پیام خود را بنویسید..." style="flex:1;" />
-            <button type="submit" class="btn btn-gold" id="chatSendBtn">ارسال</button>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. MINES -->
+    <!-- 3. MINES -->
     <section class="section" id="tab-mines">
       <div class="arena">
         <div class="panel game-control-panel">
@@ -951,7 +979,7 @@
       </div>
     </section>
 
-    <!-- 3. DICE -->
+    <!-- 4. DICE -->
     <section class="section" id="tab-dice">
       <div class="arena">
         <div class="panel game-control-panel">
@@ -990,7 +1018,7 @@
       </div>
     </section>
 
-    <!-- 4. ROULETTE -->
+    <!-- 5. ROULETTE -->
     <section class="section" id="tab-roulette">
       <div class="arena">
         <div class="panel game-control-panel">
@@ -1029,7 +1057,7 @@
       </div>
     </section>
 
-    <!-- 5. SLOTS -->
+    <!-- 6. SLOTS -->
     <section class="section" id="tab-slots">
       <div class="arena">
         <div class="panel game-control-panel">
@@ -1066,7 +1094,7 @@
       </div>
     </section>
 
-    <!-- 6. BLACKJACK -->
+    <!-- 7. BLACKJACK -->
     <section class="section" id="tab-blackjack">
       <div class="arena">
         <div class="panel game-control-panel">
@@ -1101,7 +1129,7 @@
       </div>
     </section>
 
-    <!-- 7. HI-LO -->
+    <!-- 8. HI-LO -->
     <section class="section" id="tab-hilo">
       <div class="arena">
         <div class="panel game-control-panel">
@@ -1134,7 +1162,7 @@
       </div>
     </section>
 
-    <!-- 8. LIMBO -->
+    <!-- 9. LIMBO -->
     <section class="section" id="tab-limbo">
       <div class="arena">
         <div class="panel game-control-panel">
@@ -1167,7 +1195,7 @@
       </div>
     </section>
 
-    <!-- 9. PLINKO -->
+    <!-- 10. PLINKO -->
     <section class="section" id="tab-plinko">
       <div class="arena">
         <div class="panel game-control-panel">
@@ -1203,7 +1231,7 @@
       </div>
     </section>
 
-    <!-- 10. WHEEL -->
+    <!-- 11. WHEEL -->
     <section class="section" id="tab-wheel">
       <div class="arena">
         <div class="panel game-control-panel">
@@ -1232,7 +1260,7 @@
       </div>
     </section>
 
-    <!-- 11. LEADERBOARD -->
+    <!-- 12. LEADERBOARD -->
     <section class="section" id="tab-leaderboard">
       <div class="panel">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
@@ -1248,7 +1276,7 @@
       </div>
     </section>
 
-    <!-- 12. DEPOSIT & WITHDRAWALS -->
+    <!-- 13. DEPOSIT & WITHDRAWALS -->
     <section class="section" id="tab-deposit">
       <div class="arena">
         <div>
@@ -1308,7 +1336,7 @@
       </div>
     </section>
 
-    <!-- 13. SUPPORT -->
+    <!-- 14. SUPPORT -->
     <section class="section" id="tab-support">
       <div class="arena">
         <div class="panel">
@@ -1341,7 +1369,7 @@
       </div>
     </section>
 
-    <!-- 14. HISTORY -->
+    <!-- 15. HISTORY -->
     <section class="section" id="tab-history">
       <div class="panel">
         <h2 style="margin-bottom:10px;font-size:1rem;">📜 تاریخچه شرط‌های من</h2>
@@ -1354,7 +1382,7 @@
       </div>
     </section>
 
-    <!-- 15. ADMIN CONSOLE -->
+    <!-- 16. ADMIN CONSOLE -->
     <section class="section" id="tab-admin_console">
       <div class="admin-grid">
         <div class="panel">
@@ -1419,7 +1447,7 @@
       </div>
     </section>
 
-    <!-- 16. ADMIN FINANCE -->
+    <!-- 17. ADMIN FINANCE -->
     <section class="section" id="tab-finance">
       <div class="panel">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
@@ -1430,7 +1458,7 @@
       </div>
     </section>
 
-    <!-- 17. ADMIN USERS -->
+    <!-- 18. ADMIN USERS -->
     <section class="section" id="tab-users">
       <div class="panel">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
@@ -1517,7 +1545,6 @@
     ];
     const chatChannel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("sofyan_live_chat_v1") : null;
 
-    // --- Live Web Audio Sound Engine ---
     let soundEnabled = true;
     let audioCtx = null;
 
@@ -1533,7 +1560,7 @@
     function toggleSoundEngine() {
       soundEnabled = !soundEnabled;
       const btn = document.getElementById("soundToggleBtn");
-      if (btn) btn.textContent = soundEnabled ? "🔊 صدای زنده: روشن" : "🔇 صدای زنده: خاموش";
+      if (btn) btn.textContent = soundEnabled ? "🔊 صدا: روشن" : "🔇 صدا: خاموش";
       if (soundEnabled) playTone(520, 0.08, "triangle", 0.08);
       toast(soundEnabled ? "افکت‌های صوتی زنده فعال شد." : "صدا خاموش شد.");
     }
@@ -1640,7 +1667,7 @@
       ],
       chat: [
         { id: "m1", user: "admin", role: "admin", text: "خوش آمدید! رعایت ادب در چت زنده الزامی است؛ توهین = مسدودیت فوری.", time: nowTime() },
-        { id: "m2", user: "saman_vip", role: "user", text: "پخش زنده فوتبال، صدا و گرافیک جدید فوق‌العاده شده!", time: nowTime() }
+        { id: "m2", user: "saman_vip", role: "user", text: "انفجار رو گوشی خیلی روان شده و برداشت خودکار عالیه!", time: nowTime() }
       ],
       footballBets: [],
       bets: [],
@@ -1698,95 +1725,99 @@
     let authMode = "login";
     let adminAuthSubAction = "login";
 
-    // Crash state
+    // Crash state & explosion particles
     let crashPhase = "waiting";
     let crashRoundId = (state.rounds[0]?.id || 1004) + 1;
     let crashMult = 1.0;
     let crashTarget = 2.2;
     let crashCurve = [{ m: 1.0, t: 0 }];
     let crashElapsed = 0;
+    let crashParticles = [];
     let slotState = { 1: { status: "none", amount: 0 }, 2: { status: "none", amount: 0 } };
 
-    // Live Football Matches State
+    // Live World Football Matches State
     let footballMatches = [
       {
         id: "fb-1",
-        home: "Sofyan United",
-        away: "Tehran Royals",
+        league: "UEFA Champions League",
+        home: "Real Madrid",
+        away: "Manchester City",
         homeScore: 1,
         awayScore: 0,
         cornersHome: 4,
-        cornersAway: 2,
+        cornersAway: 3,
         minute: 34,
-        possessionHome: 55,
-        shotsHome: 5,
-        shotsAway: 3,
+        possessionHome: 54,
+        shotsHome: 6,
+        shotsAway: 4,
         attackSide: "home",
         danger: true,
-        ballX: 0.72,
-        ballY: 0.46,
+        ballX: 0.74,
+        ballY: 0.45,
         odds: {
-          home: 1.85, draw: 3.40, away: 4.10, over25: 1.92,
+          home: 1.95, draw: 3.35, away: 2.85, over25: 1.76,
           cornersOver: 1.88, cornersUnder: 1.94,
           score_1_0: 5.50, score_2_0: 7.20, score_2_1: 6.80,
-          score_1_1: 5.90, score_0_0: 12.00, score_1_2: 9.40
+          score_1_1: 5.90, score_0_0: 11.50, score_1_2: 8.90
         },
         events: [
-          { min: 21, text: "⚽ گل! Sofyan United (ضربه دقیق از درون محوطه جریمه)", isGoal: true },
-          { min: 34, text: "🚩 کرنر و حمله خطرناک میزبان از جناح راست", isGoal: false }
+          { min: 22, text: "⚽ گل! Real Madrid پیش افتاد (ضربه فنی از لبه محوطه جریمه)", isGoal: true },
+          { min: 34, text: "🚩 کرنر و فشار سنگین Real Madrid روی دروازه Manchester City", isGoal: false }
         ]
       },
       {
         id: "fb-2",
-        home: "Parsia FC",
-        away: "Caspian Stars",
+        league: "Champions League Knockout",
+        home: "Barcelona",
+        away: "Bayern Munich",
         homeScore: 1,
         awayScore: 1,
         cornersHome: 5,
         cornersAway: 4,
         minute: 61,
-        possessionHome: 48,
-        shotsHome: 7,
-        shotsAway: 6,
+        possessionHome: 51,
+        shotsHome: 8,
+        shotsAway: 7,
         attackSide: "away",
         danger: true,
-        ballX: 0.26,
-        ballY: 0.54,
+        ballX: 0.24,
+        ballY: 0.53,
         odds: {
-          home: 2.45, draw: 3.10, away: 2.75, over25: 1.78,
+          home: 2.50, draw: 3.15, away: 2.65, over25: 1.65,
           cornersOver: 1.72, cornersUnder: 2.10,
           score_1_0: 14.00, score_2_0: 16.50, score_2_1: 6.20,
-          score_1_1: 4.60, score_0_0: 18.00, score_1_2: 6.90
+          score_1_1: 4.60, score_0_0: 17.50, score_1_2: 6.90
         },
         events: [
-          { min: 14, text: "⚽ گل اول برای Parsia FC", isGoal: true },
-          { min: 52, text: "⚽ گل تساوی توسط Caspian Stars روی ضدحمله", isGoal: true }
+          { min: 15, text: "⚽ گل اول برای Barcelona", isGoal: true },
+          { min: 52, text: "⚽ گل تساوی توسط Bayern Munich روی ضدحمله سریع", isGoal: true }
         ]
       },
       {
         id: "fb-3",
-        home: "Isfahan Wolves",
-        away: "Shiraz Eagles",
+        league: "European Top Clash",
+        home: "Inter Milan",
+        away: "Arsenal",
         homeScore: 0,
         awayScore: 0,
         cornersHome: 2,
-        cornersAway: 1,
+        cornersAway: 2,
         minute: 19,
-        possessionHome: 52,
-        shotsHome: 2,
-        shotsAway: 2,
+        possessionHome: 50,
+        shotsHome: 3,
+        shotsAway: 3,
         attackSide: "neutral",
         danger: false,
         ballX: 0.5,
         ballY: 0.5,
         odds: {
-          home: 2.15, draw: 3.05, away: 3.35, over25: 2.08,
-          cornersOver: 1.95, cornersUnder: 1.85,
+          home: 2.25, draw: 3.05, away: 3.15, over25: 1.98,
+          cornersOver: 1.92, cornersUnder: 1.88,
           score_1_0: 5.80, score_2_0: 8.40, score_2_1: 7.90,
           score_1_1: 5.60, score_0_0: 6.40, score_1_2: 9.80
         },
         events: [
-          { min: 1, text: "🏁 سوت آغاز مسابقه Isfahan Wolves vs Shiraz Eagles", isGoal: false }
+          { min: 1, text: "🏁 سوت آغاز مسابقه Inter Milan vs Arsenal", isGoal: false }
         ]
       }
     ];
@@ -1796,7 +1827,6 @@
     let wheelAngle = 0;
     let rouletteAngle = 0;
 
-    // Mines, Blackjack, Hi-Lo states
     let minesActive = false, minesStake = 0, minesCount = 4, minesBombs = [], minesRevealed = [];
     let bjActive = false, bjStake = 0, bjPlayer = [], bjDealer = [];
     let hiloActive = false, hiloStake = 0, hiloCurrentCard = 7, hiloMult = 1.0;
@@ -1806,7 +1836,7 @@
       const btn = document.getElementById("mobileChatToggleBtn");
       if (!panel) return;
       const isOpen = panel.classList.toggle("mobile-open");
-      if (btn) btn.textContent = isOpen ? "✕ بستن چت" : "💬 چت زنده";
+      if (btn) btn.textContent = isOpen ? "✕ بستن چت" : "💬 چت";
       if (isOpen) {
         const list = document.getElementById("chatList");
         if (list) list.scrollTop = list.scrollHeight;
@@ -1860,6 +1890,13 @@
       return Number(n || 0).toLocaleString("fa-IR") + " تومان";
     }
 
+    function fmtShort(n) {
+      const val = Number(n || 0);
+      if (val >= 1000000) return (val / 1000000).toFixed(1).replace(/\.0$/, "") + "م";
+      if (val >= 1000) return Math.round(val / 1000) + "ه";
+      return String(val);
+    }
+
     function escapeHtml(str) {
       return String(str || "")
         .replace(/&/g, "&amp;")
@@ -1886,6 +1923,89 @@
       if (!el) return;
       const cur = Number(el.value) || 10000;
       el.value = Math.max(1000, Math.round(cur * factor));
+    }
+
+    function setAutoPreset(slotId, multVal) {
+      const inp = document.getElementById("autoCash" + slotId);
+      const chk = document.getElementById("autoCashEnabled" + slotId);
+      if (inp) inp.value = Number(multVal).toFixed(2);
+      if (chk) chk.checked = true;
+      playLiveSfx("click");
+      updateCrashEstPreview();
+    }
+
+    function updateCrashEstPreview() {
+      [1, 2].forEach((id) => {
+        const amt = Number(document.getElementById("betAmt" + id)?.value) || 0;
+        const mult = Math.max(1.05, Number(document.getElementById("autoCash" + id)?.value) || 2);
+        const enabled = Boolean(document.getElementById("autoCashEnabled" + id)?.checked);
+        const estEl = document.getElementById("estWin" + id);
+        const profEl = document.getElementById("autoProfitPreview" + id);
+
+        if (estEl) estEl.textContent = "برد: " + fmtShort(amt * mult);
+        if (profEl) {
+          if (!enabled) {
+            profEl.textContent = "دستی";
+            profEl.style.color = "#94a3b8";
+          } else {
+            const netProfit = Math.max(0, Math.round(amt * (mult - 1)));
+            profEl.textContent = "+" + fmtShort(netProfit);
+            profEl.style.color = "#34d399";
+          }
+        }
+
+        const presets = [
+          { key: "15", val: 1.5 },
+          { key: "20", val: 2.0 },
+          { key: "30", val: 3.0 },
+          { key: "50", val: 5.0 }
+        ];
+        presets.forEach((p) => {
+          const chip = document.getElementById(`autoChip${id}_${p.key}`);
+          if (chip) chip.classList.toggle("active-mult", enabled && Math.abs(mult - p.val) < 0.01);
+        });
+      });
+
+      updateCrashLiveProfitBadge();
+    }
+
+    function updateCrashLiveProfitBadge() {
+      const badge = document.getElementById("crashLiveProfitBadge");
+      if (!badge) return;
+      if (crashPhase !== "running") {
+        badge.classList.remove("show");
+        return;
+      }
+      let activeTotal = 0;
+      [1, 2].forEach((id) => {
+        if (slotState[id].status === "active") activeTotal += slotState[id].amount;
+      });
+      if (activeTotal <= 0) {
+        badge.classList.remove("show");
+        return;
+      }
+      const profit = Math.round(activeTotal * (crashMult - 1));
+      badge.textContent = `سود لحظه‌ای: ${profit >= 0 ? "+" : ""}${fmtShort(profit)}`;
+      badge.style.color = profit >= 0 ? "#34d399" : "#f87171";
+      badge.classList.add("show");
+    }
+
+    function renderLiveWinnersTicker() {
+      const wrap = document.getElementById("liveWinnersTicker");
+      if (!wrap) return;
+      const sample = [
+        "🚀 arash_pro برد در انفجار 3.45x (+۳۴۵ه)",
+        "⚽ nima_fc برد فوتبال Real Madrid (+۵۸۵ه)",
+        "💣 sara_vip برد مین‌روب 4.20x (+۴۲۰ه)",
+        "🎰 parsa77 برد اسلات 15.0x (+۱.۵م)",
+        "⚡ darya_x برد لیمبو 5.10x (+۵۱۰ه)"
+      ];
+      const realWins = state.bets
+        .filter((b) => String(b.result || "").startsWith("+"))
+        .slice(0, 4)
+        .map((b) => `🏆 ${b.username} در ${b.game} (${b.result})`);
+      const merged = [...realWins, ...sample];
+      wrap.innerHTML = merged.map((item) => `<span class="ticker-pill"><strong>${escapeHtml(item)}</strong></span>`).join("");
     }
 
     function currentUser() {
@@ -1957,9 +2077,10 @@
       });
       state.bets = state.bets.slice(0, 100);
       saveState();
+      renderLiveWinnersTicker();
     }
 
-    // --- Live Football Simulation, Camera Switch, Sound & Multi-Markets ---
+    // --- Live World Football ---
     function getSelectedMatch() {
       return footballMatches.find((m) => m.id === selectedMatchId) || footballMatches[0];
     }
@@ -1985,9 +2106,9 @@
       box.className = "stadium-feed-banner show";
       if (fbViewMode === "stadium_cam") {
         const lastEv = m.events[0]?.text || "در جریان مسابقه";
-        box.innerHTML = `<strong style="color:var(--gold-bright);">🏟️ فید زنده استادیوم:</strong> مسابقه <span class="mono">${escapeHtml(m.home)} ${m.homeScore} - ${m.awayScore} ${escapeHtml(m.away)}</span> در دقیقه <span class="mono">${m.minute}'</span> — آخرین صحنه: <span>${escapeHtml(lastEv)}</span>`;
+        box.innerHTML = `<strong style="color:var(--gold-bright);">🏟️ گزارش زنده (${escapeHtml(m.league)}):</strong> <span class="mono">${escapeHtml(m.home)} ${m.homeScore} - ${m.awayScore} ${escapeHtml(m.away)}</span> در دقیقه <span class="mono">${m.minute}'</span> — آخرین صحنه: <span>${escapeHtml(lastEv)}</span>`;
       } else {
-        box.innerHTML = `<strong style="color:var(--emerald-bright);">🎧 اتاق صدای زنده استادیوم:</strong> وضعیت صدا: <strong>${soundEnabled ? "فعال" : "خاموش"}</strong> • افکت‌های سوت داور، تشویق هواداران و ثبت گل به‌صورت خودکار پخش می‌شوند.`;
+        box.innerHTML = `<strong style="color:var(--emerald-bright);">🎧 اتاق صدای استادیوم:</strong> وضعیت صدا: <strong>${soundEnabled ? "فعال" : "خاموش"}</strong> • صدای سوت داور، هواداران و ثبت گل به‌صورت خودکار پخش می‌شود.`;
       }
     }
 
@@ -2109,6 +2230,7 @@
       saveState();
       renderFootballMyBets();
       renderMyBets();
+      renderLiveWinnersTicker();
       refreshUI();
     }
 
@@ -2159,7 +2281,7 @@
           m.ballY = 0.28 + Math.random() * 0.44;
         }
 
-        if (Math.random() < 0.042) {
+        if (Math.random() < 0.045) {
           if (m.attackSide === "away") {
             m.awayScore += 1;
             m.shotsAway += 1;
@@ -2204,10 +2326,10 @@
       strip.innerHTML = footballMatches.map((m) => `
         <button type="button" class="match-card ${m.id === selectedMatchId ? "selected" : ""}" onclick="selectFootballMatch('${m.id}')">
           <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
-            <span class="live-pill mono">${m.minute}' LIVE</span>
-            <span class="mono" style="font-size:0.72rem;color:var(--gold-bright);">1: ${m.odds.home.toFixed(2)} | X: ${m.odds.draw.toFixed(2)} | 2: ${m.odds.away.toFixed(2)}</span>
+            <span class="league-tag">${escapeHtml(m.league)} • <span class="mono">${m.minute}'</span></span>
+            <span class="mono" style="font-size:0.7rem;color:var(--gold-bright);">1: ${m.odds.home.toFixed(2)} | X: ${m.odds.draw.toFixed(2)} | 2: ${m.odds.away.toFixed(2)}</span>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;width:100%;font-size:0.84rem;font-weight:900;">
+          <div style="display:flex;justify-content:space-between;align-items:center;width:100%;font-size:0.82rem;font-weight:900;">
             <span>${escapeHtml(m.home)}</span>
             <span class="mono" style="color:var(--emerald-bright);">${m.homeScore} - ${m.awayScore}</span>
             <span>${escapeHtml(m.away)}</span>
@@ -2458,7 +2580,7 @@
         const toggleBtn = document.getElementById("mobileChatToggleBtn");
         if (panel && window.innerWidth <= 960) {
           panel.classList.remove("mobile-open");
-          if (toggleBtn) toggleBtn.textContent = "💬 چت زنده";
+          if (toggleBtn) toggleBtn.textContent = "💬 چت";
         }
         drawCrashCanvas();
       }
@@ -2624,12 +2746,29 @@
       applyLiveConfigUI();
       refreshUI();
       if (wasAdmin) {
-        showTab("crash", document.querySelector(".nav-btn:not(.football-featured)"));
+        showTab("crash", document.querySelector(".nav-btn"));
       }
       toast("از حساب خارج شدید.");
     }
 
-    // --- 1. Crash with Gradient Area & Glow ---
+    // --- 1. TakBet-Style Crash with Rocket, Neon Trail, Explosion Particles & Auto Cashout ---
+    function spawnExplosionParticles(x, y) {
+      crashParticles = [];
+      const colors = ["#f87171", "#fbbf24", "#fb923c", "#c084fc", "#38bdf8"];
+      for (let i = 0; i < 34; i++) {
+        const angle = (Math.PI * 2 * i) / 34 + (Math.random() - 0.5) * 0.25;
+        const speed = 1.4 + Math.random() * 4.2;
+        crashParticles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 1.0,
+          size: 2.5 + Math.random() * 3.5,
+          color: colors[i % colors.length]
+        });
+      }
+    }
+
     function drawCrashCanvas() {
       const canvas = document.getElementById("crashCanvas");
       if (!canvas) return;
@@ -2641,47 +2780,86 @@
 
       ctx.strokeStyle = "rgba(148, 163, 184, 0.08)";
       ctx.lineWidth = 1;
-      for (let x = 0; x < w; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
-      for (let y = 0; y < h; y += 32) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+      for (let x = 0; x < w; x += 36) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+      for (let y = 0; y < h; y += 28) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
 
-      if (crashCurve.length < 2) return;
-      const maxM = Math.max(2.0, crashMult * 1.15);
-      const maxT = Math.max(2.5, crashElapsed * 1.1);
+      if (crashCurve.length >= 2) {
+        const maxM = Math.max(2.0, crashMult * 1.15);
+        const maxT = Math.max(2.5, crashElapsed * 1.1);
 
-      const pts = crashCurve.map((pt) => ({
-        x: 14 + Math.min(1, pt.t / maxT) * (w - 28),
-        y: h - 16 - Math.min(1, (pt.m - 1) / Math.max(0.5, maxM - 1)) * (h - 32)
-      }));
+        const pts = crashCurve.map((pt) => ({
+          x: 16 + Math.min(1, pt.t / maxT) * (w - 34),
+          y: h - 18 - Math.min(1, (pt.m - 1) / Math.max(0.5, maxM - 1)) * (h - 34)
+        }));
 
-      const areaGrad = ctx.createLinearGradient(0, 0, 0, h);
-      areaGrad.addColorStop(0, crashPhase === "crashed" ? "rgba(248, 113, 113, 0.28)" : "rgba(251, 191, 36, 0.28)");
-      areaGrad.addColorStop(1, "rgba(5, 9, 19, 0)");
+        const areaGrad = ctx.createLinearGradient(0, 0, 0, h);
+        areaGrad.addColorStop(0, crashPhase === "crashed" ? "rgba(248, 113, 113, 0.28)" : "rgba(56, 189, 248, 0.25)");
+        areaGrad.addColorStop(1, "rgba(5, 9, 19, 0)");
 
-      ctx.beginPath();
-      ctx.moveTo(pts[0].x, h - 16);
-      pts.forEach((p) => ctx.lineTo(p.x, p.y));
-      ctx.lineTo(pts[pts.length - 1].x, h - 16);
-      ctx.closePath();
-      ctx.fillStyle = areaGrad;
-      ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, h - 18);
+        pts.forEach((p) => ctx.lineTo(p.x, p.y));
+        ctx.lineTo(pts[pts.length - 1].x, h - 18);
+        ctx.closePath();
+        ctx.fillStyle = areaGrad;
+        ctx.fill();
 
-      ctx.beginPath();
-      pts.forEach((p, idx) => {
-        if (idx === 0) ctx.moveTo(p.x, p.y);
-        else ctx.lineTo(p.x, p.y);
-      });
-      ctx.strokeStyle = crashPhase === "crashed" ? "#f87171" : "#fbbf24";
-      ctx.lineWidth = 3.5;
-      ctx.shadowColor = crashPhase === "crashed" ? "rgba(248,113,113,0.7)" : "rgba(251,191,36,0.75)";
-      ctx.shadowBlur = 10;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
+        ctx.beginPath();
+        pts.forEach((p, idx) => {
+          if (idx === 0) ctx.moveTo(p.x, p.y);
+          else ctx.lineTo(p.x, p.y);
+        });
+        ctx.strokeStyle = crashPhase === "crashed" ? "#f87171" : "#38bdf8";
+        ctx.lineWidth = 3.2;
+        ctx.shadowColor = crashPhase === "crashed" ? "rgba(248,113,113,0.75)" : "rgba(56,189,248,0.8)";
+        ctx.shadowBlur = 10;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
 
-      const last = pts[pts.length - 1];
-      ctx.beginPath();
-      ctx.arc(last.x, last.y, 5.5, 0, Math.PI * 2);
-      ctx.fillStyle = crashPhase === "crashed" ? "#ef4444" : "#ffffff";
-      ctx.fill();
+        const last = pts[pts.length - 1];
+        if (crashPhase === "running") {
+          ctx.save();
+          ctx.translate(last.x, last.y);
+          ctx.rotate(-0.42);
+          ctx.beginPath();
+          ctx.moveTo(-10, 0);
+          ctx.lineTo(-22 - Math.random() * 7, -4);
+          ctx.lineTo(-18, 0);
+          ctx.lineTo(-22 - Math.random() * 7, 4);
+          ctx.closePath();
+          ctx.fillStyle = "#fbbf24";
+          ctx.fill();
+          ctx.fillStyle = "#f8fafc";
+          ctx.beginPath();
+          ctx.ellipse(0, 0, 11, 5.5, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#ef4444";
+          ctx.beginPath();
+          ctx.moveTo(6, -4);
+          ctx.lineTo(14, 0);
+          ctx.lineTo(6, 4);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+        } else if (crashPhase === "crashed" && crashParticles.length === 0) {
+          spawnExplosionParticles(last.x, last.y);
+        }
+      }
+
+      if (crashParticles.length > 0) {
+        crashParticles = crashParticles.filter((p) => p.life > 0.03);
+        crashParticles.forEach((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.life -= 0.04;
+          ctx.globalAlpha = Math.max(0, p.life);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+      }
     }
 
     function startCrashRound() {
@@ -2689,7 +2867,7 @@
       state.config = latest.config || state.config;
       applyLiveConfigUI();
 
-      crashPhase = "running"; crashMult = 1.0; crashElapsed = 0; crashCurve = [{ m: 1.0, t: 0 }];
+      crashPhase = "running"; crashMult = 1.0; crashElapsed = 0; crashCurve = [{ m: 1.0, t: 0 }]; crashParticles = [];
       const forced = Number(state.config?.forcedCrashMult);
       if (forced && forced >= 1.0) {
         crashTarget = Number(forced.toFixed(2));
@@ -2709,28 +2887,35 @@
       el.className = "crash-mult mono"; el.textContent = "1.00x";
       document.getElementById("crashStatusText").textContent = "راند #" + crashRoundId + " در حال پرواز";
       playLiveSfx("spin");
+      updateCrashLiveProfitBadge();
       drawCrashCanvas(); updateSlotUI();
     }
 
     setInterval(() => {
-      if (crashPhase !== "running") return;
+      if (crashPhase !== "running") {
+        if (crashParticles.length > 0) drawCrashCanvas();
+        return;
+      }
       crashElapsed += 0.1;
       crashMult = Number((crashMult + 0.03 + crashMult * 0.0065).toFixed(2));
       crashCurve.push({ m: crashMult, t: crashElapsed });
       document.getElementById("crashMultText").textContent = crashMult.toFixed(2) + "x";
+      updateCrashLiveProfitBadge();
       drawCrashCanvas();
 
       [1, 2].forEach((id) => {
         const s = slotState[id];
+        const autoEnabled = Boolean(document.getElementById("autoCashEnabled" + id)?.checked);
         const autoVal = Number(document.getElementById("autoCash" + id).value) || 0;
-        if (s.status === "active" && autoVal >= 1.05 && crashMult >= autoVal && crashMult < crashTarget) {
-          cashoutCrashSlot(id, crashMult);
+        if (s.status === "active" && autoEnabled && autoVal >= 1.05 && crashMult >= autoVal && crashMult <= crashTarget) {
+          cashoutCrashSlot(id, autoVal, true);
         }
       });
 
       if (crashMult >= crashTarget) {
         crashPhase = "crashed";
         playLiveSfx("crash");
+        updateCrashLiveProfitBadge();
         const seed = `sofyan-round-${crashRoundId}-${Date.now()}`;
         state.rounds.unshift({ id: crashRoundId, mult: crashTarget, seed, hash: makeHash(seed), time: nowTime() });
         state.rounds = state.rounds.slice(0, 15);
@@ -2760,7 +2945,7 @@
       updateSlotUI();
     }, 100);
 
-    function cashoutCrashSlot(slotId, multAtCashout) {
+    function cashoutCrashSlot(slotId, multAtCashout, isAuto = false) {
       const s = slotState[slotId]; const u = currentUser();
       if (!u || s.status !== "active") return;
       const confirmed = Number(Number(multAtCashout).toFixed(2));
@@ -2768,17 +2953,17 @@
       s.status = "cashed";
       adjustBalance(u.username, u.wallet_mode, payout);
       recordBet({ game: `انفجار پنل ${slotId}`, stake: s.amount, mult: confirmed, payout });
-      renderMyBets(); updateSlotUI();
+      renderMyBets(); updateSlotUI(); updateCrashLiveProfitBadge();
       playLiveSfx("win");
       document.getElementById("crashMultText").className = "crash-mult mono won";
-      toast(`برداشت در ضریب ${confirmed.toFixed(2)}x (${fmt(payout)})`);
+      toast(`${isAuto ? "برداشت خودکار" : "برداشت"} در ضریب ${confirmed.toFixed(2)}x (${fmt(payout)})`);
     }
 
     function handleSlot(slotId) {
       const u = currentUser();
       if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
       const s = slotState[slotId];
-      if (crashPhase === "running" && s.status === "active") { cashoutCrashSlot(slotId, crashMult); return; }
+      if (crashPhase === "running" && s.status === "active") { cashoutCrashSlot(slotId, crashMult, false); return; }
       if (s.status === "active" || s.status === "queued") return;
       const amt = Math.round(Number(document.getElementById("betAmt" + slotId).value) || 0);
       if (!(amt >= 1000)) { toast("حداقل مبلغ شرط ۱,۰۰۰ تومان است."); return; }
@@ -2793,16 +2978,29 @@
       [1, 2].forEach((id) => {
         const btn = document.getElementById("btnSlot" + id); const s = slotState[id];
         if (crashPhase === "running" && s.status === "active") {
-          btn.disabled = false; btn.className = "btn btn-green"; btn.textContent = `برداشت آنی (${crashMult.toFixed(2)}x)`;
+          btn.disabled = false; btn.className = "btn btn-green"; btn.textContent = `برداشت (${crashMult.toFixed(2)}x)`;
         } else if (s.status === "queued" || s.status === "active") {
-          btn.disabled = true; btn.className = "btn btn-gray"; btn.textContent = s.status === "queued" ? "ثبت‌شده برای راند بعد" : "در حال پرواز...";
+          btn.disabled = true; btn.className = "btn btn-gray"; btn.textContent = s.status === "queued" ? "در صف راند بعد" : "در حال پرواز...";
         } else {
-          btn.disabled = false; btn.className = "btn btn-gold"; btn.textContent = `ثبت شرط پنل ${id}`;
+          btn.disabled = false; btn.className = "btn btn-gold"; btn.textContent = `ثبت شرط ${id}`;
         }
       });
     }
 
-    // --- 2 to 10 Mini Games ---
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space") {
+        const tag = document.activeElement?.tagName;
+        if (tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+          const crashSec = document.getElementById("tab-crash");
+          if (crashSec && crashSec.classList.contains("active")) {
+            e.preventDefault();
+            handleSlot(1);
+          }
+        }
+      }
+    });
+
+    // --- 3 to 11 Mini Games ---
     function calcMinesMult(safeCount, minesTotal) {
       if (safeCount <= 0) return 1.0;
       let prob = 1;
@@ -3594,7 +3792,7 @@
     }
 
     function renderRounds() {
-      document.getElementById("historyPills").innerHTML = state.rounds.slice(0, 8).map((r, i) =>
+      document.getElementById("historyPills").innerHTML = state.rounds.slice(0, 7).map((r, i) =>
         `<button class="h-pill mono ${r.mult >= 2 ? "good" : "bad"}" onclick="openRound(${i})">${Number(r.mult).toFixed(2)}x</button>`
       ).join("");
       document.getElementById("roundsTableBody").innerHTML = state.rounds.map((r, i) =>
@@ -3859,24 +4057,10 @@
         document.getElementById("logoutBtn").style.display = "none";
       }
 
-      document.getElementById("adminConsoleNavBtn").classList.toggle("visible", showAdmin);
-      document.getElementById("adminUsersNavBtn").classList.toggle("visible", showAdmin);
-      document.getElementById("adminFinanceNavBtn").classList.toggle("visible", showAdmin);
-
-      renderRounds(); renderChat(); renderDeposits(); renderWithdrawals();
-      renderTickets(); renderMyBets(); renderLeaderboard(); renderFinanceStats(); renderUsersAdmin();
-      renderFootballMatchesStrip(); renderFootballMatchDetails(); renderFootballExtraView(); renderFootballMyBets();
-      if (showAdmin) renderAdminConsole();
+      document.querySelectorAll(".nav-btn.admin-only").forEach((el) => el.classList.toggle("visible", showAdmin));
+      renderChat(); renderDeposits(); renderWithdrawals(); renderTickets(); renderMyBets(); renderLeaderboard(); renderFootballMyBets(); renderLiveWinnersTicker();
+      if (showAdmin) { renderAdminConsole(); renderFinanceStats(); renderUsersAdmin(); }
     }
-
-    setInterval(() => {
-      const baseCount = 135 + Object.keys(state.accounts).length;
-      const jitter = Math.floor(Math.random() * 24);
-      const pill = document.getElementById("livePlayersPill");
-      if (pill) pill.textContent = `آنلاین: ${baseCount + jitter} نفر`;
-    }, 4500);
-
-    setInterval(tickFootballMatches, 2200);
 
     if (chatChannel) {
       chatChannel.onmessage = () => {
@@ -3885,27 +4069,41 @@
     }
 
     window.addEventListener("storage", (e) => {
-      if (e.key === STORAGE_KEY) syncLiveFromAdminStorage();
+      if (e.key === STORAGE_KEY) {
+        syncLiveFromAdminStorage();
+      }
     });
+
+    setInterval(() => {
+      const el = document.getElementById("livePlayersPill");
+      if (el) el.textContent = "آنلاین: " + (135 + Math.floor(Math.random() * 34)) + " نفر";
+    }, 3500);
+
+    setInterval(() => {
+      tickFootballMatches();
+    }, 2400);
+
     window.addEventListener("resize", () => {
       drawCrashCanvas();
       drawFootballPitch();
     });
 
+    // Init
+    applyLiveConfigUI();
+    renderRounds();
     buildMinesGrid();
     updateDicePreview();
     updateLimboPreview();
     renderPlinkoBuckets();
+    updateCrashEstPreview();
+    renderFootballMatchesStrip();
+    renderFootballMatchDetails();
+    renderFootballExtraView();
     updateFootballPayoutPreview();
-    applyLiveConfigUI();
+    drawFootballPitch();
     refreshUI();
     updateSlotUI();
-    drawCrashCanvas();
-    drawFootballPitch();
     setTimeout(startCrashRound, 1000);
-    if (!currentUser()) {
-      setTimeout(() => openAuth("login"), 250);
-    }
   </script>
 </body>
 </html>
