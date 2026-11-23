@@ -260,20 +260,28 @@
 
     /* Crash High-Graphics Stage */
     .crash-grid { display: grid; grid-template-columns: minmax(0, 1.85fr) minmax(280px, 1fr); gap: 14px; align-items: start; }
+    .crash-top-bar {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .mobile-chat-toggle-btn { display: none; }
     .crash-stage {
       background: radial-gradient(circle at 50% 35%, rgba(245, 158, 11, 0.18), #040710 74%);
       border: 1px solid rgba(251, 191, 36, 0.35); border-radius: 14px;
-      padding: 12px; margin-bottom: 12px; position: relative;
+      padding: 10px; margin-bottom: 12px; position: relative;
       box-shadow: inset 0 0 35px rgba(245, 158, 11, 0.08);
     }
-    .crash-canvas-wrap { position: relative; width: 100%; height: 235px; border-radius: 10px; overflow: hidden; background: #050913; border: 1px solid #1e2c4a; }
+    .crash-canvas-wrap {
+      position: relative; width: 100%; height: 245px; border-radius: 12px; overflow: hidden;
+      background: #050913; border: 1px solid #1e2c4a;
+    }
     canvas#crashCanvas { width: 100%; height: 100%; display: block; }
     .crash-hud {
       inset: 0; position: absolute;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       pointer-events: none; text-align: center; padding: 10px;
     }
-    .crash-mult { font-size: clamp(2.4rem, 7vw, 3.8rem); font-weight: 900; color: var(--gold-bright); text-shadow: 0 0 28px rgba(251, 191, 36, 0.5); }
+    .crash-mult { font-size: clamp(2.2rem, 9vw, 3.8rem); font-weight: 900; line-height: 1.1; color: var(--gold-bright); text-shadow: 0 0 28px rgba(251, 191, 36, 0.5); }
     .crash-mult.crashed { color: var(--rose-bright); text-shadow: 0 0 28px rgba(248, 113, 113, 0.55); }
     .crash-mult.won { color: var(--emerald-bright); text-shadow: 0 0 28px rgba(52, 211, 153, 0.55); }
 
@@ -453,10 +461,17 @@
     }
     @media (max-width: 960px) {
       .arena, .crash-grid, .fb-layout { grid-template-columns: 1fr; }
-      .chat-box { height: 350px; }
+      .mobile-chat-toggle-btn { display: inline-flex; }
+      .crash-chat-panel { display: none; }
+      .crash-chat-panel.mobile-open { display: flex; }
+      .chat-box { height: 320px; }
+      .crash-canvas-wrap { height: clamp(190px, 34vh, 260px); }
     }
     @media (max-width: 540px) {
-      .dual-bets, .odds-grid, .fb-telemetry { grid-template-columns: repeat(2, 1fr); }
+      .container { padding: 10px; }
+      .panel { padding: 12px; border-radius: 14px; }
+      .dual-bets, .odds-grid, .fb-telemetry { grid-template-columns: 1fr; }
+      .bet-box { padding: 10px; gap: 6px; }
       .wallet-box { font-size: 0.74rem; padding: 6px 9px; }
       .btn { padding: 8px 10px; font-size: 0.76rem; }
     }
@@ -725,10 +740,11 @@
       <div class="crash-grid">
         <div>
           <div class="panel">
-            <div style="margin-bottom:10px;">
-              <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:6px;">تاریخچه راندها (کلیک برای بررسی Provably Fair):</div>
-              <div class="history-bar" id="historyPills"></div>
+            <div class="crash-top-bar">
+              <div style="font-size:0.78rem;color:var(--text-muted);">ضرایب اخیر (کلیک = بررسی):</div>
+              <button type="button" class="btn btn-blue mobile-chat-toggle-btn" id="mobileChatToggleBtn" style="padding:6px 11px;font-size:0.75rem;" onclick="toggleMobileCrashChat()">💬 چت زنده</button>
             </div>
+            <div class="history-bar" id="historyPills" style="margin-bottom:10px;"></div>
 
             <div class="crash-stage">
               <div class="crash-canvas-wrap">
@@ -786,7 +802,7 @@
           </div>
         </div>
 
-        <div class="panel chat-box">
+        <div class="panel chat-box crash-chat-panel" id="crashChatPanel">
           <div class="chat-toolbar">
             <h3 style="font-size:0.95rem;">💬 چت زنده بازیکنان <span class="live-pill" id="chatStateBadge">باز</span></h3>
             <div id="adminChatModBar" style="display:none;gap:5px;flex-wrap:wrap;">
@@ -1577,6 +1593,18 @@
     let bjActive = false, bjStake = 0, bjPlayer = [], bjDealer = [];
     let hiloActive = false, hiloStake = 0, hiloCurrentCard = 7, hiloMult = 1.0;
 
+    function toggleMobileCrashChat() {
+      const panel = document.getElementById("crashChatPanel");
+      const btn = document.getElementById("mobileChatToggleBtn");
+      if (!panel) return;
+      const isOpen = panel.classList.toggle("mobile-open");
+      if (btn) btn.textContent = isOpen ? "✕ بستن چت" : "💬 چت زنده";
+      if (isOpen) {
+        const list = document.getElementById("chatList");
+        if (list) list.scrollTop = list.scrollHeight;
+      }
+    }
+
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
@@ -2029,7 +2057,6 @@
         ctx.fillRect(i * stripeW, 0, stripeW + 1, h);
       }
 
-      // Stadium spotlight vignette
       const spot = ctx.createRadialGradient(w / 2, h / 2, h * 0.15, w / 2, h / 2, w * 0.65);
       spot.addColorStop(0, "rgba(255,255,255,0.06)");
       spot.addColorStop(1, "rgba(0,0,0,0.35)");
@@ -2181,7 +2208,15 @@
       document.getElementById("tab-" + name).classList.add("active");
       document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
       if (btnEl) btnEl.classList.add("active");
-      if (name === "crash") drawCrashCanvas();
+      if (name === "crash") {
+        const panel = document.getElementById("crashChatPanel");
+        const toggleBtn = document.getElementById("mobileChatToggleBtn");
+        if (panel && window.innerWidth <= 960) {
+          panel.classList.remove("mobile-open");
+          if (toggleBtn) toggleBtn.textContent = "💬 چت زنده";
+        }
+        drawCrashCanvas();
+      }
       if (name === "football") { renderFootballMatchesStrip(); renderFootballMatchDetails(); renderFootballMyBets(); drawFootballPitch(); }
       if (name === "leaderboard") renderLeaderboard();
       if (name === "admin_console") renderAdminConsole();
@@ -2372,7 +2407,6 @@
         y: h - 18 - Math.min(1, (pt.m - 1) / Math.max(0.5, maxM - 1)) * (h - 38)
       }));
 
-      // Gradient fill underneath trajectory
       const areaGrad = ctx.createLinearGradient(0, 0, 0, h);
       areaGrad.addColorStop(0, crashPhase === "crashed" ? "rgba(248, 113, 113, 0.28)" : "rgba(251, 191, 36, 0.28)");
       areaGrad.addColorStop(1, "rgba(5, 9, 19, 0)");
@@ -2385,7 +2419,6 @@
       ctx.fillStyle = areaGrad;
       ctx.fill();
 
-      // Glowing curve line
       ctx.beginPath();
       pts.forEach((p, idx) => {
         if (idx === 0) ctx.moveTo(p.x, p.y);
@@ -2398,7 +2431,6 @@
       ctx.stroke();
       ctx.shadowBlur = 0;
 
-      // Rocket tip beacon
       const last = pts[pts.length - 1];
       ctx.beginPath();
       ctx.arc(last.x, last.y, 6, 0, Math.PI * 2);
