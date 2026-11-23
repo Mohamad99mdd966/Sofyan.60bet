@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>صوفیان بت | پلتفرم جامع کازینو و بازی‌های شانسی</title>
+  <style>
+    :root {
+      --bg-main: #060911;
+      --bg-panel: #0e1424;
+      --bg-card: #131c31;
+      --bg-soft: #1a2642;
+      --border: #273554;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --gold: #f59e0b;
+      --gold-bright: #fbbf24;
+      --emerald: #10b981;
+      --emerald-bright: #34d399;
+      --rose: #ef4444;
+      --rose-bright: #f87171;
+      --cyan: #06b6d4;
+      --cyan-bright: #38bdf8;
+      --purple: #8b5cf6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { max-width: 100%; overflow-x: hidden; scroll-behavior: smooth; }
+    body {
+      font-family: Tahoma, "Vazirmatn", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(245, 158, 11, 0.08), transparent 36%),
+        radial-gradient(circle at 88% 18%, rgba(16, 185, 129, 0.07), transparent 40%),
+        var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.65;
+    }
+
+    button, input, select, textarea { font-family: inherit; color: inherit; }
+    button { cursor: pointer; border: none; background: transparent; touch-action: manipulation; transition: transform 0.12s ease, filter 0.15s ease, background 0.15s ease; }
+    button:active:not(:disabled) { transform: scale(0.98); }
+    button:disabled { opacity: 0.42; cursor: not-allowed; }
+
+    input, select, textarea {
+      background: #0a101d;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      width: 100%;
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; direction: ltr; unicode-bidi: isolate; }
+
+    /* Maintenance Overlay */
+    .maint-overlay {
+      position: fixed; inset: 0; background: rgba(5, 8, 16, 0.96); z-index: 140;
+      display: none; align-items: center; justify-content: center; padding: 20px; text-align: center;
+    }
+    .maint-overlay.show { display: flex; }
+    .maint-box {
+      background: var(--bg-panel); border: 1px solid var(--gold); border-radius: 18px;
+      padding: 30px 22px; max-width: 440px; width: 100%;
+    }
+
+    /* Topbar & Navigation */
+    .topbar {
+      background: rgba(11, 17, 32, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-badge {
+      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+      background: linear-gradient(135deg, #fbbf24, #d97706);
+      color: #080c14; display: grid; place-items: center; font-weight: 900; font-size: 1.2rem;
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.28);
+    }
+    .brand-title { font-weight: 900; font-size: 1.02rem; color: var(--gold-bright); }
+    .brand-sub { font-size: 0.7rem; color: var(--text-muted); }
+
+    .status-pill {
+      font-size: 0.72rem; padding: 4px 10px; border-radius: 999px;
+      background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.45);
+      color: var(--emerald-bright); font-weight: 700;
+    }
+    .live-pill {
+      font-size: 0.72rem; padding: 4px 10px; border-radius: 999px;
+      background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.45);
+      color: var(--cyan-bright); font-weight: 700;
+    }
+
+    .top-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+    .wallet-box {
+      background: var(--bg-card); border: 1px solid var(--border);
+      padding: 7px 12px; border-radius: 10px; font-size: 0.82rem; font-weight: 800;
+      color: var(--emerald-bright); white-space: nowrap;
+    }
+    .mode-switch {
+      display: inline-flex; background: #070b14; border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden; padding: 2px;
+    }
+    .mode-btn { padding: 6px 11px; border-radius: 8px; font-size: 0.76rem; font-weight: 800; color: var(--text-muted); }
+    .mode-btn.active-demo { background: var(--cyan-bright); color: #051622; }
+    .mode-btn.active-real { background: var(--emerald); color: #052014; }
+
+    .btn {
+      padding: 9px 13px; border-radius: 10px; font-weight: 800; font-size: 0.8rem;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn:hover:not(:disabled) { filter: brightness(1.08); }
+    .btn-gold { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #090d16; }
+    .btn-green { background: linear-gradient(135deg, #34d399, #10b981); color: #052014; }
+    .btn-red { background: linear-gradient(135deg, #f87171, #ef4444); color: #ffffff; }
+    .btn-blue { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #ffffff; }
+    .btn-purple { background: linear-gradient(135deg, #a78bfa, #7c3aed); color: #ffffff; }
+    .btn-gray { background: var(--bg-soft); color: var(--text-main); border: 1px solid var(--border); }
+
+    .nav-row { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; order: 3; }
+    .nav-btn {
+      flex: 1 1 auto; text-align: center; padding: 7px 10px; border-radius: 9px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: #e2e8f0; font-size: 0.76rem; font-weight: 800;
+    }
+    .nav-btn.active { background: var(--gold); color: #090d16; border-color: var(--gold); }
+    .nav-btn.admin-only { display: none; border-color: rgba(245, 158, 11, 0.5); color: var(--gold-bright); }
+    .nav-btn.admin-only.visible { display: inline-block; }
+    .nav-btn.admin-only.active { color: #090d16; }
+
+    /* Layout */
+    .container { width: 100%; max-width: 1480px; margin: 0 auto; padding: 14px; }
+    .section { display: none; }
+    .section.active { display: block; animation: fadeIn 0.18s ease; }
+    @keyframes fadeIn { from { opacity: 0.4; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .panel {
+      background: var(--bg-panel); border: 1px solid var(--border);
+      border-radius: 16px; padding: 16px; margin-bottom: 14px;
+    }
+    .arena { display: grid; grid-template-columns: minmax(300px, 390px) minmax(0, 1fr); gap: 14px; align-items: start; }
+    .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; font-size: 0.82rem; color: #cbd5e1; }
+    .quick-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .q-chip {
+      padding: 4px 8px; border-radius: 7px; font-size: 0.72rem; font-weight: 700;
+      background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted);
+    }
+    .q-chip:hover { border-color: var(--gold); color: var(--gold-bright); }
+
+    /* VIP & Promo Strip */
+    .vip-strip {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin-bottom: 14px;
+    }
+    .vip-box {
+      background: linear-gradient(145deg, var(--bg-panel), #121c33);
+      border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    }
+
+    /* Crash */
+    .crash-grid { display: grid; grid-template-columns: minmax(0, 1.85fr) minmax(280px, 1fr); gap: 14px; align-items: start; }
+    .crash-stage {
+      background: radial-gradient(circle at 50% 35%, rgba(245, 158, 11, 0.12), #050811 72%);
+      border: 1px solid var(--border); border-radius: 14px;
+      padding: 12px; margin-bottom: 12px; position: relative;
+    }
+    .crash-canvas-wrap { position: relative; width: 100%; height: 220px; border-radius: 10px; overflow: hidden; background: #060a14; border: 1px solid #1b2742; }
+    canvas#crashCanvas { width: 100%; height: 100%; display: block; }
+    .crash-hud {
+      inset: 0; position: absolute;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      pointer-events: none; text-align: center; padding: 10px;
+    }
+    .crash-mult { font-size: clamp(2.3rem, 7vw, 3.6rem); font-weight: 900; color: var(--gold-bright); text-shadow: 0 0 24px rgba(251, 191, 36, 0.35); }
+    .crash-mult.crashed { color: var(--rose-bright); text-shadow: 0 0 24px rgba(248, 113, 113, 0.35); }
+    .crash-mult.won { color: var(--emerald-bright); text-shadow: 0 0 24px rgba(52, 211, 153, 0.35); }
+
+    .dual-bets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 10px; }
+    .bet-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .history-bar { display: flex; flex-wrap: wrap; gap: 6px; }
+    .h-pill { padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; background: var(--bg-card); border: 1px solid var(--border); }
+    .h-pill.good { color: var(--emerald-bright); border-color: rgba(16, 185, 129, 0.45); }
+    .h-pill.bad { color: var(--rose-bright); border-color: rgba(239, 68, 68, 0.45); }
+
+    /* Mines */
+    .mines-grid {
+      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px;
+      max-width: 440px; margin: 0 auto 12px;
+    }
+    .mine-tile {
+      aspect-ratio: 1 / 1; border-radius: 12px;
+      background: linear-gradient(145deg, #1b2742, #121b30);
+      border: 1px solid var(--border); font-weight: 900; font-size: 1.15rem;
+      display: grid; place-items: center;
+    }
+    .mine-tile.safe { background: rgba(16, 185, 129, 0.22); border-color: var(--emerald); color: var(--emerald-bright); }
+    .mine-tile.bomb { background: rgba(239, 68, 68, 0.25); border-color: var(--rose); color: var(--rose-bright); }
+
+    /* Dice & Limbo */
+    .dice-stage {
+      background: #060a14; border: 1px solid var(--border); border-radius: 14px;
+      padding: 26px 14px; text-align: center; margin-bottom: 12px;
+    }
+    .dice-val { font-size: clamp(2.3rem, 7vw, 3.4rem); font-weight: 900; color: var(--cyan-bright); }
+    .dice-val.win { color: var(--emerald-bright); }
+    .dice-val.lose { color: var(--rose-bright); }
+
+    /* Roulette */
+    .roulette-stage {
+      background: #060a14; border: 1px solid var(--border); border-radius: 14px;
+      padding: 22px 14px; text-align: center; margin-bottom: 12px;
+    }
+    .roulette-pocket {
+      width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 10px;
+      display: grid; place-items: center; font-size: 1.7rem; font-weight: 900;
+      border: 3px solid var(--gold); background: var(--bg-card);
+    }
+    .pocket-red { background: #991b1b; color: #fff; }
+    .pocket-black { background: #111827; color: #f8fafc; }
+    .pocket-green { background: #065f46; color: #ecfdf5; }
+
+    /* Slots */
+    .slots-stage {
+      background: #060a14; border: 1px solid var(--border); border-radius: 14px;
+      padding: 22px 14px; text-align: center; margin-bottom: 12px;
+    }
+    .reels-row {
+      display: grid; grid-template-columns: repeat(3, minmax(70px, 110px));
+      gap: 10px; justify-content: center; margin: 0 auto 12px;
+    }
+    .reel-box {
+      height: 88px; border-radius: 14px; background: linear-gradient(145deg, #16223b, #0c1324);
+      border: 2px solid var(--gold); display: grid; place-items: center; font-size: 2.3rem;
+    }
+
+    /* Blackjack & Hi-Lo Cards */
+    .bj-stage {
+      background: radial-gradient(circle at 50% 30%, rgba(16, 185, 129, 0.12), #060a14 75%);
+      border: 1px solid var(--border); border-radius: 14px; padding: 18px 14px; margin-bottom: 12px;
+    }
+    .cards-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; min-height: 76px; align-items: center; margin: 10px 0; }
+    .playing-card {
+      width: 58px; height: 80px; border-radius: 10px; background: #f8fafc; color: #090d16;
+      border: 1px solid #cbd5e1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 1rem; box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+    }
+    .playing-card.red-suit { color: #dc2626; }
+
+    /* Plinko & Wheel */
+    .plinko-lanes {
+      display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-top: 12px;
+    }
+    .plinko-bucket {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 10px 4px; text-align: center; font-weight: 800; font-size: 0.78rem; color: var(--gold-bright);
+    }
+    .plinko-bucket.hit { background: rgba(16, 185, 129, 0.25); border-color: var(--emerald); color: var(--emerald-bright); }
+
+    /* Chat */
+    .chat-box { display: flex; flex-direction: column; height: 500px; }
+    .chat-list {
+      flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
+      background: #070b14; border: 1px solid #1e293b; border-radius: 12px; padding: 10px; margin-bottom: 10px;
+    }
+    .chat-msg { background: var(--bg-card); padding: 8px 10px; border-radius: 9px; font-size: 0.8rem; word-break: break-word; border: 1px solid rgba(39, 53, 84, 0.55); }
+    .chat-msg strong { color: var(--cyan-bright); display: block; font-size: 0.74rem; margin-bottom: 2px; }
+
+    /* Stats & Cards */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 4px; }
+    .stat-label { font-size: 0.78rem; color: var(--text-muted); }
+    .stat-val { font-size: 1.15rem; font-weight: 900; color: var(--gold-bright); }
+    .stat-val.green { color: var(--emerald-bright); }
+    .stat-val.red { color: var(--rose-bright); }
+
+    .card-banner {
+      background: linear-gradient(135deg, #111b31, #080d1a); border: 1px solid var(--gold); border-radius: 14px;
+      padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px;
+    }
+    .card-num { font-size: 1.08rem; font-weight: 900; color: var(--gold-bright); letter-spacing: 1px; }
+
+    .dep-item, .ticket-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 10px; }
+    .badge-status { padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; }
+    .st-pending { background: rgba(245, 158, 11, 0.2); color: var(--gold-bright); }
+    .st-approved { background: rgba(16, 185, 129, 0.2); color: var(--emerald-bright); }
+    .st-rejected { background: rgba(239, 68, 68, 0.2); color: var(--rose-bright); }
+    .ticket-reply { background: #0c1426; border-right: 3px solid var(--emerald); padding: 8px 10px; border-radius: 8px; margin-top: 8px; font-size: 0.8rem; }
+
+    .table-wrap { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 480px; }
+    th, td { padding: 9px 8px; border-bottom: 1px solid #1e293b; text-align: right; white-space: nowrap; }
+    th { color: var(--text-muted); }
+
+    /* Modals & Toasts */
+    .modal-bg {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.82);
+      display: none; align-items: center; justify-content: center; padding: 14px; z-index: 80;
+    }
+    .modal-bg.show { display: flex; }
+    .modal-card {
+      background: var(--bg-panel); border: 1px solid var(--border); border-radius: 16px;
+      padding: 18px; width: 100%; max-width: 440px; max-height: 92vh; overflow-y: auto;
+    }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .auth-tabs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 14px; background: #080d19; padding: 4px; border-radius: 10px; }
+    .auth-tab { padding: 8px; border-radius: 8px; font-weight: 800; font-size: 0.84rem; color: var(--text-muted); }
+    .auth-tab.active { background: var(--gold); color: #090d16; }
+
+    .toast-wrap { position: fixed; bottom: 14px; left: 14px; right: 14px; z-index: 110; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast { background: #16223b; border-right: 4px solid var(--gold); padding: 10px 14px; border-radius: 10px; font-size: 0.82rem; color: #fff; max-width: 390px; box-shadow: 0 8px 24px rgba(0,0,0,0.45); }
+
+    @media (min-width: 900px) {
+      .nav-row { width: auto; order: 0; }
+      .nav-btn { flex: 0 0 auto; font-size: 0.76rem; }
+      .container { padding: 18px 24px; }
+    }
+    @media (max-width: 900px) {
+      .arena, .crash-grid { grid-template-columns: 1fr; }
+      .chat-box { height: 340px; }
+    }
+    @media (max-width: 540px) {
+      .dual-bets { grid-template-columns: 1fr; }
+      .wallet-box { font-size: 0.74rem; padding: 6px 9px; }
+      .btn { padding: 8px 10px; font-size: 0.76rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Maintenance Mode Screen -->
+  <div class="maint-overlay" id="maintenanceOverlay">
+    <div class="maint-box">
+      <div style="font-size:2.2rem;margin-bottom:10px;">🛠️</div>
+      <h2 style="font-size:1.15rem;color:var(--gold-bright);margin-bottom:8px;">سایت در حالت تعمیرات است</h2>
+      <p style="font-size:0.86rem;color:#cbd5e1;">مدیریت صوفیان بت در حال بروزرسانی سیستم است. لطفاً چند لحظه دیگر مراجعه کنید.</p>
+    </div>
+  </div>
+
+  <!-- Top Header -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-badge">S</div>
+      <div>
+        <div class="brand-title">صوفیان بت • SOFYAN.BET</div>
+        <div class="brand-sub" id="sessionInfo">وضعیت: مهمان</div>
+      </div>
+      <span class="status-pill">Provably Fair</span>
+      <span class="live-pill" id="livePlayersPill">آنلاین: 148 نفر</span>
+    </div>
+
+    <div class="top-actions">
+      <div class="mode-switch">
+        <button type="button" class="mode-btn active-demo" id="modeDemoBtn" onclick="setWalletMode('demo')">دمو</button>
+        <button type="button" class="mode-btn" id="modeRealBtn" onclick="setWalletMode('real')">واقعی</button>
+      </div>
+      <div class="wallet-box" id="balanceDisplay">10,000,000 تومان</div>
+      <button class="btn btn-green" onclick="showTab('deposit', document.getElementById('navDepositBtn'))">💳 کیف پول</button>
+      <button class="btn btn-gold" id="authTopBtn" onclick="openAuth('login')">ورود / ثبت‌نام</button>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn active" onclick="showTab('crash', this)">🚀 انفجار</button>
+      <button class="nav-btn" onclick="showTab('mines', this)">💣 مین‌روب</button>
+      <button class="nav-btn" onclick="showTab('dice', this)">🎲 تاس</button>
+      <button class="nav-btn" onclick="showTab('roulette', this)">🎡 رولت</button>
+      <button class="nav-btn" onclick="showTab('slots', this)">🎰 اسلات</button>
+      <button class="nav-btn" onclick="showTab('blackjack', this)">🃏 بلک‌جک</button>
+      <button class="nav-btn" onclick="showTab('hilo', this)">🃏 های-لو</button>
+      <button class="nav-btn" onclick="showTab('limbo', this)">⚡ لیمبو</button>
+      <button class="nav-btn" onclick="showTab('plinko', this)">⚪ پلاینکو</button>
+      <button class="nav-btn" onclick="showTab('wheel', this)">🎯 چرخ شانس</button>
+      <button class="nav-btn" id="navDepositBtn" onclick="showTab('deposit', this)">💳 واریز/برداشت</button>
+      <button class="nav-btn" onclick="showTab('support', this)">🎫 پشتیبانی</button>
+      <button class="nav-btn" onclick="showTab('history', this)">📜 تاریخچه</button>
+      <button class="nav-btn admin-only" id="adminFinanceNavBtn" onclick="showTab('finance', this)">📊 آمار مالی</button>
+      <button class="nav-btn admin-only" id="adminUsersNavBtn" onclick="showTab('users', this)">🛡️ کاربران</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- VIP, Cashback & Promo Code Strip -->
+    <div class="vip-strip">
+      <div class="vip-box">
+        <div>
+          <div style="font-size:0.74rem;color:var(--text-muted);">سطح VIP و حجم شرط</div>
+          <div style="font-size:0.88rem;font-weight:800;color:var(--gold-bright);" id="vipTierText">Bronze • حجم ۰ تومان</div>
+        </div>
+        <span class="status-pill" id="cashbackRateText">کش‌بک: 2%</span>
+      </div>
+
+      <div class="vip-box">
+        <div>
+          <div style="font-size:0.74rem;color:var(--text-muted);">کش‌بک قابل دریافت</div>
+          <div style="font-size:0.88rem;font-weight:800;color:var(--emerald-bright);" id="cashbackClaimableText">0 تومان</div>
+        </div>
+        <button type="button" class="btn btn-green" style="padding:7px 11px;font-size:0.75rem;" onclick="claimCashback()">دریافت</button>
+      </div>
+
+      <div class="vip-box">
+        <div style="flex:1;">
+          <div style="font-size:0.74rem;color:var(--text-muted);">کد هدیه (کد تست: <span class="mono">SOFYAN100</span>)</div>
+          <div style="display:flex;gap:6px;margin-top:4px;">
+            <input type="text" id="promoInput" placeholder="کد هدیه را وارد کنید..." style="padding:6px 8px;font-size:0.78rem;" />
+            <button type="button" class="btn btn-purple" style="padding:6px 10px;font-size:0.75rem;" onclick="redeemPromoCode()">اعمال</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vip-box">
+        <div>
+          <div style="font-size:0.74rem;color:var(--text-muted);" id="activeModeBanner">حالت فعال: حساب دمو</div>
+          <div style="font-size:0.72rem;color:var(--text-muted);">شارژ آزمایشی سریع</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button type="button" class="btn btn-gray" style="padding:7px 10px;font-size:0.75rem;" onclick="topupDemo()">+۵م دمو</button>
+          <button type="button" class="btn btn-red" style="padding:7px 10px;font-size:0.75rem;display:none;" id="logoutBtn" onclick="logoutUser()">خروج</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. CRASH -->
+    <section class="section active" id="tab-crash">
+      <div class="crash-grid">
+        <div>
+          <div class="panel">
+            <div style="margin-bottom:10px;">
+              <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:6px;">تاریخچه راندها (کلیک برای بررسی Provably Fair):</div>
+              <div class="history-bar" id="historyPills"></div>
+            </div>
+
+            <div class="crash-stage">
+              <div class="crash-canvas-wrap">
+                <canvas id="crashCanvas"></canvas>
+                <div class="crash-hud">
+                  <div class="crash-mult mono" id="crashMultText">1.00x</div>
+                  <div id="crashStatusText" style="color:#cbd5e1;font-size:0.84rem;margin-top:4px;">در حال آماده‌سازی راند...</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dual-bets">
+              <div class="bet-box">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <strong style="color:var(--gold-bright);font-size:0.88rem;">پنل شرط ۱</strong>
+                  <span style="font-size:0.72rem;color:var(--text-muted);">مبلغ (تومان)</span>
+                </div>
+                <input type="number" id="betAmt1" value="100000" min="1000" />
+                <div class="quick-chips">
+                  <button type="button" class="q-chip" onclick="setBetVal('betAmt1', 50000)">۵۰ هزار</button>
+                  <button type="button" class="q-chip" onclick="setBetVal('betAmt1', 250000)">۲۵۰ هزار</button>
+                  <button type="button" class="q-chip" onclick="halfDoubleBet('betAmt1', 0.5)">½</button>
+                  <button type="button" class="q-chip" onclick="halfDoubleBet('betAmt1', 2)">2x</button>
+                </div>
+                <input type="number" id="autoCash1" value="2.00" min="1.05" step="0.05" placeholder="برداشت خودکار" />
+                <button class="btn btn-gold" id="btnSlot1" onclick="handleSlot(1)">ثبت شرط پنل ۱</button>
+              </div>
+
+              <div class="bet-box">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <strong style="color:var(--cyan-bright);font-size:0.88rem;">پنل شرط ۲</strong>
+                  <span style="font-size:0.72rem;color:var(--text-muted);">مبلغ (تومان)</span>
+                </div>
+                <input type="number" id="betAmt2" value="50000" min="1000" />
+                <div class="quick-chips">
+                  <button type="button" class="q-chip" onclick="setBetVal('betAmt2', 50000)">۵۰ هزار</button>
+                  <button type="button" class="q-chip" onclick="setBetVal('betAmt2', 250000)">۲۵۰ هزار</button>
+                  <button type="button" class="q-chip" onclick="halfDoubleBet('betAmt2', 0.5)">½</button>
+                  <button type="button" class="q-chip" onclick="halfDoubleBet('betAmt2', 2)">2x</button>
+                </div>
+                <input type="number" id="autoCash2" value="3.00" min="1.05" step="0.05" placeholder="برداشت خودکار" />
+                <button class="btn btn-gold" id="btnSlot2" onclick="handleSlot(2)">ثبت شرط پنل ۲</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3 style="margin-bottom:10px;font-size:0.95rem;">جدول تاریخچه راندهای انفجار</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>راند</th><th>ضریب</th><th>هش SHA-256</th><th>زمان</th></tr></thead>
+                <tbody id="roundsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel chat-box">
+          <h3 style="margin-bottom:10px;font-size:0.95rem;">💬 چت زنده بازیکنان</h3>
+          <div class="chat-list" id="chatList"></div>
+          <form onsubmit="sendChat(event)" style="display:flex;gap:6px;">
+            <input type="text" id="chatInput" placeholder="پیام خود را بنویسید..." style="flex:1;" />
+            <button type="submit" class="btn btn-gold">ارسال</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. MINES -->
+    <section class="section" id="tab-mines">
+      <div class="arena">
+        <div class="panel">
+          <h2 style="font-size:1rem;margin-bottom:12px;">💣 بازی مین‌روب (Mines)</h2>
+          <div class="field">
+            <label>مبلغ شرط (تومان)</label>
+            <input type="number" id="minesStakeInput" value="100000" min="1000" step="1000" />
+            <div class="quick-chips">
+              <button type="button" class="q-chip" onclick="setBetVal('minesStakeInput', 50000)">۵۰ هزار</button>
+              <button type="button" class="q-chip" onclick="setBetVal('minesStakeInput', 200000)">۲۰۰ هزار</button>
+              <button type="button" class="q-chip" onclick="halfDoubleBet('minesStakeInput', 0.5)">½</button>
+              <button type="button" class="q-chip" onclick="halfDoubleBet('minesStakeInput', 2)">2x</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>تعداد مین (۱ تا ۲۰)</label>
+            <select id="minesCountSelect">
+              <option value="2">۲ مین</option>
+              <option value="4" selected>۴ مین</option>
+              <option value="6">۶ مین</option>
+              <option value="10">۱۰ مین</option>
+              <option value="15">۱۵ مین</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn btn-gold" style="flex:1;" id="minesStartBtn" onclick="startMinesGame()">شروع بازی</button>
+            <button type="button" class="btn btn-green" style="flex:1;" id="minesCashoutBtn" disabled onclick="cashoutMinesGame()">برداشت سود</button>
+          </div>
+          <div id="minesSummaryBox" style="margin-top:12px;font-size:0.82rem;color:#cbd5e1;">ضریب فعلی: <span class="mono">1.00x</span></div>
+        </div>
+
+        <div class="panel">
+          <div class="mines-grid" id="minesBoard"></div>
+          <div id="minesStatusText" style="text-align:center;font-size:0.85rem;color:var(--text-muted);">برای شروع، مبلغ و تعداد مین را انتخاب کنید.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. DICE -->
+    <section class="section" id="tab-dice">
+      <div class="arena">
+        <div class="panel">
+          <h2 style="font-size:1rem;margin-bottom:12px;">🎲 بازی تاس (Roll Under)</h2>
+          <div class="field">
+            <label>مبلغ شرط (تومان)</label>
+            <input type="number" id="diceStakeInput" value="100000" min="1000" step="1000" />
+            <div class="quick-chips">
+              <button type="button" class="q-chip" onclick="setBetVal('diceStakeInput', 50000)">۵۰ هزار</button>
+              <button type="button" class="q-chip" onclick="setBetVal('diceStakeInput', 200000)">۲۰۰ هزار</button>
+              <button type="button" class="q-chip" onclick="halfDoubleBet('diceStakeInput', 0.5)">½</button>
+              <button type="button" class="q-chip" onclick="halfDoubleBet('diceStakeInput', 2)">2x</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>برد اگر عدد تاس کمتر از (۵ تا ۹۵)</label>
+            <input type="number" id="diceTargetInput" value="50" min="5" max="95" oninput="updateDicePreview()" />
+          </div>
+          <div style="font-size:0.8rem;color:#cbd5e1;margin-bottom:12px;" id="diceMultiplierPreview">ضریب برد: <span class="mono">1.96x</span></div>
+          <button type="button" class="btn btn-gold" style="width:100%;" onclick="rollDiceGame()">پرتاب تاس</button>
+        </div>
+
+        <div class="panel">
+          <div class="dice-stage">
+            <div class="dice-val mono" id="diceResultVal">--.--</div>
+            <div id="diceResultMsg" style="font-size:0.86rem;color:var(--text-muted);margin-top:6px;">آماده پرتاب تاس</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. ROULETTE -->
+    <section class="section" id="tab-roulette">
+      <div class="arena">
+        <div class="panel">
+          <h2 style="font-size:1rem;margin-bottom:12px;">🎡 رولت اروپایی</h2>
+          <div class="field">
+            <label>مبلغ شرط (تومان)</label>
+            <input type="number" id="rouletteStakeInput" value="100000" min="1000" step="1000" />
+          </div>
+          <div class="field">
+            <label>نوع پیش‌بینی</label>
+            <select id="rouletteBetType">
+              <option value="red">قرمز (ضریب 2.00x)</option>
+              <option value="black">مشکی (ضریب 2.00x)</option>
+              <option value="even">زوج (ضریب 2.00x)</option>
+              <option value="odd">فرد (ضریب 2.00x)</option>
+              <option value="zero">صفر سبز 0 (ضریب 35.00x)</option>
+            </select>
+          </div>
+          <button type="button" class="btn btn-gold" style="width:100%;" onclick="spinRouletteGame()">چرخش چرخ رولت</button>
+        </div>
+
+        <div class="panel">
+          <div class="roulette-stage">
+            <div class="roulette-pocket mono" id="roulettePocket">0</div>
+            <div id="rouletteResultMsg" style="font-size:0.86rem;color:var(--text-muted);">نوع شرط را انتخاب و چرخ را بچرخانید</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. SLOTS -->
+    <section class="section" id="tab-slots">
+      <div class="arena">
+        <div class="panel">
+          <h2 style="font-size:1rem;margin-bottom:12px;">🎰 ماشین اسلات طلایی</h2>
+          <div class="field">
+            <label>مبلغ هر چرخش (تومان)</label>
+            <input type="number" id="slotsStakeInput" value="100000" min="1000" step="1000" />
+            <div class="quick-chips">
+              <button type="button" class="q-chip" onclick="setBetVal('slotsStakeInput', 50000)">۵۰ هزار</button>
+              <button type="button" class="q-chip" onclick="setBetVal('slotsStakeInput', 250000)">۲۵۰ هزار</button>
+              <button type="button" class="q-chip" onclick="halfDoubleBet('slotsStakeInput', 0.5)">½</button>
+              <button type="button" class="q-chip" onclick="halfDoubleBet('slotsStakeInput', 2)">2x</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-gold" style="width:100%;" onclick="spinSlotsGame()">چرخش قرقره‌ها</button>
+        </div>
+
+        <div class="panel">
+          <div class="slots-stage">
+            <div class="reels-row">
+              <div class="reel-box" id="reel1">🍒</div>
+              <div class="reel-box" id="reel2">💎</div>
+              <div class="reel-box" id="reel3">7️⃣</div>
+            </div>
+            <div id="slotsResultMsg" style="font-size:0.86rem;color:var(--text-muted);">۳ نماد یکسان = جک‌پات ویژه!</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. BLACKJACK -->
+    <section class="section" id="tab-blackjack">
+      <div class="arena">
+        <div class="panel">
+          <h2 style="font-size:1rem;margin-bottom:12px;">🃏 بلک‌جک ۲۱ (Blackjack)</h2>
+          <div class="field">
+            <label>مبلغ شرط (تومان)</label>
+            <input type="number" id="bjStakeInput" value="100000" min="1000" step="1000" />
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn btn-gold" style="flex:1;" id="bjDealBtn" onclick="dealBlackjack()">پخش کارت</button>
+            <button type="button" class="btn btn-green" style="flex:1;" id="bjHitBtn" disabled onclick="hitBlackjack()">کارت بیشتر (Hit)</button>
+            <button type="button" class="btn btn-blue" style="flex:1;" id="bjStandBtn" disabled onclick="standBlackjack()">توقف (Stand)</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="bj-stage">
+            <div style="text-align:center;font-size:0.84rem;color:var(--text-muted);">کارت‌های دیلر: <span class="mono" id="bjDealerScore">0</span></div>
+            <div class="cards-row" id="bjDealerCards"></div>
+            <hr style="border:none;border-top:1px solid var(--border);margin:10px 0;" />
+            <div style="text-align:center;font-size:0.88rem;font-weight:800;color:var(--gold-bright);">کارت‌های شما: <span class="mono" id="bjPlayerScore">0</span></div>
+            <div class="cards-row" id="bjPlayerCards"></div>
+            <div id="bjStatusMsg" style="text-align:center;font-size:0.86rem;color:#cbd5e1;margin-top:8px;">برای شروع دست جدید، مبلغ شرط را وارد کنید.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. HI-LO -->
+    <section class="section" id="tab-hilo">
+      <div class="arena">
+        <div class="panel">
+          <h2 style="font-size:1rem;margin-bottom:12px;">🃏 بازی های-لو (بزرگ‌تر یا کوچک‌تر)</h2>
+          <div class="field">
+            <label>مبلغ شرط (تومان)</label>
+            <input type="number" id="hiloStakeInput" value="100000" min="1000" step="1000" />
+          </div>
+          <button type="button" class="btn btn-gold" style="width:100%;margin-bottom:8px;" id="hiloStartBtn" onclick="startHiLoGame()">شروع دور جدید</button>
+          <div style="display:flex;gap:8px;">
+            <button type="button" class="btn btn-green" style="flex:1;" id="hiloHigherBtn" disabled onclick="guessHiLo('higher')">بزرگ‌تر / مساوی ▲</button>
+            <button type="button" class="btn btn-red" style="flex:1;" id="hiloLowerBtn" disabled onclick="guessHiLo('lower')">کوچک‌تر ▼</button>
+          </div>
+          <button type="button" class="btn btn-blue" style="width:100%;margin-top:8px;" id="hiloCashoutBtn" disabled onclick="cashoutHiLoGame()">برداشت سود</button>
+        </div>
+
+        <div class="panel">
+          <div class="bj-stage" style="text-align:center;">
+            <div style="font-size:0.84rem;color:var(--text-muted);">کارت فعلی (۱ تا ۱۳) • ضریب: <span class="mono" style="color:var(--emerald-bright);" id="hiloMultText">1.00x</span></div>
+            <div class="cards-row" id="hiloCardBox"></div>
+            <div id="hiloStatusMsg" style="font-size:0.86rem;color:#cbd5e1;">دور های-لو را آغاز کنید.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. LIMBO -->
+    <section class="section" id="tab-limbo">
+      <div class="arena">
+        <div class="panel">
+          <h2 style="font-size:1rem;margin-bottom:12px;">⚡ بازی لیمبو (Limbo)</h2>
+          <div class="field">
+            <label>مبلغ شرط (تومان)</label>
+            <input type="number" id="limboStakeInput" value="100000" min="1000" step="1000" />
+          </div>
+          <div class="field">
+            <label>ضریب هدف (حداقل 1.10x)</label>
+            <input type="number" id="limboTargetInput" value="2.50" min="1.10" max="100" step="0.10" oninput="updateLimboPreview()" />
+          </div>
+          <div style="font-size:0.8rem;color:#cbd5e1;margin-bottom:12px;" id="limboWinChance">احتمال برد تخمینی: <span class="mono">39.2%</span></div>
+          <button type="button" class="btn btn-gold" style="width:100%;" onclick="playLimboGame()">اجرای ضریب لیمبو</button>
+        </div>
+
+        <div class="panel">
+          <div class="dice-stage">
+            <div class="dice-val mono" id="limboResultVal">1.00x</div>
+            <div id="limboResultMsg" style="font-size:0.86rem;color:var(--text-muted);margin-top:6px;">اگر ضریب ثبت‌شده مساوی یا بزرگ‌تر از هدف باشد، برنده می‌شوید.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. PLINKO -->
+    <section class="section" id="tab-plinko">
+      <div class="arena">
+        <div class="panel">
+          <h2 style="font-size:1rem;margin-bottom:12px;">⚪ بازی پلاینکو (Plinko)</h2>
+          <div class="field">
+            <label>مبلغ پرتاب توپ (تومان)</label>
+            <input type="number" id="plinkoStakeInput" value="100000" min="1000" step="1000" />
+          </div>
+          <div class="field">
+            <label>سطح ریسک</label>
+            <select id="plinkoRiskSelect" onchange="renderPlinkoBuckets()">
+              <option value="low">کم‌ریسک</option>
+              <option value="medium" selected>متوسط</option>
+              <option value="high">پرریسک (تا 10x)</option>
+            </select>
+          </div>
+          <button type="button" class="btn btn-gold" style="width:100%;" onclick="dropPlinkoBall()">پرتاب توپ پلاینکو</button>
+        </div>
+
+        <div class="panel">
+          <div class="dice-stage">
+            <div class="dice-val mono" id="plinkoResultVal">--</div>
+            <div id="plinkoResultMsg" style="font-size:0.86rem;color:var(--text-muted);margin-top:6px;">توپ را رها کنید تا در یکی از خانه‌های پایین فرود بیاید.</div>
+          </div>
+          <div class="plinko-lanes" id="plinkoBucketsGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. WHEEL -->
+    <section class="section" id="tab-wheel">
+      <div class="arena">
+        <div class="panel">
+          <h2 style="font-size:1rem;margin-bottom:12px;">🎯 چرخ شانس (Wheel)</h2>
+          <div class="field">
+            <label>مبلغ شرط (تومان)</label>
+            <input type="number" id="wheelStakeInput" value="100000" min="1000" step="1000" />
+          </div>
+          <button type="button" class="btn btn-gold" style="width:100%;" onclick="spinWheelGame()">چرخش چرخ شانس</button>
+        </div>
+
+        <div class="panel">
+          <div class="roulette-stage">
+            <div class="roulette-pocket mono" id="wheelMultPocket">1.5x</div>
+            <div id="wheelResultMsg" style="font-size:0.86rem;color:var(--text-muted);">بخش‌های چرخ: 0x، 1.2x، 1.5x، 2.0x، 3.0x، 5.0x</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. DEPOSIT & WITHDRAWALS -->
+    <section class="section" id="tab-deposit">
+      <div class="arena">
+        <div>
+          <div class="panel">
+            <div class="card-banner">
+              <div style="font-size:0.78rem;color:#cbd5e1;">واریز کارت به کارت حساب واقعی</div>
+              <div class="card-num mono" id="liveCardNumber">6037997410972831</div>
+              <div style="font-size:0.84rem;font-weight:700;color:var(--emerald-bright);" id="liveCardHolder">به نام: محمد مددی صوفیانی</div>
+            </div>
+            <form onsubmit="submitDepositReceipt(event)">
+              <div class="field">
+                <label>مبلغ واریزی (تومان)</label>
+                <input type="number" id="depAmountInput" required min="10000" step="10000" value="500000" />
+              </div>
+              <div class="field">
+                <label>شماره پیگیری / شماره فیش رسید</label>
+                <input type="text" id="depRefInput" required placeholder="مثال: 98431204" />
+              </div>
+              <div class="field">
+                <label>توضیحات فیش (اختیاری)</label>
+                <input type="text" id="depNoteInput" placeholder="ساعت واریز یا نام کارت مبدا" />
+              </div>
+              <button type="submit" class="btn btn-green" style="width:100%;">ارسال فیش برای بررسی ادمین</button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <h3 style="font-size:0.98rem;margin-bottom:10px;color:var(--gold-bright);">💸 ثبت درخواست برداشت وجه واقعی</h3>
+            <form onsubmit="submitWithdrawalRequest(event)">
+              <div class="field">
+                <label>مبلغ برداشت (تومان — حداقل ۵۰,۰۰۰)</label>
+                <input type="number" id="wdrAmountInput" required min="50000" step="10000" value="200000" />
+              </div>
+              <div class="field">
+                <label>شماره کارت ۱۶ رقمی مقصد</label>
+                <input type="text" id="wdrCardInput" class="mono" required maxlength="16" placeholder="6037..." />
+              </div>
+              <div class="field">
+                <label>نام صاحب کارت</label>
+                <input type="text" id="wdrHolderInput" placeholder="نام و نام خانوادگی" />
+              </div>
+              <button type="submit" class="btn btn-gold" style="width:100%;">ثبت درخواست برداشت</button>
+            </form>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel">
+            <h2 style="font-size:1rem;margin-bottom:12px;">فیش‌های واریزی</h2>
+            <div id="depositsList"></div>
+          </div>
+          <div class="panel">
+            <h2 style="font-size:1rem;margin-bottom:12px;">درخواست‌های برداشت واقعی</h2>
+            <div id="withdrawalsList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. SUPPORT -->
+    <section class="section" id="tab-support">
+      <div class="arena">
+        <div class="panel">
+          <h2 style="font-size:1rem;margin-bottom:12px;">🎫 ارسال تیکت به پشتیبانی</h2>
+          <form onsubmit="submitTicket(event)">
+            <div class="field">
+              <label>موضوع</label>
+              <select id="ticketTopic">
+                <option value="واریز و کیف پول">واریز و کیف پول</option>
+                <option value="پیگیری برداشت">پیگیری برداشت</option>
+                <option value="گزارش بازی">گزارش بازی</option>
+                <option value="ارتقای VIP">ارتقای VIP</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>عنوان</label>
+              <input type="text" id="ticketSubject" required placeholder="عنوان تیکت" />
+            </div>
+            <div class="field">
+              <label>شرح پیام</label>
+              <textarea id="ticketMessage" rows="4" required placeholder="توضیحات خود را بنویسید..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-gold" style="width:100%;">ارسال تیکت</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h2 style="font-size:1rem;margin-bottom:12px;">لیست تیکت‌ها</h2>
+          <div id="ticketsList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13. HISTORY -->
+    <section class="section" id="tab-history">
+      <div class="panel">
+        <h2 style="margin-bottom:10px;font-size:1.05rem;">📜 تاریخچه شرط‌های من</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>شناسه</th><th>حالت</th><th>بازی</th><th>مبلغ شرط</th><th>ضریب</th><th>نتیجه</th></tr></thead>
+            <tbody id="myBetsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14. ADMIN FINANCE -->
+    <section class="section" id="tab-finance">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+          <h2 style="font-size:1.08rem;">📊 داشبورد آمار مالی (ویژه admin)</h2>
+          <button type="button" class="btn btn-gold" onclick="renderFinanceStats()">↻ بروزرسانی آمار</button>
+        </div>
+        <div class="stats-grid" id="financeCardsGrid"></div>
+      </div>
+    </section>
+
+    <!-- 15. ADMIN USERS -->
+    <section class="section" id="tab-users">
+      <div class="panel">
+        <h2 style="margin-bottom:12px;font-size:1.05rem;">🛡️ مدیریت کاربران (ویژه admin)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>شناسه</th><th>نام کاربری</th><th>دمو</th><th>واقعی</th><th>نقش</th><th>عملیات</th></tr></thead>
+            <tbody id="usersAdminBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Auth Modal -->
+  <div class="modal-bg" id="authModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 style="font-size:1rem;">حساب کاربری صوفیان بت</h3>
+        <button class="btn btn-gray" onclick="closeAuth()">✕</button>
+      </div>
+
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="authTabLogin" onclick="switchAuthMode('login')">ورود</button>
+        <button type="button" class="auth-tab" id="authTabRegister" onclick="switchAuthMode('register')">ثبت‌نام</button>
+      </div>
+
+      <form onsubmit="submitAuthForm(event)">
+        <div class="field">
+          <label>نام کاربری</label>
+          <input type="text" id="authUserInput" required minlength="3" placeholder="حداقل ۳ کاراکتر" />
+        </div>
+        <div class="field">
+          <label>رمز عبور</label>
+          <input type="password" id="authPassInput" required minlength="4" placeholder="حداقل ۴ کاراکتر" />
+        </div>
+        <div style="font-size:0.74rem;color:var(--text-muted);margin-bottom:12px;">
+          حساب ادمین پیش‌فرض: <span class="mono">admin / admin123</span>
+        </div>
+        <button type="submit" class="btn btn-gold" style="width:100%;" id="authSubmitBtn">ورود به حساب</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Round Detail Modal -->
+  <div class="modal-bg" id="roundModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 style="font-size:1rem;">اثبات منصفانه بودن راند (Provably Fair)</h3>
+        <button class="btn btn-gray" onclick="document.getElementById('roundModal').classList.remove('show')">✕</button>
+      </div>
+      <div id="roundModalBody" style="font-size:0.84rem;display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <script>
+    const STORAGE_KEY = "sofyan_bet_standalone_v1";
+    const RED_NUMBERS = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
+    const SLOT_SYMBOLS = ["🍒", "🍋", "🔔", "💎", "7️⃣"];
+    const WHEEL_SEGMENTS = [
+      { mult: 0, label: "0x" },
+      { mult: 1.2, label: "1.2x" },
+      { mult: 1.5, label: "1.5x" },
+      { mult: 2.0, label: "2.0x" },
+      { mult: 3.0, label: "3.0x" },
+      { mult: 5.0, label: "5.0x" }
+    ];
+
+    function nowTime() {
+      return new Date().toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function makeHash(seed) {
+      let h = 2166136261;
+      const s = String(seed);
+      for (let i = 0; i < s.length; i++) {
+        h ^= s.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return ((h >>> 0).toString(16).padStart(8, "0")).repeat(8);
+    }
+
+    const defaultState = {
+      sessionUsername: "",
+      usedPromos: [],
+      config: {
+        cardNumber: "6037997410972831",
+        cardHolder: "محمد مددی صوفیانی",
+        maintenance: false,
+        forcedCrashMult: null
+      },
+      accounts: {
+        admin: {
+          id: 1,
+          username: "admin",
+          password: "admin123",
+          role: "admin",
+          wallet_mode: "real",
+          demo_balance: 50000000,
+          real_balance: 10000000,
+          wagered: 0,
+          cashback_pool: 0
+        }
+      },
+      rounds: [
+        { id: 1004, mult: 2.84, seed: "seed-1004", hash: makeHash("seed-1004"), time: nowTime() },
+        { id: 1003, mult: 1.45, seed: "seed-1003", hash: makeHash("seed-1003"), time: nowTime() },
+        { id: 1002, mult: 4.12, seed: "seed-1002", hash: makeHash("seed-1002"), time: nowTime() }
+      ],
+      chat: [
+        { id: "m1", user: "saman_vip", text: "همه بازی‌های کازینو (انفجار، مین، تاس، رولت، اسلات، بلک‌جک، های-لو، لیمبو، پلاینکو، چرخ شانس) فعال شدند ✅", time: nowTime() }
+      ],
+      bets: [],
+      tickets: [
+        {
+          id: "TCK-1001",
+          username: "system",
+          topic: "واریز و کیف پول",
+          subject: "راهنمای کارت به کارت، VIP، کد هدیه و حساب دمو/واقعی",
+          message: "کد هدیه تست: SOFYAN100 • شماره کارت: 6037997410972831 به نام محمد مددی صوفیانی.",
+          status: "پاسخ داده شده",
+          reply: "فیش‌ها و برداشت‌ها با پنل مدیریت همگام‌سازی می‌شوند.",
+          time: nowTime()
+        }
+      ],
+      deposits: [],
+      withdrawals: []
+    };
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return JSON.parse(JSON.stringify(defaultState));
+        const parsed = JSON.parse(raw);
+        const merged = Object.assign(JSON.parse(JSON.stringify(defaultState)), parsed);
+        merged.config = Object.assign({}, defaultState.config, merged.config || {});
+        merged.usedPromos = Array.isArray(merged.usedPromos) ? merged.usedPromos : [];
+        if (!merged.accounts || !merged.accounts.admin) {
+          merged.accounts = Object.assign({}, defaultState.accounts, merged.accounts || {});
+        }
+        Object.values(merged.accounts).forEach((acc) => {
+          acc.wagered = Number(acc.wagered || 0);
+          acc.cashback_pool = Number(acc.cashback_pool || 0);
+        });
+        return merged;
+      } catch {
+        return JSON.parse(JSON.stringify(defaultState));
+      }
+    }
+
+    let state = loadState();
+    let authMode = "login";
+
+    // Crash state
+    let crashPhase = "waiting";
+    let crashRoundId = (state.rounds[0]?.id || 1004) + 1;
+    let crashMult = 1.0;
+    let crashTarget = 2.2;
+    let crashCurve = [{ m: 1.0, t: 0 }];
+    let crashElapsed = 0;
+    let slotState = { 1: { status: "none", amount: 0 }, 2: { status: "none", amount: 0 } };
+
+    // Mines state
+    let minesActive = false, minesStake = 0, minesCount = 4, minesBombs = [], minesRevealed = [];
+
+    // Blackjack state
+    let bjActive = false, bjStake = 0, bjPlayer = [], bjDealer = [];
+
+    // Hi-Lo state
+    let hiloActive = false, hiloStake = 0, hiloCurrentCard = 7, hiloMult = 1.0;
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function syncLiveFromAdminStorage() {
+      state = loadState();
+      applyLiveConfigUI();
+      refreshUI();
+      updateSlotUI();
+    }
+
+    function applyLiveConfigUI() {
+      const cfg = state.config || {};
+      const maintEl = document.getElementById("maintenanceOverlay");
+      if (maintEl) maintEl.classList.toggle("show", Boolean(cfg.maintenance));
+      const cardNumEl = document.getElementById("liveCardNumber");
+      const cardHolderEl = document.getElementById("liveCardHolder");
+      if (cardNumEl) cardNumEl.textContent = cfg.cardNumber || "6037997410972831";
+      if (cardHolderEl) cardHolderEl.textContent = "به نام: " + (cfg.cardHolder || "محمد مددی صوفیانی");
+    }
+
+    function fmt(n) {
+      return Number(n || 0).toLocaleString("fa-IR") + " تومان";
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function toast(msg) {
+      const el = document.createElement("div");
+      el.className = "toast";
+      el.textContent = msg;
+      document.getElementById("toastWrap").appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+
+    function setBetVal(inputId, val) {
+      const el = document.getElementById(inputId);
+      if (el) el.value = Math.max(1000, Math.round(val));
+    }
+
+    function halfDoubleBet(inputId, factor) {
+      const el = document.getElementById(inputId);
+      if (!el) return;
+      const cur = Number(el.value) || 10000;
+      el.value = Math.max(1000, Math.round(cur * factor));
+    }
+
+    function currentUser() {
+      if (!state.sessionUsername) return null;
+      return state.accounts[state.sessionUsername] || null;
+    }
+
+    function isAdmin() {
+      const u = currentUser();
+      return Boolean(u && u.role === "admin");
+    }
+
+    function currentMode() {
+      const u = currentUser();
+      return u?.wallet_mode === "real" ? "real" : "demo";
+    }
+
+    function activeBalance() {
+      const u = currentUser();
+      if (!u) return 10000000;
+      return u.wallet_mode === "real" ? u.real_balance : u.demo_balance;
+    }
+
+    function getVipInfo(wagered) {
+      const w = Number(wagered || 0);
+      if (w >= 50000000) return { tier: "Diamond VIP", rate: 0.06, label: "6%" };
+      if (w >= 15000000) return { tier: "Gold VIP", rate: 0.04, label: "4%" };
+      if (w >= 5000000) return { tier: "Silver VIP", rate: 0.03, label: "3%" };
+      return { tier: "Bronze", rate: 0.02, label: "2%" };
+    }
+
+    function adjustBalance(username, mode, delta) {
+      const acc = state.accounts[username];
+      if (!acc) return;
+      if (mode === "real") acc.real_balance = Math.max(0, Math.round(acc.real_balance + delta));
+      else acc.demo_balance = Math.max(0, Math.round(acc.demo_balance + delta));
+      saveState();
+      refreshUI();
+    }
+
+    function recordBet({ game, stake, mult, payout }) {
+      const u = currentUser();
+      if (!u) return;
+      const s = Number(stake || 0);
+      const p = Number(payout || 0);
+      u.wagered = Number(u.wagered || 0) + s;
+      if (p === 0) {
+        const vip = getVipInfo(u.wagered);
+        u.cashback_pool = Number(u.cashback_pool || 0) + Math.round(s * vip.rate);
+      }
+      state.bets.unshift({
+        id: "BET-" + Math.floor(10000 + Math.random() * 90000),
+        username: u.username,
+        mode: u.wallet_mode,
+        game,
+        stake: fmt(s),
+        mult: Number(mult || 0).toFixed(2) + "x",
+        result: p > 0 ? "+" + fmt(p) : "باخت"
+      });
+      state.bets = state.bets.slice(0, 100);
+      saveState();
+    }
+
+    function claimCashback() {
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      const amount = Math.round(Number(u.cashback_pool || 0));
+      if (amount <= 0) { toast("مبلغی برای کش‌بک ثبت نشده است."); return; }
+      u.cashback_pool = 0;
+      adjustBalance(u.username, u.wallet_mode, amount);
+      toast(`کش‌بک ${fmt(amount)} به حساب شما واریز شد!`);
+    }
+
+    function redeemPromoCode() {
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      const code = document.getElementById("promoInput").value.trim().toUpperCase();
+      if (!code) { toast("کد هدیه را وارد کنید."); return; }
+      const key = `${u.username}:${code}`;
+      if (state.usedPromos.includes(key)) { toast("این کد هدیه قبلاً توسط شما استفاده شده است."); return; }
+      if (code === "SOFYAN100" || code === "VIP500") {
+        const bonus = code === "VIP500" ? 500000 : 250000;
+        state.usedPromos.push(key);
+        adjustBalance(u.username, u.wallet_mode, bonus);
+        document.getElementById("promoInput").value = "";
+        toast(`کد هدیه ${code} اعمال شد و ${fmt(bonus)} واریز گردید!`);
+      } else {
+        toast("کد هدیه نامعتبر است (کد تست: SOFYAN100).");
+      }
+    }
+
+    function showTab(name, btnEl) {
+      if ((name === "users" || name === "finance") && !isAdmin()) {
+        toast("این بخش فقط برای ادمین مجاز است.");
+        return;
+      }
+      document.querySelectorAll(".section").forEach((s) => s.classList.remove("active"));
+      document.getElementById("tab-" + name).classList.add("active");
+      document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
+      if (btnEl) btnEl.classList.add("active");
+      if (name === "crash") drawCrashCanvas();
+      if (name === "finance") renderFinanceStats();
+      if (name === "users") renderUsersAdmin();
+    }
+
+    function setWalletMode(mode) {
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید یا ثبت‌نام کنید."); return; }
+      u.wallet_mode = mode === "real" ? "real" : "demo";
+      saveState();
+      refreshUI();
+      toast(u.wallet_mode === "real" ? "حالت بازی: حساب واقعی" : "حالت بازی: حساب دمو");
+    }
+
+    function topupDemo() {
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد حساب کاربری شوید."); return; }
+      adjustBalance(u.username, "demo", 5000000);
+      toast("۵,۰۰۰,۰۰۰ تومان به موجودی دمو اضافه شد.");
+    }
+
+    // --- Auth ---
+    function openAuth(mode = "login") {
+      switchAuthMode(mode);
+      document.getElementById("authUserInput").value = "";
+      document.getElementById("authPassInput").value = "";
+      document.getElementById("authModal").classList.add("show");
+    }
+
+    function closeAuth() { document.getElementById("authModal").classList.remove("show"); }
+
+    function switchAuthMode(mode) {
+      authMode = mode === "register" ? "register" : "login";
+      document.getElementById("authTabLogin").className = authMode === "login" ? "auth-tab active" : "auth-tab";
+      document.getElementById("authTabRegister").className = authMode === "register" ? "auth-tab active" : "auth-tab";
+      document.getElementById("authSubmitBtn").textContent = authMode === "register" ? "ثبت‌نام و ساخت حساب" : "ورود به حساب";
+    }
+
+    function submitAuthForm(e) {
+      e.preventDefault();
+      const username = document.getElementById("authUserInput").value.trim();
+      const password = document.getElementById("authPassInput").value;
+      if (username.length < 3 || password.length < 4) {
+        toast("نام کاربری حداقل ۳ کاراکتر و رمز حداقل ۴ کاراکتر باشد.");
+        return;
+      }
+
+      if (authMode === "register") {
+        if (state.accounts[username]) { toast("این نام کاربری قبلاً ثبت شده است."); return; }
+        state.accounts[username] = {
+          id: Object.keys(state.accounts).length + 1,
+          username, password, role: "user", wallet_mode: "demo",
+          demo_balance: 10000000, real_balance: 0, wagered: 0, cashback_pool: 0
+        };
+        state.sessionUsername = username;
+        saveState(); closeAuth(); refreshUI();
+        toast(`حساب ${username} با ۱۰ میلیون دمو ساخته شد.`);
+        return;
+      }
+
+      const existing = state.accounts[username];
+      if (!existing) { toast("حسابی یافت نشد. از تب ثبت‌نام حساب بسازید."); return; }
+      if (existing.password !== password) { toast("رمز عبور اشتباه است."); return; }
+      state.sessionUsername = username;
+      saveState(); closeAuth(); refreshUI();
+      toast(`خوش آمدید ${username}`);
+    }
+
+    function logoutUser() {
+      state.sessionUsername = "";
+      saveState(); refreshUI();
+      toast("از حساب خارج شدید.");
+    }
+
+    // --- 1. Crash ---
+    function drawCrashCanvas() {
+      const canvas = document.getElementById("crashCanvas");
+      if (!canvas) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) { canvas.width = rect.width; canvas.height = rect.height; }
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width, h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.08)";
+      ctx.lineWidth = 1;
+      for (let x = 0; x < w; x += 44) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+      for (let y = 0; y < h; y += 36) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+      if (crashCurve.length < 2) return;
+      const maxM = Math.max(2.0, crashMult * 1.15);
+      const maxT = Math.max(2.5, crashElapsed * 1.1);
+
+      ctx.beginPath();
+      crashCurve.forEach((pt, idx) => {
+        const px = 16 + Math.min(1, pt.t / maxT) * (w - 32);
+        const py = h - 18 - Math.min(1, (pt.m - 1) / Math.max(0.5, maxM - 1)) * (h - 38);
+        if (idx === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      });
+      ctx.strokeStyle = crashPhase === "crashed" ? "#f87171" : "#fbbf24";
+      ctx.lineWidth = 3.5;
+      ctx.stroke();
+    }
+
+    function startCrashRound() {
+      const latest = loadState();
+      state.config = latest.config || state.config;
+      applyLiveConfigUI();
+
+      crashPhase = "running"; crashMult = 1.0; crashElapsed = 0; crashCurve = [{ m: 1.0, t: 0 }];
+      const forced = Number(state.config?.forcedCrashMult);
+      if (forced && forced >= 1.0) {
+        crashTarget = Number(forced.toFixed(2));
+        state.config.forcedCrashMult = null;
+        saveState();
+      } else {
+        const r = Math.random();
+        crashTarget = r < 0.04 ? 1.0 : Number(Math.min(20, Math.max(1.1, 0.98 / (1 - r))).toFixed(2));
+      }
+
+      [1, 2].forEach((id) => {
+        if (slotState[id].status === "queued") slotState[id].status = "active";
+        else if (slotState[id].status !== "active") slotState[id] = { status: "none", amount: 0 };
+      });
+
+      const el = document.getElementById("crashMultText");
+      el.className = "crash-mult mono"; el.textContent = "1.00x";
+      document.getElementById("crashStatusText").textContent = "راند #" + crashRoundId + " در حال پرواز";
+      drawCrashCanvas(); updateSlotUI();
+    }
+
+    setInterval(() => {
+      if (crashPhase !== "running") return;
+      crashElapsed += 0.1;
+      crashMult = Number((crashMult + 0.03 + crashMult * 0.0065).toFixed(2));
+      crashCurve.push({ m: crashMult, t: crashElapsed });
+      document.getElementById("crashMultText").textContent = crashMult.toFixed(2) + "x";
+      drawCrashCanvas();
+
+      [1, 2].forEach((id) => {
+        const s = slotState[id];
+        const autoVal = Number(document.getElementById("autoCash" + id).value) || 0;
+        if (s.status === "active" && autoVal >= 1.05 && crashMult >= autoVal && crashMult < crashTarget) {
+          cashoutCrashSlot(id, crashMult);
+        }
+      });
+
+      if (crashMult >= crashTarget) {
+        crashPhase = "crashed";
+        const seed = `sofyan-round-${crashRoundId}-${Date.now()}`;
+        state.rounds.unshift({ id: crashRoundId, mult: crashTarget, seed, hash: makeHash(seed), time: nowTime() });
+        state.rounds = state.rounds.slice(0, 15);
+
+        [1, 2].forEach((id) => {
+          if (slotState[id].status === "active") {
+            recordBet({ game: `انفجار پنل ${id}`, stake: slotState[id].amount, mult: 0, payout: 0 });
+            slotState[id] = { status: "lost", amount: 0 };
+          }
+        });
+
+        saveState(); renderRounds(); renderMyBets(); drawCrashCanvas();
+        const el = document.getElementById("crashMultText");
+        el.textContent = crashTarget.toFixed(2) + "x"; el.className = "crash-mult mono crashed";
+        document.getElementById("crashStatusText").textContent = "منفجر شد! راند بعدی تا چند لحظه دیگر...";
+        updateSlotUI();
+
+        crashRoundId += 1;
+        setTimeout(() => {
+          crashPhase = "waiting";
+          [1, 2].forEach((id) => { if (slotState[id].status !== "queued") slotState[id] = { status: "none", amount: 0 }; });
+          document.getElementById("crashStatusText").textContent = "در انتظار شروع راند #" + crashRoundId + "...";
+          updateSlotUI();
+          setTimeout(startCrashRound, 1800);
+        }, 2000);
+      }
+      updateSlotUI();
+    }, 100);
+
+    function cashoutCrashSlot(slotId, multAtCashout) {
+      const s = slotState[slotId]; const u = currentUser();
+      if (!u || s.status !== "active") return;
+      const confirmed = Number(Number(multAtCashout).toFixed(2));
+      const payout = Math.round(s.amount * confirmed);
+      s.status = "cashed";
+      adjustBalance(u.username, u.wallet_mode, payout);
+      recordBet({ game: `انفجار پنل ${slotId}`, stake: s.amount, mult: confirmed, payout });
+      renderMyBets(); updateSlotUI();
+      document.getElementById("crashMultText").className = "crash-mult mono won";
+      toast(`برداشت در ضریب ${confirmed.toFixed(2)}x (${fmt(payout)})`);
+    }
+
+    function handleSlot(slotId) {
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      const s = slotState[slotId];
+      if (crashPhase === "running" && s.status === "active") { cashoutCrashSlot(slotId, crashMult); return; }
+      if (s.status === "active" || s.status === "queued") return;
+      const amt = Math.round(Number(document.getElementById("betAmt" + slotId).value) || 0);
+      if (!(amt >= 1000)) { toast("حداقل مبلغ شرط ۱,۰۰۰ تومان است."); return; }
+      if (activeBalance() < amt) { toast("موجودی حساب فعال کافی نیست."); return; }
+      adjustBalance(u.username, u.wallet_mode, -amt);
+      slotState[slotId] = { status: crashPhase === "waiting" ? "active" : "queued", amount: amt };
+      updateSlotUI(); toast("شرط انفجار ثبت شد.");
+    }
+
+    function updateSlotUI() {
+      [1, 2].forEach((id) => {
+        const btn = document.getElementById("btnSlot" + id); const s = slotState[id];
+        if (crashPhase === "running" && s.status === "active") {
+          btn.disabled = false; btn.className = "btn btn-green"; btn.textContent = `برداشت آنی (${crashMult.toFixed(2)}x)`;
+        } else if (s.status === "queued" || s.status === "active") {
+          btn.disabled = true; btn.className = "btn btn-gray"; btn.textContent = s.status === "queued" ? "ثبت‌شده برای راند بعد" : "در حال پرواز...";
+        } else {
+          btn.disabled = false; btn.className = "btn btn-gold"; btn.textContent = `ثبت شرط پنل ${id}`;
+        }
+      });
+    }
+
+    // --- 2. Mines ---
+    function calcMinesMult(safeCount, minesTotal) {
+      if (safeCount <= 0) return 1.0;
+      let prob = 1;
+      for (let i = 0; i < safeCount; i++) prob *= (25 - minesTotal - i) / (25 - i);
+      return Number(Math.max(1.01, Math.min(250, 0.97 / Math.max(prob, 0.0001))).toFixed(2));
+    }
+
+    function buildMinesGrid() {
+      const board = document.getElementById("minesBoard");
+      board.innerHTML = Array.from({ length: 25 }, (_, i) => {
+        let cls = "mine-tile", label = "✦";
+        if (minesRevealed.includes(i)) { cls += " safe"; label = "💎"; }
+        else if (!minesActive && minesBombs.includes(i)) { cls += " bomb"; label = "💣"; }
+        return `<button type="button" class="${cls}" ${!minesActive || minesRevealed.includes(i) ? "disabled" : ""} onclick="revealMine(${i})">${label}</button>`;
+      }).join("");
+    }
+
+    function startMinesGame() {
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      const stake = Math.round(Number(document.getElementById("minesStakeInput").value) || 0);
+      const cnt = Number(document.getElementById("minesCountSelect").value) || 4;
+      if (!(stake >= 1000)) { toast("حداقل مبلغ شرط ۱,۰۰۰ تومان است."); return; }
+      if (activeBalance() < stake) { toast("موجودی حساب کافی نیست."); return; }
+      adjustBalance(u.username, u.wallet_mode, -stake);
+      minesActive = true; minesStake = stake; minesCount = cnt; minesRevealed = [];
+      const set = new Set();
+      while (set.size < cnt) set.add(Math.floor(Math.random() * 25));
+      minesBombs = Array.from(set);
+      buildMinesGrid();
+      document.getElementById("minesStartBtn").disabled = true;
+      document.getElementById("minesCashoutBtn").disabled = false;
+      document.getElementById("minesSummaryBox").innerHTML = `ضریب خانه بعدی: <span class="mono" style="color:var(--emerald-bright);">${calcMinesMult(1, cnt)}x</span>`;
+      document.getElementById("minesStatusText").textContent = "خانه‌های امن را باز کنید یا برداشت سود بزنید.";
+    }
+
+    function revealMine(idx) {
+      if (!minesActive || minesRevealed.includes(idx)) return;
+      if (minesBombs.includes(idx)) {
+        minesActive = false; buildMinesGrid();
+        recordBet({ game: `مین‌روب (${minesCount} مین)`, stake: minesStake, mult: 0, payout: 0 });
+        renderMyBets();
+        document.getElementById("minesStartBtn").disabled = false;
+        document.getElementById("minesCashoutBtn").disabled = true;
+        document.getElementById("minesStatusText").textContent = "به مین برخورد کردید!";
+        toast("مین منفجر شد!");
+        return;
+      }
+      minesRevealed.push(idx);
+      const mult = calcMinesMult(minesRevealed.length, minesCount);
+      const payout = Math.round(minesStake * mult);
+      buildMinesGrid();
+      document.getElementById("minesSummaryBox").innerHTML = `ضریب فعلی: <span class="mono" style="color:var(--emerald-bright);">${mult}x</span> • سود احتمالی: <strong>${fmt(payout)}</strong>`;
+    }
+
+    function cashoutMinesGame() {
+      const u = currentUser();
+      if (!minesActive || !u || minesRevealed.length === 0) { toast("حداقل یک خانه امن را باز کنید."); return; }
+      const mult = calcMinesMult(minesRevealed.length, minesCount);
+      const payout = Math.round(minesStake * mult);
+      minesActive = false;
+      adjustBalance(u.username, u.wallet_mode, payout);
+      recordBet({ game: `مین‌روب (${minesCount} مین)`, stake: minesStake, mult, payout });
+      buildMinesGrid(); renderMyBets();
+      document.getElementById("minesStartBtn").disabled = false;
+      document.getElementById("minesCashoutBtn").disabled = true;
+      document.getElementById("minesStatusText").textContent = `برداشت موفق: ${fmt(payout)} (${mult}x)`;
+      toast(`مبلغ ${fmt(payout)} واریز شد.`);
+    }
+
+    // --- 3. Dice ---
+    function updateDicePreview() {
+      const target = Math.min(95, Math.max(5, Number(document.getElementById("diceTargetInput").value) || 50));
+      document.getElementById("diceMultiplierPreview").innerHTML = `ضریب برد: <span class="mono" style="color:var(--emerald-bright);">${(98 / target).toFixed(2)}x</span> • احتمال: <span class="mono">${target}%</span>`;
+    }
+
+    function rollDiceGame() {
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      const stake = Math.round(Number(document.getElementById("diceStakeInput").value) || 0);
+      const target = Math.min(95, Math.max(5, Number(document.getElementById("diceTargetInput").value) || 50));
+      if (!(stake >= 1000)) { toast("حداقل مبلغ شرط ۱,۰۰۰ تومان است."); return; }
+      if (activeBalance() < stake) { toast("موجودی حساب کافی نیست."); return; }
+      const roll = Number((Math.random() * 99.99).toFixed(2));
+      const won = roll < target;
+      const mult = Number((98 / target).toFixed(2));
+      const payout = won ? Math.round(stake * mult) : 0;
+      adjustBalance(u.username, u.wallet_mode, -stake + payout);
+      recordBet({ game: `تاس (کمتر از ${target})`, stake, mult: won ? mult : 0, payout });
+      renderMyBets();
+      const el = document.getElementById("diceResultVal");
+      el.textContent = roll.toFixed(2);
+      if (won) {
+        el.className = "dice-val mono win";
+        document.getElementById("diceResultMsg").textContent = `برنده شدید! ${fmt(payout)} (${mult}x) به حساب واریز شد.`;
+      } else {
+        el.className = "dice-val mono lose";
+        document.getElementById("diceResultMsg").textContent = `عدد تاس (${roll}) کمتر از ${target} نشد.`;
+      }
+    }
+
+    // --- 4. Roulette ---
+    function spinRouletteGame() {
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      const stake = Math.round(Number(document.getElementById("rouletteStakeInput").value) || 0);
+      const betType = document.getElementById("rouletteBetType").value;
+      if (!(stake >= 1000)) { toast("حداقل مبلغ شرط ۱,۰۰۰ تومان است."); return; }
+      if (activeBalance() < stake) { toast("موجودی حساب کافی نیست."); return; }
+      const num = Math.floor(Math.random() * 37);
+      const isRed = RED_NUMBERS.has(num), isGreen = num === 0;
+      const isEven = num > 0 && num % 2 === 0, isOdd = num > 0 && num % 2 === 1;
+      let won = false, mult = 2.0;
+      if (betType === "red" && isRed) won = true;
+      else if (betType === "black" && !isGreen && !isRed) won = true;
+      else if (betType === "even" && isEven) won = true;
+      else if (betType === "odd" && isOdd) won = true;
+      else if (betType === "zero" && isGreen) { won = true; mult = 35.0; }
+      const payout = won ? Math.round(stake * mult) : 0;
+      adjustBalance(u.username, u.wallet_mode, -stake + payout);
+      recordBet({ game: `رولت (${betType})`, stake, mult: won ? mult : 0, payout });
+      renderMyBets();
+      const pocket = document.getElementById("roulettePocket");
+      pocket.textContent = String(num);
+      pocket.className = "roulette-pocket mono " + (isGreen ? "pocket-green" : isRed ? "pocket-red" : "pocket-black");
+      document.getElementById("rouletteResultMsg").textContent = won
+        ? `تبریک! عدد ${num} برنده شد — دریافتی: ${fmt(payout)} (${mult.toFixed(2)}x)`
+        : `عدد ${num} فرود آمد — این دور باخت ثبت شد.`;
+    }
+
+    // --- 5. Slots ---
+    function spinSlotsGame() {
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      const stake = Math.round(Number(document.getElementById("slotsStakeInput").value) || 0);
+      if (!(stake >= 1000)) { toast("حداقل مبلغ شرط ۱,۰۰۰ تومان است."); return; }
+      if (activeBalance() < stake) { toast("موجودی حساب کافی نیست."); return; }
+      const r1 = SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
+      const r2 = SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
+      const r3 = SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
+      document.getElementById("reel1").textContent = r1;
+      document.getElementById("reel2").textContent = r2;
+      document.getElementById("reel3").textContent = r3;
+
+      let mult = 0;
+      if (r1 === r2 && r2 === r3) mult = r1 === "7️⃣" ? 15.0 : r1 === "💎" ? 8.0 : 4.0;
+      else if (r1 === r2 || r2 === r3 || r1 === r3) mult = 1.3;
+
+      const payout = Math.round(stake * mult);
+      adjustBalance(u.username, u.wallet_mode, -stake + payout);
+      recordBet({ game: "اسلات طلایی", stake, mult, payout });
+      renderMyBets();
+      document.getElementById("slotsResultMsg").textContent = payout > 0
+        ? `برد در اسلات! ضریب ${mult.toFixed(2)}x — دریافتی: ${fmt(payout)}`
+        : "ترکیب برنده نیفتاد — چرخش بعدی را امتحان کنید.";
+    }
+
+    // --- 6. Blackjack ---
+    function drawCardObj() {
+      const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+      const suits = ["♠", "♥", "♦", "♣"];
+      const r = ranks[Math.floor(Math.random() * ranks.length)];
+      const s = suits[Math.floor(Math.random() * suits.length)];
+      const val = r === "A" ? 11 : ["K", "Q", "J"].includes(r) ? 10 : Number(r);
+      return { rank: r, suit: s, val, red: s === "♥" || s === "♦" };
+    }
+
+    function calcHandScore(cards) {
+      let sum = 0, aces = 0;
+      cards.forEach((c) => { sum += c.val; if (c.rank === "A") aces += 1; });
+      while (sum > 21 && aces > 0) { sum -= 10; aces -= 1; }
+      return sum;
+    }
+
+    function renderBjHands() {
+      document.getElementById("bjDealerCards").innerHTML = bjDealer.map((c) =>
+        `<div class="playing-card ${c.red ? "red-suit" : ""}"><span>${c.rank}</span><span>${c.suit}</span></div>`
+      ).join("");
+      document.getElementById("bjPlayerCards").innerHTML = bjPlayer.map((c) =>
+        `<div class="playing-card ${c.red ? "red-suit" : ""}"><span>${c.rank}</span><span>${c.suit}</span></div>`
+      ).join("");
+      document.getElementById("bjDealerScore").textContent = String(calcHandScore(bjDealer));
+      document.getElementById("bjPlayerScore").textContent = String(calcHandScore(bjPlayer));
+    }
+
+    function dealBlackjack() {
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      const stake = Math.round(Number(document.getElementById("bjStakeInput").value) || 0);
+      if (!(stake >= 1000)) { toast("حداقل مبلغ شرط ۱,۰۰۰ تومان است."); return; }
+      if (activeBalance() < stake) { toast("موجودی حساب کافی نیست."); return; }
+      adjustBalance(u.username, u.wallet_mode, -stake);
+      bjActive = true; bjStake = stake;
+      bjPlayer = [drawCardObj(), drawCardObj()];
+      bjDealer = [drawCardObj()];
+      renderBjHands();
+      document.getElementById("bjDealBtn").disabled = true;
+      document.getElementById("bjHitBtn").disabled = false;
+      document.getElementById("bjStandBtn").disabled = false;
+      document.getElementById("bjStatusMsg").textContent = "کارت بیشتر بگیرید یا توقف کنید.";
+    }
+
+    function hitBlackjack() {
+      if (!bjActive) return;
+      bjPlayer.push(drawCardObj());
+      renderBjHands();
+      const pScore = calcHandScore(bjPlayer);
+      if (pScore > 21) finishBlackjack("bust");
+    }
+
+    function standBlackjack() {
+      if (!bjActive) return;
+      while (calcHandScore(bjDealer) < 17) bjDealer.push(drawCardObj());
+      renderBjHands();
+      const pScore = calcHandScore(bjPlayer), dScore = calcHandScore(bjDealer);
+      if (dScore > 21 || pScore > dScore) finishBlackjack("win");
+      else if (pScore === dScore) finishBlackjack("push");
+      else finishBlackjack("lose");
+    }
+
+    function finishBlackjack(outcome) {
+      const u = currentUser();
+      bjActive = false;
+      let mult = 0, payout = 0, msg = "";
+      if (outcome === "win") { mult = 2.0; payout = bjStake * 2; msg = `بردید! ${fmt(payout)} واریز شد.`; }
+      else if (outcome === "push") { mult = 1.0; payout = bjStake; msg = "مساوی شد؛ مبلغ شرط برگشت داده شد."; }
+      else if (outcome === "bust") { msg = "امتیاز از ۲۱ بیشتر شد (Bust)."; }
+      else { msg = "دیلر برنده شد."; }
+
+      if (u && payout > 0) adjustBalance(u.username, u.wallet_mode, payout);
+      recordBet({ game: "بلک‌جک ۲۱", stake: bjStake, mult, payout });
+      renderMyBets();
+      document.getElementById("bjDealBtn").disabled = false;
+      document.getElementById("bjHitBtn").disabled = true;
+      document.getElementById("bjStandBtn").disabled = true;
+      document.getElementById("bjStatusMsg").textContent = msg;
+    }
+
+    // --- 7. Hi-Lo ---
+    function startHiLoGame() {
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      const stake = Math.round(Number(document.getElementById("hiloStakeInput").value) || 0);
+      if (!(stake >= 1000)) { toast("حداقل مبلغ شرط ۱,۰۰۰ تومان است."); return; }
+      if (activeBalance() < stake) { toast("موجودی حساب کافی نیست."); return; }
+      adjustBalance(u.username, u.wallet_mode, -stake);
+      hiloActive = true; hiloStake = stake;
+      hiloCurrentCard = Math.floor(Math.random() * 13) + 1;
+      hiloMult = 1.0;
+      document.getElementById("hiloCardBox").innerHTML = `<div class="playing-card"><span>${hiloCurrentCard}</span><span>♦</span></div>`;
+      document.getElementById("hiloMultText").textContent = "1.00x";
+      document.getElementById("hiloStartBtn").disabled = true;
+      document.getElementById("hiloHigherBtn").disabled = false;
+      document.getElementById("hiloLowerBtn").disabled = false;
+      document.getElementById("hiloCashoutBtn").disabled = false;
+      document.getElementById("hiloStatusMsg").textContent = "کارت بعدی بزرگ‌تر/مساوی است یا کوچک‌تر؟";
+    }
+
+    function guessHiLo(dir) {
+      if (!hiloActive) return;
+      const nextCard = Math.floor(Math.random() * 13) + 1;
+      const ok = dir === "higher" ? nextCard >= hiloCurrentCard : nextCard < hiloCurrentCard;
+      hiloCurrentCard = nextCard;
+      document.getElementById("hiloCardBox").innerHTML = `<div class="playing-card"><span>${hiloCurrentCard}</span><span>♠</span></div>`;
+      if (!ok) {
+        hiloActive = false;
+        recordBet({ game: "های-لو (Hi-Lo)", stake: hiloStake, mult: 0, payout: 0 });
+        renderMyBets();
+        document.getElementById("hiloStartBtn").disabled = false;
+        document.getElementById("hiloHigherBtn").disabled = true;
+        document.getElementById("hiloLowerBtn").disabled = true;
+        document.getElementById("hiloCashoutBtn").disabled = true;
+        document.getElementById("hiloStatusMsg").textContent = `حدس اشتباه بود! کارت جدید: ${nextCard}`;
+        return;
+      }
+      hiloMult = Number((hiloMult * 1.45).toFixed(2));
+      document.getElementById("hiloMultText").textContent = hiloMult.toFixed(2) + "x";
+      document.getElementById("hiloStatusMsg").textContent = `درست بود! سود فعلی: ${fmt(Math.round(hiloStake * hiloMult))}`;
+    }
+
+    function cashoutHiLoGame() {
+      const u = currentUser();
+      if (!hiloActive || !u) return;
+      const payout = Math.round(hiloStake * hiloMult);
+      hiloActive = false;
+      adjustBalance(u.username, u.wallet_mode, payout);
+      recordBet({ game: "های-لو (Hi-Lo)", stake: hiloStake, mult: hiloMult, payout });
+      renderMyBets();
+      document.getElementById("hiloStartBtn").disabled = false;
+      document.getElementById("hiloHigherBtn").disabled = true;
+      document.getElementById("hiloLowerBtn").disabled = true;
+      document.getElementById("hiloCashoutBtn").disabled = true;
+      document.getElementById("hiloStatusMsg").textContent = `برداشت موفق: ${fmt(payout)} (${hiloMult.toFixed(2)}x)`;
+    }
+
+    // --- 8. Limbo ---
+    function updateLimboPreview() {
+      const target = Math.max(1.1, Number(document.getElementById("limboTargetInput").value) || 2.5);
+      const chance = Math.min(90, Math.max(1, (98 / target))).toFixed(1);
+      document.getElementById("limboWinChance").innerHTML = `احتمال برد تخمینی: <span class="mono">${chance}%</span>`;
+    }
+
+    function playLimboGame() {
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      const stake = Math.round(Number(document.getElementById("limboStakeInput").value) || 0);
+      const target = Math.max(1.1, Number(document.getElementById("limboTargetInput").value) || 2.5);
+      if (!(stake >= 1000)) { toast("حداقل مبلغ شرط ۱,۰۰۰ تومان است."); return; }
+      if (activeBalance() < stake) { toast("موجودی حساب کافی نیست."); return; }
+
+      const r = Math.random();
+      const rolled = r < 0.03 ? 1.0 : Number(Math.min(100, Math.max(1.0, 0.98 / (1 - r))).toFixed(2));
+      const won = rolled >= target;
+      const payout = won ? Math.round(stake * target) : 0;
+      adjustBalance(u.username, u.wallet_mode, -stake + payout);
+      recordBet({ game: `لیمبو (هدف ${target.toFixed(2)}x)`, stake, mult: won ? target : 0, payout });
+      renderMyBets();
+
+      const el = document.getElementById("limboResultVal");
+      el.textContent = rolled.toFixed(2) + "x";
+      el.className = "dice-val mono " + (won ? "win" : "lose");
+      document.getElementById("limboResultMsg").textContent = won
+        ? `موفق شدید! ضریب ${rolled.toFixed(2)}x از هدف بیشتر شد — دریافتی: ${fmt(payout)}`
+        : `ضریب ${rolled.toFixed(2)}x به هدف ${target.toFixed(2)}x نرسید.`;
+    }
+
+    // --- 9. Plinko ---
+    function getPlinkoTable() {
+      const risk = document.getElementById("plinkoRiskSelect").value;
+      if (risk === "high") return [10.0, 3.0, 1.2, 0.4, 1.2, 3.0, 10.0];
+      if (risk === "low") return [1.8, 1.3, 1.1, 0.9, 1.1, 1.3, 1.8];
+      return [5.0, 2.0, 1.2, 0.6, 1.2, 2.0, 5.0];
+    }
+
+    function renderPlinkoBuckets(activeIdx = -1) {
+      const arr = getPlinkoTable();
+      document.getElementById("plinkoBucketsGrid").innerHTML = arr.map((m, idx) =>
+        `<div class="plinko-bucket mono ${idx === activeIdx ? "hit" : ""}">${m.toFixed(1)}x</div>`
+      ).join("");
+    }
+
+    function dropPlinkoBall() {
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      const stake = Math.round(Number(document.getElementById("plinkoStakeInput").value) || 0);
+      if (!(stake >= 1000)) { toast("حداقل مبلغ شرط ۱,۰۰۰ تومان است."); return; }
+      if (activeBalance() < stake) { toast("موجودی حساب کافی نیست."); return; }
+
+      const arr = getPlinkoTable();
+      // Weighted toward center
+      const weights = [1, 3, 6, 8, 6, 3, 1];
+      const totalW = weights.reduce((a, b) => a + b, 0);
+      let pick = Math.random() * totalW, idx = 3;
+      for (let i = 0; i < weights.length; i++) {
+        pick -= weights[i];
+        if (pick <= 0) { idx = i; break; }
+      }
+      const mult = arr[idx];
+      const payout = Math.round(stake * mult);
+      adjustBalance(u.username, u.wallet_mode, -stake + payout);
+      recordBet({ game: "پلاینکو (Plinko)", stake, mult, payout });
+      renderMyBets();
+      renderPlinkoBuckets(idx);
+      document.getElementById("plinkoResultVal").textContent = mult.toFixed(1) + "x";
+      document.getElementById("plinkoResultMsg").textContent = `توپ در خانه ${idx + 1} فرود آمد — دریافتی: ${fmt(payout)}`;
+    }
+
+    // --- 10. Wheel ---
+    function spinWheelGame() {
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      const stake = Math.round(Number(document.getElementById("wheelStakeInput").value) || 0);
+      if (!(stake >= 1000)) { toast("حداقل مبلغ شرط ۱,۰۰۰ تومان است."); return; }
+      if (activeBalance() < stake) { toast("موجودی حساب کافی نیست."); return; }
+
+      const seg = WHEEL_SEGMENTS[Math.floor(Math.random() * WHEEL_SEGMENTS.length)];
+      const payout = Math.round(stake * seg.mult);
+      adjustBalance(u.username, u.wallet_mode, -stake + payout);
+      recordBet({ game: "چرخ شانس (Wheel)", stake, mult: seg.mult, payout });
+      renderMyBets();
+      document.getElementById("wheelMultPocket").textContent = seg.label;
+      document.getElementById("wheelResultMsg").textContent = payout > 0
+        ? `چرخ روی ${seg.label} ایستاد — دریافتی: ${fmt(payout)}`
+        : "چرخ روی 0x ایستاد — این دور باخت ثبت شد.";
+    }
+
+    // --- Deposits, Withdrawals, Tickets, Chat, Admin ---
+    function submitDepositReceipt(e) {
+      e.preventDefault();
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      const amount = Math.round(Number(document.getElementById("depAmountInput").value) || 0);
+      const receipt_ref = document.getElementById("depRefInput").value.trim();
+      const note = document.getElementById("depNoteInput").value.trim();
+      if (!(amount >= 10000) || receipt_ref.length < 3) { toast("مبلغ و شماره فیش را به‌درستی وارد کنید."); return; }
+      state.deposits.unshift({
+        id: "DEP-" + Math.floor(1000 + Math.random() * 9000),
+        username: u.username, amount, receipt_ref, note, status: "pending", created_at: nowTime()
+      });
+      document.getElementById("depRefInput").value = ""; document.getElementById("depNoteInput").value = "";
+      saveState(); renderDeposits(); toast("فیش واریزی ثبت شد.");
+    }
+
+    function submitWithdrawalRequest(e) {
+      e.preventDefault();
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      const amount = Math.round(Number(document.getElementById("wdrAmountInput").value) || 0);
+      const dest_card = document.getElementById("wdrCardInput").value.replace(/\s+/g, "").trim();
+      const holder_name = document.getElementById("wdrHolderInput").value.trim();
+      if (!(amount >= 50000)) { toast("حداقل برداشت ۵۰,۰۰۰ تومان است."); return; }
+      if (!/^\d{16}$/.test(dest_card)) { toast("شماره کارت باید ۱۶ رقم باشد."); return; }
+      if (u.real_balance < amount) { toast("موجودی حساب واقعی کافی نیست."); return; }
+      adjustBalance(u.username, "real", -amount);
+      state.withdrawals.unshift({
+        id: "WDR-" + Math.floor(1000 + Math.random() * 9000),
+        username: u.username, amount, dest_card, holder_name, status: "pending", created_at: nowTime()
+      });
+      saveState(); renderWithdrawals(); toast("درخواست برداشت ثبت شد.");
+    }
+
+    function reviewDeposit(depId, decision) {
+      if (!isAdmin()) return;
+      const dep = state.deposits.find((d) => d.id === depId);
+      if (!dep || dep.status !== "pending") return;
+      dep.status = decision;
+      if (decision === "approved") adjustBalance(dep.username, "real", dep.amount);
+      saveState(); renderDeposits(); renderFinanceStats();
+      toast(decision === "approved" ? "فیش تایید و شارژ شد." : "فیش رد شد.");
+    }
+
+    function reviewWithdrawal(wdrId, decision) {
+      if (!isAdmin()) return;
+      const wdr = state.withdrawals.find((w) => w.id === wdrId);
+      if (!wdr || wdr.status !== "pending") return;
+      wdr.status = decision;
+      if (decision === "rejected") adjustBalance(wdr.username, "real", wdr.amount);
+      saveState(); renderWithdrawals(); renderFinanceStats();
+      toast(decision === "approved" ? "برداشت تایید شد." : "برداشت رد و مبلغ برگشت داده شد.");
+    }
+
+    function submitTicket(e) {
+      e.preventDefault();
+      const u = currentUser();
+      if (!u) { openAuth("login"); toast("ابتدا وارد شوید."); return; }
+      state.tickets.unshift({
+        id: "TCK-" + Math.floor(1000 + Math.random() * 9000),
+        username: u.username, topic: document.getElementById("ticketTopic").value,
+        subject: document.getElementById("ticketSubject").value.trim(),
+        message: document.getElementById("ticketMessage").value.trim(),
+        status: "در انتظار بررسی", reply: "", time: nowTime()
+      });
+      document.getElementById("ticketSubject").value = ""; document.getElementById("ticketMessage").value = "";
+      saveState(); renderTickets(); toast("تیکت ارسال شد.");
+    }
+
+    function sendChat(e) {
+      e.preventDefault();
+      const inp = document.getElementById("chatInput");
+      const txt = inp.value.trim();
+      if (!txt) return;
+      inp.value = "";
+      state.chat.push({ id: "m-" + Date.now(), user: currentUser()?.username || "مهمان", text: txt, time: nowTime() });
+      state.chat = state.chat.slice(-60);
+      saveState(); renderChat();
+    }
+
+    function changeUserRole(username) {
+      if (!isAdmin()) return;
+      const sel = document.getElementById("role-sel-" + username);
+      if (!sel || !state.accounts[username]) return;
+      state.accounts[username].role = sel.value;
+      saveState(); renderUsersAdmin(); refreshUI();
+      toast(`نقش ${username} به‌روزرسانی شد.`);
+    }
+
+    // --- Renders ---
+    function statusBadge(status) {
+      if (status === "approved") return `<span class="badge-status st-approved">تایید شده</span>`;
+      if (status === "rejected") return `<span class="badge-status st-rejected">رد شده</span>`;
+      return `<span class="badge-status st-pending">در انتظار بررسی</span>`;
+    }
+
+    function renderRounds() {
+      document.getElementById("historyPills").innerHTML = state.rounds.slice(0, 8).map((r, i) =>
+        `<button class="h-pill mono ${r.mult >= 2 ? "good" : "bad"}" onclick="openRound(${i})">${Number(r.mult).toFixed(2)}x</button>`
+      ).join("");
+      document.getElementById("roundsTableBody").innerHTML = state.rounds.map((r, i) =>
+        `<tr style="cursor:pointer;" onclick="openRound(${i})">
+          <td class="mono">#${r.id}</td>
+          <td class="mono" style="font-weight:800;color:${r.mult >= 2 ? "#34d399" : "#f87171"};">${Number(r.mult).toFixed(2)}x</td>
+          <td class="mono">${String(r.hash || "").slice(0, 16)}...</td>
+          <td>${r.time || ""}</td>
+        </tr>`
+      ).join("");
+    }
+
+    function openRound(i) {
+      const r = state.rounds[i];
+      if (!r) return;
+      document.getElementById("roundModalBody").innerHTML = `
+        <div><strong>شماره راند:</strong> <span class="mono">#${r.id}</span></div>
+        <div><strong>ضریب انفجار:</strong> <span class="mono">${Number(r.mult).toFixed(2)}x</span></div>
+        <div><strong>Server Seed:</strong> <span class="mono">${escapeHtml(r.seed || "verified")}</span></div>
+        <div><strong>هش SHA-256:</strong><div class="mono" style="word-break:break-all;background:#070b14;padding:8px;border-radius:8px;margin-top:4px;">${r.hash}</div></div>
+      `;
+      document.getElementById("roundModal").classList.add("show");
+    }
+
+    function renderChat() {
+      const box = document.getElementById("chatList");
+      box.innerHTML = state.chat.map((m) => `<div class="chat-msg"><strong>${escapeHtml(m.user)}</strong><span>${escapeHtml(m.text)}</span></div>`).join("");
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function renderDeposits() {
+      const wrap = document.getElementById("depositsList");
+      if (!state.deposits.length) { wrap.innerHTML = `<div style="color:var(--text-muted);font-size:0.85rem;">فیشی ثبت نشده است.</div>`; return; }
+      const adminActive = isAdmin();
+      wrap.innerHTML = state.deposits.map((d) => `
+        <div class="dep-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+            <div><span class="mono" style="color:var(--text-muted);font-size:0.76rem;">#${escapeHtml(d.id)}</span> <strong style="margin-right:6px;">${fmt(d.amount)}</strong> <span style="color:var(--text-muted);font-size:0.76rem;">(${escapeHtml(d.username)})</span></div>
+            ${statusBadge(d.status)}
+          </div>
+          <div style="font-size:0.8rem;color:#cbd5e1;">فیش: <span class="mono" style="color:var(--gold-bright);">${escapeHtml(d.receipt_ref)}</span> • ${escapeHtml(d.created_at || "")}</div>
+          ${adminActive && d.status === "pending" ? `
+            <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-green" onclick="reviewDeposit('${escapeHtml(d.id)}', 'approved')">✔ تایید و شارژ</button>
+              <button type="button" class="btn btn-red" onclick="reviewDeposit('${escapeHtml(d.id)}', 'rejected')">✖ رد فیش</button>
+            </div>
+          ` : ""}
+        </div>
+      `).join("");
+    }
+
+    function renderWithdrawals() {
+      const wrap = document.getElementById("withdrawalsList");
+      if (!state.withdrawals.length) { wrap.innerHTML = `<div style="color:var(--text-muted);font-size:0.85rem;">برداشتی ثبت نشده است.</div>`; return; }
+      const adminActive = isAdmin();
+      wrap.innerHTML = state.withdrawals.map((w) => `
+        <div class="dep-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+            <div><span class="mono" style="color:var(--text-muted);font-size:0.76rem;">#${escapeHtml(w.id)}</span> <strong style="margin-right:6px;">${fmt(w.amount)}</strong> <span style="color:var(--text-muted);font-size:0.76rem;">(${escapeHtml(w.username)})</span></div>
+            ${statusBadge(w.status)}
+          </div>
+          <div style="font-size:0.8rem;color:#cbd5e1;">کارت مقصد: <span class="mono" style="color:var(--cyan-bright);">${escapeHtml(w.dest_card)}</span> • ${escapeHtml(w.created_at || "")}</div>
+          ${adminActive && w.status === "pending" ? `
+            <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-green" onclick="reviewWithdrawal('${escapeHtml(w.id)}', 'approved')">✔ تایید برداشت</button>
+              <button type="button" class="btn btn-red" onclick="reviewWithdrawal('${escapeHtml(w.id)}', 'rejected')">✖ رد و بازگشت</button>
+            </div>
+          ` : ""}
+        </div>
+      `).join("");
+    }
+
+    function renderTickets() {
+      const wrap = document.getElementById("ticketsList");
+      if (!state.tickets.length) { wrap.innerHTML = `<div style="color:var(--text-muted);font-size:0.85rem;">تیکتی ثبت نشده است.</div>`; return; }
+      wrap.innerHTML = state.tickets.map((t) => `
+        <div class="ticket-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+            <strong>${escapeHtml(t.subject)}</strong>
+            <span class="badge-status st-approved">${escapeHtml(t.status)}</span>
+          </div>
+          <div style="font-size:0.82rem;color:#cbd5e1;">${escapeHtml(t.message)}</div>
+          ${t.reply ? `<div class="ticket-reply"><strong>پاسخ پشتیبانی:</strong> ${escapeHtml(t.reply)}</div>` : ""}
+        </div>
+      `).join("");
+    }
+
+    function renderMyBets() {
+      const body = document.getElementById("myBetsBody");
+      const u = currentUser();
+      const list = u ? state.bets.filter((b) => b.username === u.username) : state.bets;
+      if (!list.length) { body.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);">هنوز شرطی ثبت نشده است.</td></tr>`; return; }
+      body.innerHTML = list.map((b) => `
+        <tr>
+          <td class="mono">${escapeHtml(b.id)}</td>
+          <td>${b.mode === "real" ? "واقعی" : "دمو"}</td>
+          <td>${escapeHtml(b.game)}</td>
+          <td>${escapeHtml(b.stake)}</td>
+          <td class="mono">${escapeHtml(b.mult)}</td>
+          <td>${escapeHtml(b.result)}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderFinanceStats() {
+      const grid = document.getElementById("financeCardsGrid");
+      if (!grid) return;
+      const depApproved = state.deposits.filter((d) => d.status === "approved").reduce((s, d) => s + d.amount, 0);
+      const wdrApproved = state.withdrawals.filter((w) => w.status === "approved").reduce((s, w) => s + w.amount, 0);
+      const totalReal = Object.values(state.accounts).reduce((s, a) => s + Number(a.real_balance || 0), 0);
+      grid.innerHTML = `
+        <div class="stat-card"><div class="stat-label">واریزهای تاییدشده</div><div class="stat-val green">${fmt(depApproved)}</div></div>
+        <div class="stat-card"><div class="stat-label">برداشت‌های تاییدشده</div><div class="stat-val red">${fmt(wdrApproved)}</div></div>
+        <div class="stat-card"><div class="stat-label">جریان نقدی خالص</div><div class="stat-val">${fmt(depApproved - wdrApproved)}</div></div>
+        <div class="stat-card"><div class="stat-label">موجودی واقعی کل کاربران</div><div class="stat-val">${fmt(totalReal)}</div></div>
+      `;
+    }
+
+    function renderUsersAdmin() {
+      const body = document.getElementById("usersAdminBody");
+      if (!body) return;
+      const users = Object.values(state.accounts);
+      body.innerHTML = users.map((u) => `
+        <tr>
+          <td class="mono">#${u.id}</td>
+          <td>${escapeHtml(u.username)}</td>
+          <td>${fmt(u.demo_balance)}</td>
+          <td>${fmt(u.real_balance)}</td>
+          <td class="mono">${escapeHtml(u.role)}</td>
+          <td>
+            <select id="role-sel-${escapeHtml(u.username)}" style="width:auto;padding:4px 8px;font-size:0.78rem;">
+              <option value="user" ${u.role === "user" ? "selected" : ""}>user</option>
+              <option value="admin" ${u.role === "admin" ? "selected" : ""}>admin</option>
+            </select>
+            <button type="button" class="btn btn-gold" onclick="changeUserRole('${escapeHtml(u.username)}')">ثبت</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function refreshUI() {
+      const u = currentUser();
+      const mode = currentMode();
+      document.getElementById("balanceDisplay").textContent = fmt(activeBalance());
+      document.getElementById("modeDemoBtn").className = mode === "demo" ? "mode-btn active-demo" : "mode-btn";
+      document.getElementById("modeRealBtn").className = mode === "real" ? "mode-btn active-real" : "mode-btn";
+
+      const vip = getVipInfo(u?.wagered || 0);
+      document.getElementById("vipTierText").textContent = `${vip.tier} • حجم ${fmt(u?.wagered || 0)}`;
+      document.getElementById("cashbackRateText").textContent = `کش‌بک: ${vip.label}`;
+      document.getElementById("cashbackClaimableText").textContent = fmt(u?.cashback_pool || 0);
+
+      if (u) {
+        document.getElementById("activeModeBanner").textContent = mode === "real"
+          ? `حالت فعال: حساب واقعی (${fmt(u.real_balance)})`
+          : `حالت فعال: حساب دمو (${fmt(u.demo_balance)})`;
+        document.getElementById("sessionInfo").textContent = `${u.username} (${u.role === "admin" ? "ADMIN" : "USER"}) • ${mode === "real" ? "واقعی" : "دمو"}`;
+        document.getElementById("authTopBtn").textContent = u.username;
+        document.getElementById("logoutBtn").style.display = "inline-flex";
+      } else {
+        document.getElementById("activeModeBanner").textContent = "حالت فعال: حساب دمو (برای بازی و کیف پول وارد شوید)";
+        document.getElementById("sessionInfo").textContent = "وضعیت: مهمان";
+        document.getElementById("authTopBtn").textContent = "ورود / ثبت‌نام";
+        document.getElementById("logoutBtn").style.display = "none";
+      }
+
+      const showAdmin = isAdmin();
+      document.getElementById("adminUsersNavBtn").classList.toggle("visible", showAdmin);
+      document.getElementById("adminFinanceNavBtn").classList.toggle("visible", showAdmin);
+
+      renderRounds(); renderChat(); renderDeposits(); renderWithdrawals();
+      renderTickets(); renderMyBets(); renderFinanceStats(); renderUsersAdmin();
+    }
+
+    setInterval(() => {
+      const baseCount = 135 + Object.keys(state.accounts).length;
+      const jitter = Math.floor(Math.random() * 24);
+      const pill = document.getElementById("livePlayersPill");
+      if (pill) pill.textContent = `آنلاین: ${baseCount + jitter} نفر`;
+    }, 4500);
+
+    window.addEventListener("storage", (e) => {
+      if (e.key === STORAGE_KEY) syncLiveFromAdminStorage();
+    });
+    window.addEventListener("resize", drawCrashCanvas);
+
+    buildMinesGrid();
+    updateDicePreview();
+    updateLimboPreview();
+    renderPlinkoBuckets();
+    applyLiveConfigUI();
+    refreshUI();
+    updateSlotUI();
+    drawCrashCanvas();
+    setTimeout(startCrashRound, 1000);
+    if (!currentUser()) {
+      setTimeout(() => openAuth("login"), 250);
+    }
+  </script>
+</body>
+</html>
