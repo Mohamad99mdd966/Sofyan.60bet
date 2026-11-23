@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>صوفیان بت | پلتفرم جامع کازینو و بازی‌های شانسی</title>
+  <title>صوفیان بت | پلتفرم جامع کازینو و مرکز مدیریت</title>
   <style>
     :root {
       --bg-main: #060911;
@@ -35,6 +35,26 @@
       color: var(--text-main);
       min-height: 100vh;
       line-height: 1.65;
+    }
+
+    /* Distinct Admin Command Theme */
+    body.admin-workspace {
+      background:
+        radial-gradient(circle at 15% 10%, rgba(139, 92, 246, 0.14), transparent 40%),
+        radial-gradient(circle at 85% 12%, rgba(245, 158, 11, 0.12), transparent 42%),
+        #05070f;
+    }
+    body.admin-workspace .topbar {
+      background: rgba(15, 12, 32, 0.95);
+      border-bottom: 1px solid rgba(245, 158, 11, 0.45);
+    }
+    body.admin-workspace .brand-badge {
+      background: linear-gradient(135deg, #a78bfa, #f59e0b);
+      color: #070911;
+    }
+    body.admin-workspace .panel {
+      background: linear-gradient(160deg, #11162a, #0c1020);
+      border-color: rgba(139, 92, 246, 0.35);
     }
 
     button, input, select, textarea { font-family: inherit; color: inherit; }
@@ -91,6 +111,11 @@
       background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.45);
       color: var(--emerald-bright); font-weight: 700;
     }
+    .admin-pill {
+      font-size: 0.72rem; padding: 4px 10px; border-radius: 999px;
+      background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(167, 139, 250, 0.55);
+      color: #ddd6fe; font-weight: 800;
+    }
     .live-pill {
       font-size: 0.72rem; padding: 4px 10px; border-radius: 999px;
       background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.45);
@@ -130,9 +155,9 @@
       color: #e2e8f0; font-size: 0.76rem; font-weight: 800;
     }
     .nav-btn.active { background: var(--gold); color: #090d16; border-color: var(--gold); }
-    .nav-btn.admin-only { display: none; border-color: rgba(245, 158, 11, 0.5); color: var(--gold-bright); }
+    .nav-btn.admin-only { display: none; border-color: rgba(167, 139, 250, 0.55); color: #ddd6fe; background: rgba(124, 58, 237, 0.16); }
     .nav-btn.admin-only.visible { display: inline-block; }
-    .nav-btn.admin-only.active { color: #090d16; }
+    .nav-btn.admin-only.active { background: linear-gradient(135deg, #a78bfa, #f59e0b); color: #080b14; }
 
     /* Layout */
     .container { width: 100%; max-width: 1480px; margin: 0 auto; padding: 14px; }
@@ -144,7 +169,16 @@
       background: var(--bg-panel); border: 1px solid var(--border);
       border-radius: 16px; padding: 16px; margin-bottom: 14px;
     }
+    .admin-banner {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.24), rgba(245, 158, 11, 0.16));
+      border: 1px solid rgba(251, 191, 36, 0.5);
+      border-radius: 16px; padding: 14px 16px; margin-bottom: 14px;
+      display: none; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+    }
+    .admin-banner.show { display: flex; }
+
     .arena { display: grid; grid-template-columns: minmax(300px, 390px) minmax(0, 1fr); gap: 14px; align-items: start; }
+    .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 14px; }
     .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; font-size: 0.82rem; color: #cbd5e1; }
     .quick-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
     .q-chip {
@@ -299,7 +333,7 @@
     .ticket-reply { background: #0c1426; border-right: 3px solid var(--emerald); padding: 8px 10px; border-radius: 8px; margin-top: 8px; font-size: 0.8rem; }
 
     .table-wrap { width: 100%; overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 480px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 520px; }
     th, td { padding: 9px 8px; border-bottom: 1px solid #1e293b; text-align: right; white-space: nowrap; }
     th { color: var(--text-muted); }
 
@@ -311,12 +345,13 @@
     .modal-bg.show { display: flex; }
     .modal-card {
       background: var(--bg-panel); border: 1px solid var(--border); border-radius: 16px;
-      padding: 18px; width: 100%; max-width: 440px; max-height: 92vh; overflow-y: auto;
+      padding: 18px; width: 100%; max-width: 450px; max-height: 92vh; overflow-y: auto;
     }
     .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .auth-tabs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 14px; background: #080d19; padding: 4px; border-radius: 10px; }
-    .auth-tab { padding: 8px; border-radius: 8px; font-weight: 800; font-size: 0.84rem; color: var(--text-muted); }
+    .auth-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 14px; background: #080d19; padding: 4px; border-radius: 10px; }
+    .auth-tab { padding: 8px 6px; border-radius: 8px; font-weight: 800; font-size: 0.78rem; color: var(--text-muted); }
     .auth-tab.active { background: var(--gold); color: #090d16; }
+    .auth-tab.admin-tab.active { background: linear-gradient(135deg, #a78bfa, #7c3aed); color: #ffffff; }
 
     .toast-wrap { position: fixed; bottom: 14px; left: 14px; right: 14px; z-index: 110; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
     .toast { background: #16223b; border-right: 4px solid var(--gold); padding: 10px 14px; border-radius: 10px; font-size: 0.82rem; color: #fff; max-width: 390px; box-shadow: 0 8px 24px rgba(0,0,0,0.45); }
@@ -338,24 +373,25 @@
   </style>
 </head>
 <body>
-  <!-- Maintenance Mode Screen -->
+  <!-- Maintenance Mode Screen (Bypassed for logged-in admin) -->
   <div class="maint-overlay" id="maintenanceOverlay">
     <div class="maint-box">
       <div style="font-size:2.2rem;margin-bottom:10px;">🛠️</div>
       <h2 style="font-size:1.15rem;color:var(--gold-bright);margin-bottom:8px;">سایت در حالت تعمیرات است</h2>
-      <p style="font-size:0.86rem;color:#cbd5e1;">مدیریت صوفیان بت در حال بروزرسانی سیستم است. لطفاً چند لحظه دیگر مراجعه کنید.</p>
+      <p style="font-size:0.86rem;color:#cbd5e1;margin-bottom:14px;">مدیریت صوفیان بت در حال بروزرسانی سیستم است. لطفاً چند لحظه دیگر مراجعه کنید.</p>
+      <button type="button" class="btn btn-purple" onclick="openAuth('admin_login')">ورود ادمین</button>
     </div>
   </div>
 
   <!-- Top Header -->
   <header class="topbar">
     <div class="brand">
-      <div class="brand-badge">S</div>
+      <div class="brand-badge" id="brandBadge">S</div>
       <div>
-        <div class="brand-title">صوفیان بت • SOFYAN.BET</div>
+        <div class="brand-title" id="brandTitleText">صوفیان بت • SOFYAN.BET</div>
         <div class="brand-sub" id="sessionInfo">وضعیت: مهمان</div>
       </div>
-      <span class="status-pill">Provably Fair</span>
+      <span class="status-pill" id="roleBadgePill">Provably Fair</span>
       <span class="live-pill" id="livePlayersPill">آنلاین: 148 نفر</span>
     </div>
 
@@ -365,8 +401,9 @@
         <button type="button" class="mode-btn" id="modeRealBtn" onclick="setWalletMode('real')">واقعی</button>
       </div>
       <div class="wallet-box" id="balanceDisplay">10,000,000 تومان</div>
-      <button class="btn btn-green" onclick="showTab('deposit', document.getElementById('navDepositBtn'))">💳 کیف پول</button>
-      <button class="btn btn-gold" id="authTopBtn" onclick="openAuth('login')">ورود / ثبت‌نام</button>
+      <button type="button" class="btn btn-purple" id="adminPortalBtn" onclick="openAdminPortal()">🛡️ بخش ادمین</button>
+      <button type="button" class="btn btn-green" onclick="showTab('deposit', document.getElementById('navDepositBtn'))">💳 کیف پول</button>
+      <button type="button" class="btn btn-gold" id="authTopBtn" onclick="openAuth('login')">ورود / ثبت‌نام</button>
     </div>
 
     <div class="nav-row">
@@ -384,12 +421,26 @@
       <button class="nav-btn" id="navDepositBtn" onclick="showTab('deposit', this)">💳 واریز/برداشت</button>
       <button class="nav-btn" onclick="showTab('support', this)">🎫 پشتیبانی</button>
       <button class="nav-btn" onclick="showTab('history', this)">📜 تاریخچه</button>
+      <button class="nav-btn admin-only" id="adminConsoleNavBtn" onclick="showTab('admin_console', this)">⚙️ مدیریت کل</button>
       <button class="nav-btn admin-only" id="adminFinanceNavBtn" onclick="showTab('finance', this)">📊 آمار مالی</button>
       <button class="nav-btn admin-only" id="adminUsersNavBtn" onclick="showTab('users', this)">🛡️ کاربران</button>
     </div>
   </header>
 
   <main class="container">
+    <!-- Admin Command Banner (Only visible for logged-in admins) -->
+    <div class="admin-banner" id="adminCommandBanner">
+      <div>
+        <div style="font-size:0.95rem;font-weight:900;color:var(--gold-bright);">⚡ محیط مدیریت مستقل سایت (Admin Command Center)</div>
+        <div style="font-size:0.78rem;color:#e2e8f0;" id="adminSlotsSummary">تعداد ادمین‌های فعال: 1 از 5 ظرفیت مجاز</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button type="button" class="btn btn-gold" onclick="showTab('admin_console', document.getElementById('adminConsoleNavBtn'))">تنظیمات کل سایت</button>
+        <button type="button" class="btn btn-purple" onclick="showTab('finance', document.getElementById('adminFinanceNavBtn'))">آمار مالی</button>
+        <button type="button" class="btn btn-gray" onclick="showTab('users', document.getElementById('adminUsersNavBtn'))">مدیریت کاربران</button>
+      </div>
+    </div>
+
     <!-- VIP, Daily Challenge, Cashback & Promo Code Strip -->
     <div class="vip-strip">
       <div class="vip-box">
@@ -423,7 +474,7 @@
 
       <div class="vip-box">
         <div style="flex:1;">
-          <div style="font-size:0.74rem;color:var(--text-muted);">کد هدیه (کد تست: <span class="mono">SOFYAN100</span>)</div>
+          <div style="font-size:0.74rem;color:var(--text-muted);">کد هدیه (کد پیش‌فرض: <span class="mono">SOFYAN100</span>)</div>
           <div style="display:flex;gap:6px;margin-top:4px;">
             <input type="text" id="promoInput" placeholder="کد هدیه را وارد کنید..." style="padding:6px 8px;font-size:0.78rem;" />
             <button type="button" class="btn btn-purple" style="padding:6px 10px;font-size:0.75rem;" onclick="redeemPromoCode()">اعمال</button>
@@ -908,24 +959,92 @@
       </div>
     </section>
 
-    <!-- 15. ADMIN FINANCE -->
+    <!-- 15. ADMIN CONSOLE (Full Site Administration) -->
+    <section class="section" id="tab-admin_console">
+      <div class="admin-grid">
+        <div class="panel">
+          <h2 style="font-size:1rem;margin-bottom:12px;color:var(--gold-bright);">💳 تنظیمات درگاه کارت به کارت و وضعیت سایت</h2>
+          <form onsubmit="saveSiteConfigAdmin(event)">
+            <div class="field">
+              <label>شماره کارت مقصد (۱۶ رقم)</label>
+              <input type="text" id="cfgCardNumberInput" class="mono" maxlength="16" required />
+            </div>
+            <div class="field">
+              <label>نام صاحب کارت</label>
+              <input type="text" id="cfgCardHolderInput" required />
+            </div>
+            <div class="field">
+              <label>حالت تعمیرات سایت</label>
+              <select id="cfgMaintenanceSelect">
+                <option value="false">فعال و در دسترس (عادی)</option>
+                <option value="true">در حالت تعمیرات (قفل کردن سایت برای کاربران)</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-gold" style="width:100%;">ذخیره تنظیمات سایت</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <h2 style="font-size:1rem;margin-bottom:12px;color:var(--cyan-bright);">🚀 کنترل انفجار و چالش روزانه</h2>
+          <div class="field">
+            <label>ضریب اجباری راند بعدی انفجار (خالی = تصادفی)</label>
+            <input type="number" id="cfgForcedCrashInput" step="0.05" min="1.00" max="50" placeholder="مثال: 1.50 یا 4.20" />
+          </div>
+          <button type="button" class="btn btn-blue" style="width:100%;margin-bottom:14px;" onclick="applyForcedCrashAdmin()">اعمال ضریب راند بعدی</button>
+
+          <hr style="border:none;border-top:1px solid var(--border);margin:10px 0;" />
+
+          <div class="field">
+            <label>مبلغ جایزه چالش روزانه (تومان)</label>
+            <input type="number" id="cfgDailyRewardInput" step="10000" min="10000" />
+          </div>
+          <button type="button" class="btn btn-green" style="width:100%;" onclick="saveDailyRewardAdmin()">ذخیره جایزه چالش روزانه</button>
+        </div>
+
+        <div class="panel">
+          <h2 style="font-size:1rem;margin-bottom:12px;color:#ddd6fe;">🎁 ساخت کد هدیه جدید و لیست کدها</h2>
+          <form onsubmit="createPromoCodeAdmin(event)">
+            <div class="field">
+              <label>کد هدیه (حروف بزرگ/عدد)</label>
+              <input type="text" id="newPromoCodeInput" placeholder="مثال: NOWRUZ200" required />
+            </div>
+            <div class="field">
+              <label>مبلغ هدیه (تومان)</label>
+              <input type="number" id="newPromoAmountInput" value="200000" min="10000" step="10000" required />
+            </div>
+            <button type="submit" class="btn btn-purple" style="width:100%;">ایجاد کد هدیه</button>
+          </form>
+          <div id="adminPromoListBox" style="margin-top:12px;font-size:0.78rem;color:#cbd5e1;"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2 style="font-size:1rem;margin-bottom:12px;">🎫 پاسخگویی سریع به تیکت‌های پشتیبانی</h2>
+        <div id="adminTicketsConsoleList"></div>
+      </div>
+    </section>
+
+    <!-- 16. ADMIN FINANCE -->
     <section class="section" id="tab-finance">
       <div class="panel">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
-          <h2 style="font-size:1.08rem;">📊 داشبورد آمار مالی (ویژه admin)</h2>
+          <h2 style="font-size:1.08rem;">📊 داشبورد آمار مالی (محیط مدیریت)</h2>
           <button type="button" class="btn btn-gold" onclick="renderFinanceStats()">↻ بروزرسانی آمار</button>
         </div>
         <div class="stats-grid" id="financeCardsGrid"></div>
       </div>
     </section>
 
-    <!-- 16. ADMIN USERS -->
+    <!-- 17. ADMIN USERS -->
     <section class="section" id="tab-users">
       <div class="panel">
-        <h2 style="margin-bottom:12px;font-size:1.05rem;">🛡️ مدیریت کاربران (ویژه admin)</h2>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+          <h2 style="font-size:1.05rem;">🛡️ مدیریت کاربران و ادمین‌ها (حداکثر ۵ ادمین)</h2>
+          <span class="admin-pill" id="usersAdminCapPill">ادمین‌ها: 1 / 5</span>
+        </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>شناسه</th><th>نام کاربری</th><th>دمو</th><th>واقعی</th><th>نقش</th><th>عملیات</th></tr></thead>
+            <thead><tr><th>شناسه</th><th>نام کاربری</th><th>دمو</th><th>واقعی</th><th>نقش</th><th>شارژ سریع</th><th>مدیریت نقش</th></tr></thead>
             <tbody id="usersAdminBody"></tbody>
           </table>
         </div>
@@ -933,17 +1052,23 @@
     </section>
   </main>
 
-  <!-- Auth Modal -->
+  <!-- Auth Modal (Supports User Login/Register + Dedicated Admin Login/Register capped at 5 admins) -->
   <div class="modal-bg" id="authModal">
     <div class="modal-card">
       <div class="modal-head">
-        <h3 style="font-size:1rem;">حساب کاربری صوفیان بت</h3>
+        <h3 style="font-size:1rem;" id="authModalTitle">حساب کاربری صوفیان بت</h3>
         <button class="btn btn-gray" onclick="closeAuth()">✕</button>
       </div>
 
       <div class="auth-tabs">
-        <button type="button" class="auth-tab active" id="authTabLogin" onclick="switchAuthMode('login')">ورود</button>
-        <button type="button" class="auth-tab" id="authTabRegister" onclick="switchAuthMode('register')">ثبت‌نام</button>
+        <button type="button" class="auth-tab active" id="authTabLogin" onclick="switchAuthMode('login')">ورود کاربر</button>
+        <button type="button" class="auth-tab" id="authTabRegister" onclick="switchAuthMode('register')">ثبت‌نام کاربر</button>
+        <button type="button" class="auth-tab admin-tab" id="authTabAdmin" onclick="switchAuthMode('admin_login')">ورود / ثبت‌نام ادمین</button>
+      </div>
+
+      <div id="adminAuthSubSwitch" style="display:none;gap:6px;margin-bottom:12px;">
+        <button type="button" class="btn btn-purple" style="flex:1;padding:7px;" id="adminSubLoginBtn" onclick="setAdminAuthAction('login')">ورود ادمین</button>
+        <button type="button" class="btn btn-gold" style="flex:1;padding:7px;" id="adminSubRegBtn" onclick="setAdminAuthAction('register')">ثبت‌نام ادمین جدید</button>
       </div>
 
       <form onsubmit="submitAuthForm(event)">
@@ -955,8 +1080,8 @@
           <label>رمز عبور</label>
           <input type="password" id="authPassInput" required minlength="4" placeholder="حداقل ۴ کاراکتر" />
         </div>
-        <div style="font-size:0.74rem;color:var(--text-muted);margin-bottom:12px;">
-          حساب ادمین پیش‌فرض: <span class="mono">admin / admin123</span>
+        <div style="font-size:0.74rem;color:var(--text-muted);margin-bottom:12px;" id="authHelperNote">
+          ادمین پیش‌فرض: <span class="mono">admin / admin123</span> • سقف ثبت‌نام ادمین: ۵ حساب
         </div>
         <button type="submit" class="btn btn-gold" style="width:100%;" id="authSubmitBtn">ورود به حساب</button>
       </form>
@@ -978,8 +1103,8 @@
 
   <script>
     const STORAGE_KEY = "sofyan_bet_standalone_v1";
+    const MAX_ADMINS = 5;
     const DAILY_GOAL = 5;
-    const DAILY_REWARD = 100000;
     const RED_NUMBERS = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
     const SLOT_SYMBOLS = ["🍒", "🍋", "🔔", "💎", "7️⃣"];
     const WHEEL_SEGMENTS = [
@@ -1012,11 +1137,16 @@
     const defaultState = {
       sessionUsername: "",
       usedPromos: [],
+      promoCodes: {
+        SOFYAN100: 250000,
+        VIP500: 500000
+      },
       config: {
         cardNumber: "6037997410972831",
         cardHolder: "محمد مددی صوفیانی",
         maintenance: false,
-        forcedCrashMult: null
+        forcedCrashMult: null,
+        dailyReward: 100000
       },
       accounts: {
         admin: {
@@ -1040,7 +1170,7 @@
         { id: 1002, mult: 4.12, seed: "seed-1002", hash: makeHash("seed-1002"), time: nowTime() }
       ],
       chat: [
-        { id: "m1", user: "saman_vip", text: "چالش روزانه و جدول برترین‌ها اضافه شد؛ موفق باشید ✅", time: nowTime() }
+        { id: "m1", user: "saman_vip", text: "بخش مدیریت مستقل و چالش روزانه فعال شد ✅", time: nowTime() }
       ],
       bets: [],
       tickets: [
@@ -1049,9 +1179,9 @@
           username: "system",
           topic: "واریز و کیف پول",
           subject: "راهنمای کارت به کارت، VIP، چالش روزانه و رتبه‌بندی",
-          message: "با ثبت ۵ شرط در روز، جایزه ۱۰۰,۰۰۰ تومانی چالش روزانه را دریافت کنید.",
+          message: "با ثبت ۵ شرط در روز، جایزه چالش روزانه را دریافت کنید.",
           status: "پاسخ داده شده",
-          reply: "فیش‌ها و برداشت‌ها با پنل مدیریت همگام‌سازی می‌شوند.",
+          reply: "فیش‌ها و برداشت‌ها در محیط مدیریت قابل بررسی و تایید هستند.",
           time: nowTime()
         }
       ],
@@ -1079,6 +1209,7 @@
         const parsed = JSON.parse(raw);
         const merged = Object.assign(JSON.parse(JSON.stringify(defaultState)), parsed);
         merged.config = Object.assign({}, defaultState.config, merged.config || {});
+        merged.promoCodes = Object.assign({}, defaultState.promoCodes, merged.promoCodes || {});
         merged.usedPromos = Array.isArray(merged.usedPromos) ? merged.usedPromos : [];
         if (!merged.accounts || !merged.accounts.admin) {
           merged.accounts = Object.assign({}, defaultState.accounts, merged.accounts || {});
@@ -1092,6 +1223,7 @@
 
     let state = loadState();
     let authMode = "login";
+    let adminAuthSubAction = "login";
 
     // Crash state
     let crashPhase = "waiting";
@@ -1115,6 +1247,10 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
+    function getAdminCount() {
+      return Object.values(state.accounts).filter((a) => a.role === "admin").length;
+    }
+
     function syncLiveFromAdminStorage() {
       state = loadState();
       applyLiveConfigUI();
@@ -1125,7 +1261,9 @@
     function applyLiveConfigUI() {
       const cfg = state.config || {};
       const maintEl = document.getElementById("maintenanceOverlay");
-      if (maintEl) maintEl.classList.toggle("show", Boolean(cfg.maintenance));
+      if (maintEl) {
+        maintEl.classList.toggle("show", Boolean(cfg.maintenance) && !isAdmin());
+      }
       const cardNumEl = document.getElementById("liveCardNumber");
       const cardHolderEl = document.getElementById("liveCardHolder");
       if (cardNumEl) cardNumEl.textContent = cfg.cardNumber || "6037997410972831";
@@ -1149,7 +1287,7 @@
       el.className = "toast";
       el.textContent = msg;
       document.getElementById("toastWrap").appendChild(el);
-      setTimeout(() => el.remove(), 3000);
+      setTimeout(() => el.remove(), 3200);
     }
 
     function setBetVal(inputId, val) {
@@ -1235,9 +1373,10 @@
       normalizeAccount(u);
       if (u.daily_reward_claimed) { toast("جایزه چالش امروز قبلاً دریافت شده است."); return; }
       if (u.daily_bets_count < DAILY_GOAL) { toast(`برای دریافت جایزه، ${DAILY_GOAL} شرط ثبت کنید.`); return; }
+      const reward = Number(state.config?.dailyReward || 100000);
       u.daily_reward_claimed = true;
-      adjustBalance(u.username, u.wallet_mode, DAILY_REWARD);
-      toast(`تبریک! جایزه چالش روزانه (${fmt(DAILY_REWARD)}) واریز شد.`);
+      adjustBalance(u.username, u.wallet_mode, reward);
+      toast(`تبریک! جایزه چالش روزانه (${fmt(reward)}) واریز شد.`);
     }
 
     function claimCashback() {
@@ -1257,20 +1396,29 @@
       if (!code) { toast("کد هدیه را وارد کنید."); return; }
       const key = `${u.username}:${code}`;
       if (state.usedPromos.includes(key)) { toast("این کد هدیه قبلاً توسط شما استفاده شده است."); return; }
-      if (code === "SOFYAN100" || code === "VIP500") {
-        const bonus = code === "VIP500" ? 500000 : 250000;
+      const bonus = Number(state.promoCodes?.[code] || 0);
+      if (bonus > 0) {
         state.usedPromos.push(key);
         adjustBalance(u.username, u.wallet_mode, bonus);
         document.getElementById("promoInput").value = "";
         toast(`کد هدیه ${code} اعمال شد و ${fmt(bonus)} واریز گردید!`);
       } else {
-        toast("کد هدیه نامعتبر است (کد تست: SOFYAN100).");
+        toast("کد هدیه نامعتبر است.");
+      }
+    }
+
+    function openAdminPortal() {
+      if (isAdmin()) {
+        showTab("admin_console", document.getElementById("adminConsoleNavBtn"));
+      } else {
+        openAuth("admin_login");
       }
     }
 
     function showTab(name, btnEl) {
-      if ((name === "users" || name === "finance") && !isAdmin()) {
-        toast("این بخش فقط برای ادمین مجاز است.");
+      if ((name === "users" || name === "finance" || name === "admin_console") && !isAdmin()) {
+        openAuth("admin_login");
+        toast("برای دسترسی به بخش مدیریت، وارد حساب ادمین شوید.");
         return;
       }
       document.querySelectorAll(".section").forEach((s) => s.classList.remove("active"));
@@ -1279,6 +1427,7 @@
       if (btnEl) btnEl.classList.add("active");
       if (name === "crash") drawCrashCanvas();
       if (name === "leaderboard") renderLeaderboard();
+      if (name === "admin_console") renderAdminConsole();
       if (name === "finance") renderFinanceStats();
       if (name === "users") renderUsersAdmin();
     }
@@ -1298,7 +1447,7 @@
       toast("۵,۰۰۰,۰۰۰ تومان به موجودی دمو اضافه شد.");
     }
 
-    // --- Auth ---
+    // --- Auth & Admin Registration (Max 5 Admins) ---
     function openAuth(mode = "login") {
       switchAuthMode(mode);
       document.getElementById("authUserInput").value = "";
@@ -1308,11 +1457,35 @@
 
     function closeAuth() { document.getElementById("authModal").classList.remove("show"); }
 
+    function setAdminAuthAction(subAct) {
+      adminAuthSubAction = subAct === "register" ? "register" : "login";
+      const adminCnt = getAdminCount();
+      if (adminAuthSubAction === "register") {
+        document.getElementById("authSubmitBtn").textContent = `ثبت‌نام ادمین (${adminCnt}/${MAX_ADMINS})`;
+        document.getElementById("authHelperNote").innerHTML = `ظرفیت ثبت‌نام ادمین: <strong>${adminCnt} از ${MAX_ADMINS}</strong> حساب فعال`;
+      } else {
+        document.getElementById("authSubmitBtn").textContent = "ورود به پنل مدیریت ادمین";
+        document.getElementById("authHelperNote").innerHTML = `ادمین پیش‌فرض: <span class="mono">admin / admin123</span> • سقف کل: ${MAX_ADMINS} ادمین`;
+      }
+    }
+
     function switchAuthMode(mode) {
-      authMode = mode === "register" ? "register" : "login";
+      authMode = ["login", "register", "admin_login"].includes(mode) ? mode : "login";
       document.getElementById("authTabLogin").className = authMode === "login" ? "auth-tab active" : "auth-tab";
       document.getElementById("authTabRegister").className = authMode === "register" ? "auth-tab active" : "auth-tab";
-      document.getElementById("authSubmitBtn").textContent = authMode === "register" ? "ثبت‌نام و ساخت حساب" : "ورود به حساب";
+      document.getElementById("authTabAdmin").className = authMode === "admin_login" ? "auth-tab admin-tab active" : "auth-tab admin-tab";
+
+      const subBox = document.getElementById("adminAuthSubSwitch");
+      if (authMode === "admin_login") {
+        subBox.style.display = "flex";
+        document.getElementById("authModalTitle").textContent = "ورود و ثبت‌نام مدیران سایت (حداکثر ۵ ادمین)";
+        setAdminAuthAction(adminAuthSubAction);
+      } else {
+        subBox.style.display = "none";
+        document.getElementById("authModalTitle").textContent = "حساب کاربری صوفیان بت";
+        document.getElementById("authSubmitBtn").textContent = authMode === "register" ? "ثبت‌نام و ساخت حساب" : "ورود به حساب";
+        document.getElementById("authHelperNote").innerHTML = `ادمین پیش‌فرض: <span class="mono">admin / admin123</span> • سقف ادمین‌ها: ${MAX_ADMINS}`;
+      }
     }
 
     function submitAuthForm(e) {
@@ -1321,6 +1494,60 @@
       const password = document.getElementById("authPassInput").value;
       if (username.length < 3 || password.length < 4) {
         toast("نام کاربری حداقل ۳ کاراکتر و رمز حداقل ۴ کاراکتر باشد.");
+        return;
+      }
+
+      if (authMode === "admin_login" && adminAuthSubAction === "register") {
+        const currentAdmins = getAdminCount();
+        if (currentAdmins >= MAX_ADMINS) {
+          toast(`ظرفیت ثبت‌نام ادمین تکمیل است! حداکثر ${MAX_ADMINS} ادمین مجاز است.`);
+          return;
+        }
+        if (state.accounts[username]) {
+          toast("این نام کاربری قبلاً ثبت شده است.");
+          return;
+        }
+        state.accounts[username] = {
+          id: Object.keys(state.accounts).length + 1,
+          username,
+          password,
+          role: "admin",
+          wallet_mode: "real",
+          demo_balance: 50000000,
+          real_balance: 10000000,
+          wagered: 0,
+          cashback_pool: 0,
+          daily_bets_count: 0,
+          daily_bets_date: todayKey(),
+          daily_reward_claimed: false
+        };
+        state.sessionUsername = username;
+        saveState();
+        closeAuth();
+        applyLiveConfigUI();
+        refreshUI();
+        showTab("admin_console", document.getElementById("adminConsoleNavBtn"));
+        toast(`حساب ادمین ${username} ساخته شد (${getAdminCount()}/${MAX_ADMINS}).`);
+        return;
+      }
+
+      if (authMode === "admin_login") {
+        const existing = state.accounts[username];
+        if (!existing || existing.role !== "admin") {
+          toast("این حساب دسترسی ادمین ندارد یا وجود ندارد.");
+          return;
+        }
+        if (existing.password !== password) {
+          toast("رمز عبور ادمین اشتباه است.");
+          return;
+        }
+        state.sessionUsername = username;
+        saveState();
+        closeAuth();
+        applyLiveConfigUI();
+        refreshUI();
+        showTab("admin_console", document.getElementById("adminConsoleNavBtn"));
+        toast(`خوش آمدید مدیر ${username}`);
         return;
       }
 
@@ -1333,7 +1560,7 @@
           daily_bets_count: 0, daily_bets_date: todayKey(), daily_reward_claimed: false
         };
         state.sessionUsername = username;
-        saveState(); closeAuth(); refreshUI();
+        saveState(); closeAuth(); applyLiveConfigUI(); refreshUI();
         toast(`حساب ${username} با ۱۰ میلیون دمو ساخته شد.`);
         return;
       }
@@ -1342,13 +1569,19 @@
       if (!existing) { toast("حسابی یافت نشد. از تب ثبت‌نام حساب بسازید."); return; }
       if (existing.password !== password) { toast("رمز عبور اشتباه است."); return; }
       state.sessionUsername = username;
-      saveState(); closeAuth(); refreshUI();
+      saveState(); closeAuth(); applyLiveConfigUI(); refreshUI();
       toast(`خوش آمدید ${username}`);
     }
 
     function logoutUser() {
+      const wasAdmin = isAdmin();
       state.sessionUsername = "";
-      saveState(); refreshUI();
+      saveState();
+      applyLiveConfigUI();
+      refreshUI();
+      if (wasAdmin) {
+        showTab("crash", document.querySelector(".nav-btn"));
+      }
       toast("از حساب خارج شدید.");
     }
 
@@ -1881,7 +2114,7 @@
         : "چرخ روی 0x ایستاد — این دور باخت ثبت شد.";
     }
 
-    // --- Deposits, Withdrawals, Tickets, Chat, Admin ---
+    // --- Deposits, Withdrawals, Tickets, Chat, Admin Console ---
     function submitDepositReceipt(e) {
       e.preventDefault();
       const u = currentUser();
@@ -1951,6 +2184,64 @@
       saveState(); renderTickets(); toast("تیکت ارسال شد.");
     }
 
+    function replyTicketAdmin(ticketId) {
+      if (!isAdmin()) return;
+      const inp = document.getElementById("tck-reply-" + ticketId);
+      const t = state.tickets.find((item) => item.id === ticketId);
+      if (!inp || !t || !inp.value.trim()) { toast("متن پاسخ را وارد کنید."); return; }
+      t.reply = inp.value.trim();
+      t.status = "پاسخ داده شده";
+      saveState();
+      renderTickets();
+      renderAdminConsole();
+      toast("پاسخ تیکت ثبت شد.");
+    }
+
+    function saveSiteConfigAdmin(e) {
+      e.preventDefault();
+      if (!isAdmin()) return;
+      const cardNum = document.getElementById("cfgCardNumberInput").value.replace(/\s+/g, "").trim();
+      const cardHolder = document.getElementById("cfgCardHolderInput").value.trim();
+      const maint = document.getElementById("cfgMaintenanceSelect").value === "true";
+      state.config.cardNumber = cardNum || "6037997410972831";
+      state.config.cardHolder = cardHolder || "محمد مددی صوفیانی";
+      state.config.maintenance = maint;
+      saveState();
+      applyLiveConfigUI();
+      toast("تنظیمات کارت و وضعیت سایت ذخیره شد.");
+    }
+
+    function applyForcedCrashAdmin() {
+      if (!isAdmin()) return;
+      const raw = Number(document.getElementById("cfgForcedCrashInput").value);
+      if (!(raw >= 1.0)) { toast("ضریب معتبر (حداقل 1.00) وارد کنید."); return; }
+      state.config.forcedCrashMult = Number(raw.toFixed(2));
+      saveState();
+      toast(`ضریب اجباری راند بعدی انفجار روی ${raw.toFixed(2)}x تنظیم شد.`);
+    }
+
+    function saveDailyRewardAdmin() {
+      if (!isAdmin()) return;
+      const reward = Math.round(Number(document.getElementById("cfgDailyRewardInput").value) || 100000);
+      state.config.dailyReward = Math.max(10000, reward);
+      saveState();
+      refreshUI();
+      toast(`جایزه چالش روزانه روی ${fmt(state.config.dailyReward)} تنظیم شد.`);
+    }
+
+    function createPromoCodeAdmin(e) {
+      e.preventDefault();
+      if (!isAdmin()) return;
+      const code = document.getElementById("newPromoCodeInput").value.trim().toUpperCase();
+      const amt = Math.round(Number(document.getElementById("newPromoAmountInput").value) || 0);
+      if (!code || !(amt >= 10000)) { toast("کد و مبلغ معتبر وارد کنید."); return; }
+      state.promoCodes[code] = amt;
+      document.getElementById("newPromoCodeInput").value = "";
+      saveState();
+      renderAdminConsole();
+      toast(`کد هدیه ${code} (${fmt(amt)}) فعال شد.`);
+    }
+
     function sendChat(e) {
       e.preventDefault();
       const inp = document.getElementById("chatInput");
@@ -1962,13 +2253,26 @@
       saveState(); renderChat();
     }
 
+    function giftUserBalanceAdmin(username) {
+      if (!isAdmin() || !state.accounts[username]) return;
+      adjustBalance(username, "real", 1000000);
+      renderUsersAdmin();
+      toast(`۱,۰۰۰,۰۰۰ تومان به حساب واقعی ${username} واریز شد.`);
+    }
+
     function changeUserRole(username) {
       if (!isAdmin()) return;
       const sel = document.getElementById("role-sel-" + username);
       if (!sel || !state.accounts[username]) return;
-      state.accounts[username].role = sel.value;
+      const targetRole = sel.value;
+      if (targetRole === "admin" && state.accounts[username].role !== "admin" && getAdminCount() >= MAX_ADMINS) {
+        sel.value = "user";
+        toast(`حداکثر ${MAX_ADMINS} ادمین می‌توانند در سایت فعال باشند.`);
+        return;
+      }
+      state.accounts[username].role = targetRole;
       saveState(); renderUsersAdmin(); refreshUI();
-      toast(`نقش ${username} به‌روزرسانی شد.`);
+      toast(`نقش ${username} به ${targetRole} تغییر یافت.`);
     }
 
     // --- Renders ---
@@ -1976,6 +2280,33 @@
       if (status === "approved") return `<span class="badge-status st-approved">تایید شده</span>`;
       if (status === "rejected") return `<span class="badge-status st-rejected">رد شده</span>`;
       return `<span class="badge-status st-pending">در انتظار بررسی</span>`;
+    }
+
+    function renderAdminConsole() {
+      if (!isAdmin()) return;
+      document.getElementById("cfgCardNumberInput").value = state.config.cardNumber || "";
+      document.getElementById("cfgCardHolderInput").value = state.config.cardHolder || "";
+      document.getElementById("cfgMaintenanceSelect").value = String(Boolean(state.config.maintenance));
+      document.getElementById("cfgDailyRewardInput").value = String(state.config.dailyReward || 100000);
+
+      const promoEntries = Object.entries(state.promoCodes || {});
+      document.getElementById("adminPromoListBox").innerHTML = promoEntries.length
+        ? promoEntries.map(([k, v]) => `<div class="mono" style="margin-top:4px;">${escapeHtml(k)} → ${fmt(v)}</div>`).join("")
+        : "کدی ثبت نشده است.";
+
+      document.getElementById("adminTicketsConsoleList").innerHTML = state.tickets.map((t) => `
+        <div class="ticket-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+            <strong>${escapeHtml(t.subject)} <span style="color:var(--text-muted);font-size:0.75rem;">(${escapeHtml(t.username)})</span></strong>
+            <span class="badge-status st-approved">${escapeHtml(t.status)}</span>
+          </div>
+          <div style="font-size:0.8rem;color:#cbd5e1;margin-bottom:8px;">${escapeHtml(t.message)}</div>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="tck-reply-${escapeHtml(t.id)}" value="${escapeHtml(t.reply || "")}" placeholder="پاسخ مدیر به این تیکت..." />
+            <button type="button" class="btn btn-green" onclick="replyTicketAdmin('${escapeHtml(t.id)}')">ثبت پاسخ</button>
+          </div>
+        </div>
+      `).join("");
     }
 
     function renderLeaderboard() {
@@ -2124,6 +2455,9 @@
 
     function renderUsersAdmin() {
       const body = document.getElementById("usersAdminBody");
+      const capPill = document.getElementById("usersAdminCapPill");
+      const adminCnt = getAdminCount();
+      if (capPill) capPill.textContent = `ادمین‌ها: ${adminCnt} / ${MAX_ADMINS}`;
       if (!body) return;
       const users = Object.values(state.accounts);
       body.innerHTML = users.map((u) => `
@@ -2133,6 +2467,9 @@
           <td>${fmt(u.demo_balance)}</td>
           <td>${fmt(u.real_balance)}</td>
           <td class="mono">${escapeHtml(u.role)}</td>
+          <td>
+            <button type="button" class="btn btn-green" style="padding:5px 9px;font-size:0.74rem;" onclick="giftUserBalanceAdmin('${escapeHtml(u.username)}')">+۱م واقعی</button>
+          </td>
           <td>
             <select id="role-sel-${escapeHtml(u.username)}" style="width:auto;padding:4px 8px;font-size:0.78rem;">
               <option value="user" ${u.role === "user" ? "selected" : ""}>user</option>
@@ -2147,6 +2484,18 @@
     function refreshUI() {
       const u = currentUser();
       const mode = currentMode();
+      const showAdmin = isAdmin();
+      const adminCnt = getAdminCount();
+
+      document.body.classList.toggle("admin-workspace", showAdmin);
+      document.getElementById("adminCommandBanner").classList.toggle("show", showAdmin);
+      document.getElementById("adminSlotsSummary").textContent = `تعداد ادمین‌های فعال: ${adminCnt} از ${MAX_ADMINS} ظرفیت مجاز • مدیریت کامل سایت فعال است`;
+      document.getElementById("brandBadge").textContent = showAdmin ? "A" : "S";
+      document.getElementById("brandTitleText").textContent = showAdmin ? "مرکز مدیریت صوفیان بت • ADMIN" : "صوفیان بت • SOFYAN.BET";
+      document.getElementById("roleBadgePill").className = showAdmin ? "admin-pill" : "status-pill";
+      document.getElementById("roleBadgePill").textContent = showAdmin ? `ADMIN (${adminCnt}/${MAX_ADMINS})` : "Provably Fair";
+      document.getElementById("adminPortalBtn").textContent = showAdmin ? "⚙️ پنل مدیریت" : "🛡️ ورود/ثبت‌نام ادمین";
+
       document.getElementById("balanceDisplay").textContent = fmt(activeBalance());
       document.getElementById("modeDemoBtn").className = mode === "demo" ? "mode-btn active-demo" : "mode-btn";
       document.getElementById("modeRealBtn").className = mode === "real" ? "mode-btn active-real" : "mode-btn";
@@ -2157,6 +2506,7 @@
       document.getElementById("cashbackClaimableText").textContent = fmt(u?.cashback_pool || 0);
 
       const doneBets = Math.min(DAILY_GOAL, Number(u?.daily_bets_count || 0));
+      const rewardK = Math.round(Number(state.config?.dailyReward || 100000) / 1000);
       document.getElementById("dailyChallengeProgressText").textContent = `${doneBets}/${DAILY_GOAL}`;
       document.getElementById("dailyChallengeBar").style.width = `${(doneBets / DAILY_GOAL) * 100}%`;
       const claimBtn = document.getElementById("claimChallengeBtn");
@@ -2168,7 +2518,7 @@
         claimBtn.textContent = "دریافت جایزه";
       } else {
         claimBtn.disabled = true;
-        claimBtn.textContent = "جایزه ۱۰۰ه";
+        claimBtn.textContent = `جایزه ${rewardK}ه`;
       }
 
       if (u) {
@@ -2185,12 +2535,13 @@
         document.getElementById("logoutBtn").style.display = "none";
       }
 
-      const showAdmin = isAdmin();
+      document.getElementById("adminConsoleNavBtn").classList.toggle("visible", showAdmin);
       document.getElementById("adminUsersNavBtn").classList.toggle("visible", showAdmin);
       document.getElementById("adminFinanceNavBtn").classList.toggle("visible", showAdmin);
 
       renderRounds(); renderChat(); renderDeposits(); renderWithdrawals();
       renderTickets(); renderMyBets(); renderLeaderboard(); renderFinanceStats(); renderUsersAdmin();
+      if (showAdmin) renderAdminConsole();
     }
 
     setInterval(() => {
