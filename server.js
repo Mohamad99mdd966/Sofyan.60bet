@@ -10,22 +10,30 @@ const server = http.createServer((req, res) => {
 
 const wss = new WebSocketServer({ server });
 
-// Shared server state across all connected devices
+// ثابت نگه‌داشتن نقطه شروع راندها برای هماهنگی پایدار بین همه کاربران و ری‌استارت‌ها
+const ROUND_EPOCH_MS = 1767225600000;
+const WAITING_MS = 2200;
+const CRASH_PAUSE_MS = 2200;
+
 const sharedState = {
   secretCode: "11228",
   ownerActor: null,
-  subAdmins: {}, // username -> { username, rank, perms }
+  subAdmins: {},
+  deposits: [],
+  withdrawals: [],
+  usersBalanceAdjustments: {}, // username -> { demoDelta, realDelta, wageredDelta }
+  auditLogs: [],
   chat: {
     locked: false,
     slowModeSec: 0,
     pinnedId: null,
-    mutedUsers: {}, // username -> expiresAtMs
+    mutedUsers: {},
     messages: [
       {
         id: "m_server_init",
         user: "سیستم",
         isAdmin: true,
-        text: "سرور همگام‌سازی راند و چت زنده متصل شد.",
+        text: "سرور همگام‌سازی راند و چت زنده برای همه کاربران فعال است.",
         time: new Date().toLocaleTimeString("fa-IR"),
         deleted: false
       }
@@ -34,7 +42,17 @@ const sharedState = {
   crashHistory: [1.42, 2.85, 1.18, 4.60, 1.94, 3.12]
 };
 
-const userLastChatMap = new Map(); // username -> lastSentMs
+const userLastChatMap = new Map();
+let lastRecordedRound = -1;
+
+function addServerAudit(actor, action) {
+  sharedState.auditLogs.unshift({
+    time: new Date().toLocaleTimeString("fa-IR"),
+    actor: actor || "سیستم",
+    action
+  });
+  if (sharedState.auditLogs.length > 100) sharedState.auditLogs.pop();
+}
 
 function deterministicCrashPoint(roundIndex, secretSalt = "sofyan_crash_v1") {
   const hash = crypto
@@ -52,16 +70,10 @@ function getCrashDurationMs(targetMult) {
   return Math.max(1400, Math.min(18000, Math.pow(targetMult - 1.0, 0.72) * 2600 + 1400));
 }
 
-// Authoritative server round engine
-const ROUND_EPOCH_MS = Date.now() - 1000;
-const WAITING_MS = 2200;
-const CRASH_PAUSE_MS = 2200;
-let lastRecordedRound = -1;
-
 function getAuthoritativeRoundSnapshot(nowMs = Date.now()) {
   const avgSpan = 6500;
   const approxIdx = Math.max(0, Math.floor((nowMs - ROUND_EPOCH_MS) / avgSpan));
-  let idx = Math.max(0, approxIdx - 10);
+  let idx = Math.max(0, approxIdx - 12);
   let cursor = ROUND_EPOCH_MS + idx * avgSpan;
 
   while (true) {
@@ -97,7 +109,10 @@ function getAuthoritativeRoundSnapshot(nowMs = Date.now()) {
     }
     cursor += totalMs;
     idx += 1;
+    if (idx > approxIdx + 30) break;
   }
+
+  return { roundIndex: approxIdx, phase: "waiting", mult: 1.0, target: 2.0, progressRatio: 0, remainingSec: 1.0 };
 }
 
 function broadcast(packetObj) {
@@ -125,17 +140,28 @@ function sanitizeChatForBroadcast() {
   return sharedState.chat;
 }
 
+function getSharedPayload() {
+  return {
+    ownerActor: sharedState.ownerActor,
+    subAdmins: sharedState.subAdmins,
+    deposits: sharedState.deposits,
+    withdrawals: sharedState.withdrawals,
+    usersBalanceAdjustments: sharedState.usersBalanceAdjustments,
+    auditLogs: sharedState.auditLogs,
+    chat: sanitizeChatForBroadcast(),
+    crashHistory: sharedState.crashHistory
+  };
+}
+
 wss.on("connection", (ws) => {
   ws.username = "مهمان";
   ws.adminSession = null;
 
-  // Send immediate sync on connect
   ws.send(
     JSON.stringify({
       type: "SYNC_INIT",
       round: getAuthoritativeRoundSnapshot(),
-      chat: sanitizeChatForBroadcast(),
-      crashHistory: sharedState.crashHistory
+      shared: getSharedPayload()
     })
   );
 
@@ -164,21 +190,24 @@ wss.on("connection", (ws) => {
         ws.adminSession = {
           actor,
           isOwner: true,
-          rank: "ادمین اصلی",
+          rank: "ادمین اصلی (مالک کل)",
           perms: { approveDep: true, manageWd: true, grantBal: true, modChat: true }
         };
-        ws.send(JSON.stringify({ type: "ADMIN_SESSION", session: ws.adminSession }));
-        broadcast({ type: "TOAST", message: `${actor} به‌عنوان ادمین اصلی ثبت شد` });
+        addServerAudit(actor, "ثبت به‌عنوان ادمین اصلی با کد مخفی");
+        ws.send(JSON.stringify({ type: "ADMIN_SESSION", session: ws.adminSession, secretCode: sharedState.secretCode }));
+        broadcast({ type: "SHARED_SYNC", shared: getSharedPayload(), toast: `${actor} به‌عنوان ادمین اصلی منصوب شد` });
         return;
       }
       if (sharedState.ownerActor === actor) {
         ws.adminSession = {
           actor,
           isOwner: true,
-          rank: "ادمین اصلی",
+          rank: "ادمین اصلی (مالک کل)",
           perms: { approveDep: true, manageWd: true, grantBal: true, modChat: true }
         };
-        ws.send(JSON.stringify({ type: "ADMIN_SESSION", session: ws.adminSession }));
+        addServerAudit(actor, "ورود ادمین اصلی به پنل مدیریت");
+        ws.send(JSON.stringify({ type: "ADMIN_SESSION", session: ws.adminSession, secretCode: sharedState.secretCode }));
+        broadcast({ type: "SHARED_SYNC", shared: getSharedPayload() });
         return;
       }
       if (sharedState.subAdmins[actor]) {
@@ -188,10 +217,101 @@ wss.on("connection", (ws) => {
           rank: sharedState.subAdmins[actor].rank,
           perms: { ...sharedState.subAdmins[actor].perms }
         };
+        addServerAudit(actor, `ورود ادمین درجه‌دار (${sharedState.subAdmins[actor].rank})`);
         ws.send(JSON.stringify({ type: "ADMIN_SESSION", session: ws.adminSession }));
+        broadcast({ type: "SHARED_SYNC", shared: getSharedPayload() });
         return;
       }
       ws.send(JSON.stringify({ type: "TOAST", message: "کد صحیح است اما درجه ادمین برای این کاربر ثبت نشده است" }));
+      return;
+    }
+
+    if (data.type === "ADMIN_UPDATE_SECRET" && ws.adminSession && ws.adminSession.isOwner) {
+      const nextCode = String(data.secretCode || "").trim();
+      if (nextCode.length >= 3) {
+        sharedState.secretCode = nextCode;
+        addServerAudit(ws.adminSession.actor, "تغییر کد مخفی مدیریت");
+        ws.send(JSON.stringify({ type: "ADMIN_SESSION", session: ws.adminSession, secretCode: sharedState.secretCode }));
+        broadcast({ type: "SHARED_SYNC", shared: getSharedPayload(), toast: "کد مخفی جدید ذخیره شد" });
+      }
+      return;
+    }
+
+    if (data.type === "ADMIN_ASSIGN_SUBADMIN" && ws.adminSession && ws.adminSession.isOwner) {
+      const uname = String(data.username || "").trim();
+      const rank = String(data.rank || "ناظر").trim();
+      const perms = data.perms || { approveDep: true, manageWd: false, grantBal: false, modChat: true };
+      if (uname) {
+        sharedState.subAdmins[uname] = { username: uname, rank, perms };
+        addServerAudit(ws.adminSession.actor, `اعطای درجه «${rank}» به ${uname}`);
+        broadcast({ type: "SHARED_SYNC", shared: getSharedPayload(), toast: `درجه «${rank}» برای ${uname} ثبت شد` });
+      }
+      return;
+    }
+
+    if (data.type === "ADMIN_REMOVE_SUBADMIN" && ws.adminSession && ws.adminSession.isOwner) {
+      const uname = String(data.username || "").trim();
+      if (uname && sharedState.subAdmins[uname]) {
+        delete sharedState.subAdmins[uname];
+        addServerAudit(ws.adminSession.actor, `حذف دسترسی ادمین ${uname}`);
+        broadcast({ type: "SHARED_SYNC", shared: getSharedPayload(), toast: `دسترسی ${uname} حذف شد` });
+      }
+      return;
+    }
+
+    if (data.type === "DEPOSIT_CREATE" && data.deposit) {
+      sharedState.deposits.unshift(data.deposit);
+      if (sharedState.deposits.length > 150) sharedState.deposits.pop();
+      broadcast({ type: "SHARED_SYNC", shared: getSharedPayload() });
+      return;
+    }
+
+    if (data.type === "WITHDRAW_CREATE" && data.withdrawal) {
+      sharedState.withdrawals.unshift(data.withdrawal);
+      if (sharedState.withdrawals.length > 150) sharedState.withdrawals.pop();
+      broadcast({ type: "SHARED_SYNC", shared: getSharedPayload() });
+      return;
+    }
+
+    if (data.type === "ADMIN_DECIDE_DEPOSIT" && ws.adminSession && (ws.adminSession.isOwner || ws.adminSession.perms?.approveDep)) {
+      const item = sharedState.deposits.find((d) => d.id === data.id);
+      if (item && item.status === "pending") {
+        item.status = data.approve ? "approved" : "rejected";
+        if (data.approve) {
+          const u = item.user || "مهمان";
+          sharedState.usersBalanceAdjustments[u] = sharedState.usersBalanceAdjustments[u] || { demoDelta: 0, realDelta: 0, wageredDelta: 0 };
+          sharedState.usersBalanceAdjustments[u].realDelta += Number(item.amount || 0);
+        }
+        addServerAudit(ws.adminSession.actor, `${data.approve ? "تایید" : "رد"} واریز ${item.amount} برای ${item.user}`);
+        broadcast({ type: "SHARED_SYNC", shared: getSharedPayload(), toast: data.approve ? "واریز تایید شد" : "واریز رد شد" });
+      }
+      return;
+    }
+
+    if (data.type === "ADMIN_DECIDE_WITHDRAW" && ws.adminSession && (ws.adminSession.isOwner || ws.adminSession.perms?.manageWd)) {
+      const item = sharedState.withdrawals.find((w) => w.id === data.id);
+      if (item && item.status === "pending") {
+        item.status = data.approve ? "approved" : "rejected";
+        if (!data.approve) {
+          const u = item.user || "مهمان";
+          sharedState.usersBalanceAdjustments[u] = sharedState.usersBalanceAdjustments[u] || { demoDelta: 0, realDelta: 0, wageredDelta: 0 };
+          sharedState.usersBalanceAdjustments[u].realDelta += Number(item.amount || 0);
+        }
+        addServerAudit(ws.adminSession.actor, `${data.approve ? "پرداخت" : "رد"} برداشت ${item.amount} برای ${item.user}`);
+        broadcast({ type: "SHARED_SYNC", shared: getSharedPayload(), toast: data.approve ? "برداشت پرداخت شد" : "برداشت رد و برگشت داده شد" });
+      }
+      return;
+    }
+
+    if (data.type === "ADMIN_GRANT_REAL" && ws.adminSession && (ws.adminSession.isOwner || ws.adminSession.perms?.grantBal)) {
+      const u = String(data.username || "").trim();
+      const amt = Number(data.amount || 500000);
+      if (u) {
+        sharedState.usersBalanceAdjustments[u] = sharedState.usersBalanceAdjustments[u] || { demoDelta: 0, realDelta: 0, wageredDelta: 0 };
+        sharedState.usersBalanceAdjustments[u].realDelta += amt;
+        addServerAudit(ws.adminSession.actor, `شارژ ${amt} واقعی برای ${u}`);
+        broadcast({ type: "SHARED_SYNC", shared: getSharedPayload(), toast: `${amt.toLocaleString("fa-IR")} واقعی به ${u} اضافه شد` });
+      }
       return;
     }
 
@@ -202,7 +322,7 @@ wss.on("connection", (ws) => {
 
       const isAdmin = isClientAdminWithChatPerm(ws);
       if (sharedState.chat.locked && !isAdmin) {
-        ws.send(JSON.stringify({ type: "TOAST", message: "چت زنده قفل است" }));
+        ws.send(JSON.stringify({ type: "TOAST", message: "چت زنده توسط مدیریت قفل شده است" }));
         return;
       }
 
@@ -237,29 +357,32 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    // Admin chat moderation commands
     if (data.type === "MOD_DELETE_MSG" && isClientAdminWithChatPerm(ws)) {
       const msg = sharedState.chat.messages.find((m) => m.id === data.msgId);
       if (msg) msg.deleted = true;
       if (sharedState.chat.pinnedId === data.msgId) sharedState.chat.pinnedId = null;
+      addServerAudit(ws.adminSession.actor, "حذف پیام در چت زنده");
       broadcast({ type: "CHAT_SYNC", chat: sanitizeChatForBroadcast() });
       return;
     }
 
     if (data.type === "MOD_PIN_MSG" && isClientAdminWithChatPerm(ws)) {
       sharedState.chat.pinnedId = data.msgId || null;
+      addServerAudit(ws.adminSession.actor, "پین کردن پیام در چت زنده");
       broadcast({ type: "CHAT_SYNC", chat: sanitizeChatForBroadcast() });
       return;
     }
 
     if (data.type === "MOD_TOGGLE_LOCK" && isClientAdminWithChatPerm(ws)) {
       sharedState.chat.locked = !sharedState.chat.locked;
+      addServerAudit(ws.adminSession.actor, sharedState.chat.locked ? "قفل چت زنده" : "باز کردن چت زنده");
       broadcast({ type: "CHAT_SYNC", chat: sanitizeChatForBroadcast() });
       return;
     }
 
     if (data.type === "MOD_TOGGLE_SLOW" && isClientAdminWithChatPerm(ws)) {
       sharedState.chat.slowModeSec = sharedState.chat.slowModeSec > 0 ? 0 : Number(data.seconds || 5);
+      addServerAudit(ws.adminSession.actor, sharedState.chat.slowModeSec > 0 ? "فعال‌سازی حالت آهسته چت" : "غیرفعال‌سازی حالت آهسته چت");
       broadcast({ type: "CHAT_SYNC", chat: sanitizeChatForBroadcast() });
       return;
     }
@@ -267,6 +390,7 @@ wss.on("connection", (ws) => {
     if (data.type === "MOD_CLEAR_CHAT" && isClientAdminWithChatPerm(ws)) {
       sharedState.chat.messages = [];
       sharedState.chat.pinnedId = null;
+      addServerAudit(ws.adminSession.actor, "پاک‌سازی کامل چت زنده");
       broadcast({ type: "CHAT_SYNC", chat: sanitizeChatForBroadcast() });
       return;
     }
@@ -274,21 +398,26 @@ wss.on("connection", (ws) => {
     if (data.type === "MOD_MUTE_USER" && isClientAdminWithChatPerm(ws)) {
       const target = String(data.username || "").trim();
       const mins = Math.max(1, Number(data.minutes || 10));
-      if (target) sharedState.chat.mutedUsers[target] = Date.now() + mins * 60000;
+      if (target) {
+        sharedState.chat.mutedUsers[target] = Date.now() + mins * 60000;
+        addServerAudit(ws.adminSession.actor, `میوت ${target} به مدت ${mins} دقیقه`);
+      }
       broadcast({ type: "CHAT_SYNC", chat: sanitizeChatForBroadcast() });
       return;
     }
 
     if (data.type === "MOD_UNMUTE_USER" && isClientAdminWithChatPerm(ws)) {
       const target = String(data.username || "").trim();
-      if (target) delete sharedState.chat.mutedUsers[target];
+      if (target) {
+        delete sharedState.chat.mutedUsers[target];
+        addServerAudit(ws.adminSession.actor, `رفع میوت ${target}`);
+      }
       broadcast({ type: "CHAT_SYNC", chat: sanitizeChatForBroadcast() });
       return;
     }
   });
 });
 
-// Broadcast authoritative Crash tick 10 times/sec to every connected client
 setInterval(() => {
   const snap = getAuthoritativeRoundSnapshot(Date.now());
   if (snap.phase === "crashed" && lastRecordedRound !== snap.roundIndex) {
@@ -304,5 +433,5 @@ setInterval(() => {
 }, 100);
 
 server.listen(PORT, () => {
-  console.log(`Sofyan WebSocket Server running on ws://localhost:${PORT}`);
+  console.log(`Sofyan WebSocket Server running on port ${PORT}`);
 });
