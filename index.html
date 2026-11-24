@@ -3,468 +3,527 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>صوفیان بت • SOFYAN LIVE — همگام‌سازی کامل با سرور</title>
+  <title>صوفیان بت — پلتفرم آنلاین</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <style>
     :root {
-      --bg-950: #040711;
-      --bg-900: #080d1b;
-      --border: rgba(148, 163, 184, 0.16);
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --gold: #f59e0b;
-      --gold-bright: #fde047;
-      --emerald: #10b981;
-      --emerald-bright: #34d399;
-      --cyan: #06b6d4;
-      --cyan-bright: #67e8f9;
-      --rose: #f43f5e;
-      --rose-bright: #fda4af;
-      --violet: #8b5cf6;
-      --violet-bright: #c4b5fd;
+      --bg: #eef4fb;
+      --bg-card: #ffffff;
+      --bg-subtle: #f4f8fc;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #dbe5f0;
+      --neon-primary: #0284c7;
+      --neon-emerald: #059669;
+      --neon-rose: #e11d48;
+      --neon-violet: #7c3aed;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { min-height: 100%; background: var(--bg-950); color: var(--text); font-family: "Vazirmatn", Tahoma, system-ui, sans-serif; line-height: 1.55; overflow-x: hidden; }
-    body::before {
-      content: ""; position: fixed; inset: 0; z-index: -1;
-      background:
-        radial-gradient(circle at 14% 12%, rgba(245, 158, 11, 0.16), transparent 36%),
-        radial-gradient(circle at 86% 16%, rgba(16, 185, 129, 0.15), transparent 40%),
-        linear-gradient(180deg, #050814 0%, #070c1b 55%, #040711 100%);
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
     }
-
-    button, input, select, textarea { font-family: inherit; color: var(--text); }
-    button { cursor: pointer; border: none; background: none; transition: transform 0.14s ease, opacity 0.2s ease, border-color 0.2s ease; }
-    button:active:not(:disabled) { transform: scale(0.97); }
-    button:disabled { opacity: 0.45; cursor: not-allowed; }
-
-    input, select, textarea {
-      width: 100%; background: rgba(5, 9, 20, 0.88); border: 1px solid rgba(148, 163, 184, 0.22);
-      border-radius: 12px; padding: 9px 12px; font-size: 0.85rem; outline: none;
-    }
-    input[type="checkbox"] { width: auto; accent-color: var(--emerald-bright); }
-    input:focus, select:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.16); }
 
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; direction: ltr; unicode-bidi: embed; }
-    .app-shell { max-width: 1560px; margin: 0 auto; padding: 12px 16px 44px; }
 
-    .glass-panel {
-      background: linear-gradient(155deg, rgba(17, 27, 52, 0.85), rgba(8, 13, 27, 0.93));
-      backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 20px;
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    .container { max-width: 1280px; margin: 0 auto; padding: 14px; }
+
+    .app-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 6px 24px rgba(15, 23, 42, 0.05);
     }
 
-    .launcher-bar {
-      position: sticky; top: 10px; z-index: 50; padding: 10px 14px; margin-bottom: 12px;
-      border-radius: 18px; background: rgba(8, 13, 27, 0.92); backdrop-filter: blur(18px);
-      border: 1px solid rgba(251, 191, 36, 0.28); box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
-    }
-    .launcher-main { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-
-    .brand-trigger {
-      display: flex; align-items: center; gap: 10px; padding: 6px 12px 6px 8px; border-radius: 14px;
-      background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(16, 185, 129, 0.12));
-      border: 1px solid rgba(251, 191, 36, 0.35); text-align: right;
-    }
-    .brand-mark {
-      width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center;
-      font-weight: 900; font-size: 1.15rem; color: #070b14;
-      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
-    }
-    .brand-trigger-title { font-weight: 900; font-size: 0.96rem; color: var(--gold-bright); display: flex; align-items: center; gap: 6px; }
-    .brand-trigger-hint { font-size: 0.72rem; color: var(--muted); }
-    .launcher-quick-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-
-    .wallet-pill {
-      padding: 8px 13px; border-radius: 13px; font-size: 0.82rem; font-weight: 800; color: var(--emerald-bright);
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(6, 78, 59, 0.24));
-      border: 1px solid rgba(52, 211, 153, 0.38); white-space: nowrap;
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      margin-bottom: 12px;
     }
 
-    .mode-switch { display: inline-flex; padding: 3px; border-radius: 12px; background: rgba(5, 9, 19, 0.92); border: 1px solid var(--border); }
-    .mode-btn { padding: 5px 10px; border-radius: 9px; font-size: 0.75rem; font-weight: 800; color: var(--muted); }
-    .mode-btn.active-demo { background: linear-gradient(135deg, var(--cyan-bright), var(--cyan)); color: #041521; }
-    .mode-btn.active-real { background: linear-gradient(135deg, var(--emerald-bright), var(--emerald)); color: #041f14; }
+    .brand-box { display: flex; align-items: center; gap: 10px; }
+    .brand-title { font-size: 1.08rem; font-weight: 900; color: var(--neon-primary); }
+    .brand-sub { font-size: 0.76rem; color: var(--muted); }
+
+    .top-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: var(--bg-subtle);
+    }
+    .pill-ok { color: var(--neon-emerald); border-color: #a7f3d0; background: #ecfdf5; }
+    .pill-warn { color: var(--neon-rose); border-color: #fecdd3; background: #fff1f2; }
+    .pill-info { color: var(--neon-primary); border-color: #bae6fd; background: #f0f9ff; }
+    .pill-admin { color: var(--neon-violet); border-color: #ddd6fe; background: #f5f3ff; }
+
+    .mode-switch {
+      display: inline-flex;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2px;
+    }
+    .mode-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .mode-btn.active-demo { background: #e0f2fe; color: var(--neon-primary); }
+    .mode-btn.active-real { background: #d1fae5; color: var(--neon-emerald); }
 
     .btn {
-      padding: 8px 13px; border-radius: 12px; font-size: 0.8rem; font-weight: 800;
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      padding: 8px 13px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.15s ease;
     }
-    .btn-sm { padding: 5px 9px; font-size: 0.72rem; border-radius: 9px; }
-    .btn-gold { background: linear-gradient(135deg, var(--gold-bright), var(--gold)); color: #080c15; }
-    .btn-green { background: linear-gradient(135deg, var(--emerald-bright), var(--emerald)); color: #041d12; }
-    .btn-cyan { background: linear-gradient(135deg, var(--cyan-bright), var(--cyan)); color: #041926; }
-    .btn-rose { background: linear-gradient(135deg, var(--rose-bright), var(--rose)); color: #fff; }
-    .btn-violet { background: linear-gradient(135deg, var(--violet-bright), var(--violet)); color: #fff; }
-    .btn-ghost { background: rgba(21, 32, 61, 0.82); border: 1px solid var(--border); color: var(--text); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-sm { padding: 5px 10px; font-size: 0.75rem; border-radius: 9px; }
+    .btn-neon { background: var(--neon-primary); color: #fff; }
+    .btn-emerald { background: var(--neon-emerald); color: #fff; }
+    .btn-rose { background: var(--neon-rose); color: #fff; }
+    .btn-ghost { background: var(--bg-subtle); color: var(--text); border-color: var(--border); }
 
-    .collapsible-drawer { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
-    .collapsible-drawer.open { display: block; }
-    .drawer-meta-row {
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;
-      margin-bottom: 10px; padding: 10px 12px; border-radius: 14px;
-      background: rgba(6, 10, 22, 0.75); border: 1px solid var(--border);
+    .drawer { display: none; padding: 12px 16px; margin-bottom: 12px; }
+    .drawer.open { display: block; }
+
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 8px;
+      margin-bottom: 12px;
     }
-
-    .pill { font-size: 0.72rem; font-weight: 800; padding: 4px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px; }
-    .pill-fair { background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(52, 211, 153, 0.4); color: var(--emerald-bright); }
-    .pill-live { background: rgba(6, 182, 212, 0.14); border: 1px solid rgba(103, 232, 249, 0.4); color: var(--cyan-bright); }
-    .pill-admin { background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(196, 181, 253, 0.48); color: var(--violet-bright); }
-    .pill-gold { background: rgba(245, 158, 11, 0.16); border: 1px solid rgba(251, 191, 36, 0.45); color: var(--gold-bright); }
-    .pill-warn { background: rgba(244, 63, 94, 0.16); border: 1px solid rgba(253, 164, 175, 0.45); color: var(--rose-bright); }
-
-    .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 7px; }
-    .nav-tab { padding: 9px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: 800; background: rgba(16, 25, 48, 0.85); border: 1px solid var(--border); color: #cbd5e1; text-align: center; }
-    .nav-tab.active { background: linear-gradient(135deg, var(--gold-bright), var(--gold)); color: #080c15; border-color: var(--gold-bright); }
-
-    #sec-admin { display: none; margin-bottom: 16px; border: 1px solid rgba(196, 181, 253, 0.45); }
-    #sec-admin.unlocked { display: block; }
-
-    .live-ticker {
-      display: flex; align-items: center; gap: 10px; overflow-x: auto; scrollbar-width: none;
-      padding: 8px 14px; margin-bottom: 10px; border-radius: 14px;
-      background: rgba(8, 14, 28, 0.86); border: 1px solid rgba(16, 185, 129, 0.25); font-size: 0.76rem;
+    .nav-tab {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
-    .ticker-badge { padding: 3px 9px; border-radius: 8px; font-weight: 900; background: rgba(245, 158, 11, 0.18); border: 1px solid rgba(251, 191, 36, 0.42); color: var(--gold-bright); white-space: nowrap; }
-    .ticker-item { color: #cbd5e1; white-space: nowrap; }
-    .ticker-item strong { color: var(--emerald-bright); }
+    .nav-tab.active {
+      background: #e0f2fe;
+      color: var(--neon-primary);
+      border-color: #bae6fd;
+    }
 
     .section { display: none; }
     .section.active { display: block; }
+    #sec-admin:not(.unlocked) { display: none !important; }
 
-    .crash-layout { display: grid; grid-template-columns: minmax(0, 1.72fr) minmax(340px, 1fr); gap: 14px; align-items: start; }
-    .stage-card { padding: 14px; }
-    .stage-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-    .stage-title-group { display: flex; align-items: center; gap: 10px; }
-    .stage-icon { width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; font-size: 1.25rem; background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(244, 63, 94, 0.18)); border: 1px solid rgba(251, 191, 36, 0.35); }
-
-    .crash-canvas-box { position: relative; width: 100%; height: 320px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(251, 191, 36, 0.28); background: #040712; }
-    canvas.hd-canvas { width: 100%; height: 100%; display: block; }
-    .crash-hud { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; text-align: center; padding: 12px; }
-    .crash-mult-readout { font-size: clamp(2.4rem, 7vw, 4.3rem); font-weight: 900; line-height: 1.05; color: var(--gold-bright); }
-    .crash-mult-readout.state-waiting { color: var(--cyan-bright); }
-    .crash-mult-readout.state-crashed { color: var(--rose-bright); }
-    .crash-sub-readout { margin-top: 6px; padding: 4px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 800; background: rgba(5, 9, 20, 0.78); border: 1px solid rgba(148, 163, 184, 0.25); color: #e2e8f0; }
-
-    .history-strip { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-    .h-badge { padding: 4px 10px; border-radius: 999px; font-size: 0.74rem; font-weight: 800; background: rgba(15, 23, 42, 0.85); border: 1px solid var(--border); }
-    .h-badge.hi { color: var(--emerald-bright); border-color: rgba(52, 211, 153, 0.42); }
-    .h-badge.lo { color: var(--rose-bright); border-color: rgba(244, 63, 94, 0.4); }
-
-    .dual-bet-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
-    .bet-slot { padding: 12px; border-radius: 16px; background: rgba(11, 18, 36, 0.86); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
-    .bet-slot-head { display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; font-weight: 800; }
-    .quick-row { display: flex; flex-wrap: wrap; gap: 5px; }
-    .chip-btn { padding: 4px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; background: rgba(21, 32, 61, 0.85); border: 1px solid var(--border); color: #cbd5e1; }
-
-    .game-arena { display: grid; grid-template-columns: minmax(290px, 380px) minmax(0, 1fr); gap: 14px; align-items: start; }
-    .field-group { margin-bottom: 10px; }
-    .field-label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 5px; font-weight: 700; }
-    .field-error { font-size: 0.72rem; color: var(--rose-bright); margin-top: 4px; min-height: 16px; }
-
-    .mines-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; max-width: 390px; margin: 0 auto 12px; }
-    .mine-cell { aspect-ratio: 1 / 1; border-radius: 14px; font-size: 1.25rem; font-weight: 900; display: grid; place-items: center; background: linear-gradient(145deg, rgba(27, 41, 77, 0.92), rgba(13, 21, 42, 0.95)); border: 1px solid rgba(148, 163, 184, 0.25); }
-    .mine-cell.safe { background: radial-gradient(circle, rgba(52, 211, 153, 0.34), rgba(6, 78, 59, 0.65)); border-color: var(--emerald-bright); color: var(--emerald-bright); }
-    .mine-cell.mine { background: radial-gradient(circle, rgba(244, 63, 94, 0.36), rgba(136, 19, 55, 0.65)); border-color: var(--rose-bright); color: var(--rose-bright); }
-
-    .big-readout { text-align: center; padding: 18px 12px; border-radius: 16px; background: rgba(6, 11, 23, 0.8); border: 1px solid var(--border); margin-bottom: 12px; }
-    .big-num { font-size: clamp(2.1rem, 6vw, 3.3rem); font-weight: 900; color: var(--cyan-bright); }
-
-    .cards-flex { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; min-height: 82px; align-items: center; margin: 10px 0; }
-    .play-card { width: 58px; height: 82px; border-radius: 12px; background: linear-gradient(160deg, #ffffff, #e2e8f0); color: #090d16; border: 1px solid #cbd5e1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 900; font-size: 1rem; }
-    .play-card.red { color: #dc2626; }
-
-    .plinko-buckets { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-top: 10px; }
-    .plinko-slot { padding: 9px 4px; border-radius: 10px; text-align: center; font-size: 0.78rem; font-weight: 900; color: var(--gold-bright); background: rgba(16, 25, 48, 0.88); border: 1px solid var(--border); }
-    .plinko-slot.active-hit { background: rgba(16, 185, 129, 0.25); border-color: var(--emerald-bright); color: var(--emerald-bright); }
-
-    /* TakBet-style Football Styles */
-    .fb-top-bar {
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
-      margin-bottom: 12px; padding: 10px 12px; border-radius: 16px;
-      background: rgba(7, 12, 26, 0.85); border: 1px solid var(--border);
-    }
-    .fb-filter-group { display: flex; flex-wrap: wrap; gap: 6px; }
-    .fb-filter-btn {
-      padding: 6px 12px; border-radius: 10px; font-size: 0.78rem; font-weight: 800;
-      background: rgba(18, 28, 54, 0.85); border: 1px solid var(--border); color: #cbd5e1;
-    }
-    .fb-filter-btn.active {
-      background: linear-gradient(135deg, var(--emerald-bright), var(--emerald)); color: #041e13; border-color: var(--emerald-bright);
-    }
-    .fb-search-box { max-width: 240px; }
-
-    .fb-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(310px, 1fr); gap: 14px; align-items: start; }
-    .matches-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; margin-bottom: 12px; max-height: 290px; overflow-y: auto; padding-left: 2px; }
-    .match-tile { padding: 10px 12px; border-radius: 14px; text-align: right; background: rgba(13, 21, 42, 0.85); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px; }
-    .match-tile.selected { border-color: var(--emerald-bright); background: rgba(16, 185, 129, 0.12); }
-    .match-live-tag { font-size: 0.68rem; font-weight: 900; padding: 1px 7px; border-radius: 999px; background: rgba(244, 63, 94, 0.2); color: var(--rose-bright); }
-    .match-pre-tag { font-size: 0.68rem; font-weight: 800; padding: 1px 7px; border-radius: 999px; background: rgba(6, 182, 212, 0.18); color: var(--cyan-bright); }
-
-    .pitch-box { width: 100%; height: 220px; border-radius: 15px; overflow: hidden; border: 1px solid rgba(52, 211, 153, 0.38); margin: 10px 0; }
-    .market-block-title { font-size: 0.8rem; font-weight: 800; color: var(--muted); margin: 10px 0 6px; }
-    .odds-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 8px; }
-    .odd-card { padding: 9px 6px; border-radius: 12px; background: rgba(16, 25, 48, 0.88); border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.78rem; }
-    .odd-card strong { font-size: 0.88rem; color: var(--emerald-bright); }
-    .odd-card.picked { border-color: var(--gold-bright); background: rgba(245, 158, 11, 0.16); }
-
-    .slip-summary-box {
-      padding: 10px 12px; border-radius: 14px; margin-bottom: 10px;
-      background: rgba(5, 9, 20, 0.85); border: 1px solid rgba(251, 191, 36, 0.28); font-size: 0.8rem;
-    }
-    .slip-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; }
-
-    .wallet-tabs { display: inline-flex; gap: 6px; padding: 4px; border-radius: 14px; background: rgba(5, 9, 20, 0.85); border: 1px solid var(--border); margin-bottom: 14px; flex-wrap: wrap; }
-    .sub-tab-btn { padding: 8px 14px; border-radius: 10px; font-size: 0.8rem; font-weight: 800; color: var(--muted); }
-    .sub-tab-btn.active { background: linear-gradient(135deg, var(--gold-bright), var(--gold)); color: #080c15; }
-    .method-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-    .method-chip { padding: 6px 11px; border-radius: 10px; font-size: 0.76rem; font-weight: 800; background: rgba(16, 25, 48, 0.85); border: 1px solid var(--border); color: #cbd5e1; }
-    .method-chip.active { border-color: var(--emerald-bright); background: rgba(16, 185, 129, 0.18); color: var(--emerald-bright); }
-    .wallet-split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; }
-    .bank-card-box { padding: 16px; border-radius: 18px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(16, 185, 129, 0.12), rgba(10, 16, 32, 0.92)); border: 1px solid rgba(251, 191, 36, 0.45); margin-bottom: 12px; }
-    .card-digits { font-size: 1.15rem; font-weight: 900; letter-spacing: 2px; color: var(--gold-bright); margin: 6px 0; }
-
-    .status-badge { padding: 3px 9px; border-radius: 999px; font-size: 0.72rem; font-weight: 800; display: inline-block; }
-    .st-pending { background: rgba(245, 158, 11, 0.2); color: var(--gold-bright); }
-    .st-approved { background: rgba(16, 185, 129, 0.2); color: var(--emerald-bright); }
-    .st-rejected { background: rgba(244, 63, 94, 0.2); color: var(--rose-bright); }
-
-    .chat-wrap { display: flex; flex-direction: column; height: 560px; }
-    .pinned-banner { padding: 8px 10px; border-radius: 12px; background: rgba(245, 158, 11, 0.14); border: 1px solid rgba(251, 191, 36, 0.35); font-size: 0.76rem; color: var(--gold-bright); margin-bottom: 8px; display: none; align-items: center; justify-content: space-between; gap: 8px; }
-    .pinned-banner.visible { display: flex; }
-    .mod-toolbar { display: none; flex-wrap: wrap; gap: 6px; padding: 8px; margin-bottom: 8px; border-radius: 12px; background: rgba(139, 92, 246, 0.12); border: 1px solid rgba(196, 181, 253, 0.32); font-size: 0.74rem; }
-    .mod-toolbar.active { display: flex; }
-    .chat-stream { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 14px; background: rgba(5, 9, 20, 0.82); border: 1px solid var(--border); margin-bottom: 10px; }
-    .chat-bubble { padding: 8px 10px; border-radius: 12px; background: rgba(20, 31, 58, 0.85); border: 1px solid rgba(148, 163, 184, 0.14); font-size: 0.8rem; }
-    .chat-bubble-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 3px; }
-    .chat-mod-actions { display: inline-flex; gap: 4px; flex-wrap: wrap; }
-    .chat-mod-btn { padding: 2px 6px; border-radius: 6px; font-size: 0.68rem; font-weight: 800; background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(148, 163, 184, 0.25); color: #e2e8f0; }
-
-    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 14px; }
-    .stat-box { padding: 12px; border-radius: 14px; background: rgba(14, 23, 44, 0.82); border: 1px solid var(--border); }
-    .perm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; margin: 8px 0 12px; }
-    .perm-check { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 12px; background: rgba(5, 9, 20, 0.75); border: 1px solid var(--border); font-size: 0.78rem; }
-    .table-scroll { width: 100%; overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 580px; font-size: 0.8rem; }
-    th, td { padding: 9px 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.14); text-align: right; }
-    th { color: var(--muted); }
-
-    .modal-backdrop { position: fixed; inset: 0; z-index: 90; background: rgba(2, 5, 13, 0.84); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 14px; }
-    .modal-backdrop.open { display: flex; }
-    .modal-card { width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto; padding: 20px; }
-    .auth-switcher { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px; border-radius: 13px; background: rgba(5, 9, 20, 0.9); border: 1px solid var(--border); margin-bottom: 14px; }
-    .auth-switch-btn { padding: 8px; border-radius: 10px; font-size: 0.82rem; font-weight: 800; color: var(--muted); }
-    .auth-switch-btn.active { background: linear-gradient(135deg, var(--gold-bright), var(--gold)); color: #080c15; }
-    .auth-box-note { padding: 10px 12px; border-radius: 12px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(52, 211, 153, 0.25); font-size: 0.75rem; color: #cbd5e1; margin-bottom: 12px; }
-
-    .toast-stack { position: fixed; bottom: 16px; left: 16px; right: 16px; z-index: 120; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
-    .toast-item { max-width: 390px; padding: 10px 14px; border-radius: 12px; background: rgba(15, 23, 42, 0.94); border: 1px solid rgba(251, 191, 36, 0.45); border-right: 4px solid var(--gold-bright); font-size: 0.82rem; }
+    .crash-layout { display: grid; grid-template-columns: 1.65fr 1fr; gap: 12px; }
+    .game-arena { display: grid; grid-template-columns: 360px 1fr; gap: 12px; }
+    .fb-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; }
+    .wallet-split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 
     @media (max-width: 980px) {
-      .crash-layout, .game-arena, .fb-grid, .wallet-split { grid-template-columns: 1fr; }
-      .crash-canvas-box { height: 250px; }
-      .chat-wrap { height: 420px; }
+      .crash-layout, .game-arena, .fb-grid, .wallet-split, .admin-grid { grid-template-columns: 1fr; }
     }
-    @media (max-width: 600px) {
-      .dual-bet-grid, .odds-row { grid-template-columns: 1fr; }
-      .app-shell { padding: 10px 10px 32px; }
+
+    .stage-card { padding: 14px; }
+
+    .crash-stage {
+      position: relative;
+      height: 290px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #f8fbff;
+      margin-bottom: 10px;
     }
+    .hd-canvas { width: 100%; height: 100%; display: block; }
+
+    .crash-hud {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      text-align: center;
+      padding: 12px;
+    }
+    .crash-mult-readout { font-size: 2.8rem; font-weight: 900; color: var(--neon-primary); text-shadow: 0 2px 12px rgba(255,255,255,0.9); }
+    .crash-mult-readout.state-waiting { color: var(--muted); font-size: 2rem; }
+    .crash-mult-readout.state-crashed { color: var(--neon-rose); }
+    .crash-sub-readout { font-size: 0.84rem; font-weight: 700; color: var(--text); background: rgba(255,255,255,0.85); padding: 3px 10px; border-radius: 999px; }
+
+    .history-strip { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .h-badge { padding: 4px 8px; border-radius: 8px; font-size: 0.76rem; font-weight: 800; }
+    .h-badge.hi { background: #dcfce7; color: #15803d; }
+    .h-badge.lo { background: #fee2e2; color: #b91c1c; }
+
+    .dual-bet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 640px) { .dual-bet-grid { grid-template-columns: 1fr; } }
+
+    .bet-slot {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .bet-slot-head { display: flex; justify-content: space-between; align-items: center; font-weight: 800; }
+
+    .field-group { margin-bottom: 10px; }
+    .field-label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.84rem;
+    }
+
+    .quick-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+    .chip-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .chat-wrap { display: flex; flex-direction: column; height: 100%; min-height: 430px; }
+    .chat-stream {
+      flex: 1;
+      max-height: 320px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 8px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+    .chat-bubble { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; font-size: 0.82rem; }
+    .chat-bubble-top { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 3px; }
+    .chat-mod-actions { display: inline-flex; gap: 4px; }
+    .chat-mod-btn { border: 1px solid var(--border); background: var(--bg-subtle); border-radius: 6px; padding: 2px 6px; font-size: 0.68rem; cursor: pointer; font-weight: 700; }
+
+    .pinned-banner {
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      font-size: 0.76rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .pinned-banner.visible { display: flex; }
+
+    .mod-toolbar {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 7px 10px;
+      border-radius: 10px;
+      background: #f5f3ff;
+      border: 1px solid #ddd6fe;
+      margin-bottom: 8px;
+      font-size: 0.76rem;
+    }
+    .mod-toolbar.active { display: flex; }
+
+    .mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; max-width: 360px; margin: 0 auto 12px; }
+    .mine-cell {
+      aspect-ratio: 1;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-subtle);
+      color: var(--muted);
+      font-size: 1.05rem;
+      cursor: pointer;
+    }
+    .mine-cell.safe { background: #dcfce7; color: #15803d; border-color: #86efac; }
+    .mine-cell.mine { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+
+    .big-readout { text-align: center; padding: 24px 12px; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 10px; }
+    .big-num { font-size: 2rem; font-weight: 900; color: var(--neon-primary); }
+
+    .cards-flex { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; min-height: 76px; align-items: center; margin: 8px 0; }
+    .play-card {
+      width: 54px;
+      height: 74px;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.95rem;
+    }
+    .play-card.red { color: var(--neon-rose); }
+
+    .plinko-buckets { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .plinko-slot { text-align: center; padding: 8px 4px; border-radius: 10px; background: var(--bg-subtle); border: 1px solid var(--border); font-size: 0.76rem; font-weight: 800; }
+    .plinko-slot.active-hit { background: #d1fae5; color: var(--neon-emerald); border-color: #6ee7b7; }
+
+    .fb-top-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+    .fb-filter-group { display: flex; gap: 6px; flex-wrap: wrap; }
+    .fb-filter-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      border-radius: 10px;
+      padding: 6px 10px;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .fb-filter-btn.active { background: #e0f2fe; color: var(--neon-primary); border-color: #bae6fd; }
+    .fb-search-box { min-width: 220px; }
+
+    .matches-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; margin-bottom: 12px; }
+    .match-tile {
+      text-align: right;
+      border: 1px solid var(--border);
+      background: var(--bg-subtle);
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .match-tile.selected { border-color: var(--neon-primary); background: #f0f9ff; }
+    .match-live-tag { background: #dcfce7; color: #15803d; padding: 1px 6px; border-radius: 999px; font-size: 0.68rem; font-weight: 800; }
+    .match-pre-tag { background: #e2e8f0; color: #334155; padding: 1px 6px; border-radius: 999px; font-size: 0.68rem; font-weight: 800; }
+
+    .pitch-box { height: 150px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); margin: 10px 0; }
+
+    .market-block-title { font-size: 0.76rem; font-weight: 800; color: var(--muted); margin: 8px 0 4px; }
+    .odds-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .odd-card {
+      border: 1px solid var(--border);
+      background: var(--bg-subtle);
+      border-radius: 10px;
+      padding: 7px 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 0.74rem;
+    }
+    .odd-card.picked { border-color: var(--neon-primary); background: #e0f2fe; color: var(--neon-primary); }
+
+    .slip-summary-box { background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; margin: 8px 0; font-size: 0.78rem; }
+    .slip-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .slip-row:last-child { margin-bottom: 0; }
+
+    .wallet-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .sub-tab-btn {
+      border: 1px solid var(--border);
+      background: var(--bg-subtle);
+      color: var(--muted);
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .sub-tab-btn.active { background: var(--neon-primary); color: #fff; border-color: var(--neon-primary); }
+
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+    @media (max-width: 640px) { .stats-row { grid-template-columns: 1fr; } }
+    .stat-box { background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 14px; padding: 12px; }
+
+    .bank-card-box {
+      background: linear-gradient(135deg, #f0f9ff 0%, #eff6ff 100%);
+      border: 1px solid #bae6fd;
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .card-digits { font-size: 1.15rem; font-weight: 900; letter-spacing: 2px; color: var(--text); text-align: center; }
+
+    .method-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+    .method-chip {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-family: inherit;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .method-chip.active { background: #d1fae5; color: var(--neon-emerald); border-color: #6ee7b7; }
+
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    th, td { padding: 8px; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap; }
+    th { background: var(--bg-subtle); color: var(--muted); font-weight: 800; }
+
+    .status-badge { padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 800; }
+    .st-pending { background: #fef3c7; color: #92400e; }
+    .st-approved { background: #dcfce7; color: #15803d; }
+    .st-rejected { background: #fee2e2; color: #b91c1c; }
+
+    .perm-check { display: inline-flex; align-items: center; gap: 5px; font-size: 0.78rem; cursor: pointer; }
+    .perm-check input { width: auto; }
+    .audit-log-box { max-height: 150px; overflow-y: auto; background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 8px; font-size: 0.74rem; }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-card { width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto; padding: 18px; }
+
+    .auth-switcher { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; background: var(--bg-subtle); padding: 4px; border-radius: 12px; }
+    .auth-switch-btn { border: none; background: transparent; padding: 8px; border-radius: 9px; font-family: inherit; font-weight: 800; font-size: 0.82rem; cursor: pointer; color: var(--muted); }
+    .auth-switch-btn.active { background: #fff; color: var(--neon-primary); box-shadow: 0 2px 8px rgba(15,23,42,0.06); }
+    .auth-box-note { background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; font-size: 0.76rem; color: var(--muted); margin-bottom: 10px; }
+    .field-error { color: var(--neon-rose); font-size: 0.76rem; font-weight: 700; margin-bottom: 8px; min-height: 18px; }
+
+    .toast-stack { position: fixed; bottom: 16px; left: 16px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; }
+    .toast-item { background: #0f172a; color: #fff; padding: 9px 14px; border-radius: 12px; font-size: 0.8rem; font-weight: 700; transition: opacity 0.25s ease; }
   </style>
 </head>
 <body>
-  <div class="app-shell">
-    <header class="launcher-bar">
-      <div class="launcher-main">
-        <button type="button" class="brand-trigger" onclick="toggleBrandDrawer()" aria-expanded="false" id="brandDrawerBtn">
-          <div class="brand-mark">S</div>
-          <div>
-            <div class="brand-trigger-title">
-              <span>صوفیان بت • SOFYAN LIVE</span>
-              <span id="drawerArrow" style="font-size:0.75rem;color:var(--muted);">▾</span>
-            </div>
-            <div class="brand-trigger-hint" id="headerAccountSubtitle">منوی اصلی • ورود یا ثبت‌نام حساب کاربری</div>
-          </div>
+  <div class="container">
+    <header class="app-card topbar">
+      <div class="brand-box">
+        <button type="button" class="btn btn-ghost btn-sm" id="brandDrawerBtn" aria-expanded="false" onclick="toggleBrandDrawer()">
+          <i class="fa-solid fa-bolt"></i>
+          <span>صوفیان بت</span>
+          <span id="drawerArrow"><i class="fa-solid fa-chevron-down"></i></span>
         </button>
-
-        <div class="launcher-quick-actions">
-          <div class="mode-switch">
-            <button type="button" class="mode-btn active-demo" id="demoModeBtn" onclick="setWalletMode('demo')">دمو</button>
-            <button type="button" class="mode-btn" id="realModeBtn" onclick="setWalletMode('real')">واقعی</button>
-          </div>
-          <div class="wallet-pill" id="walletReadout">10,000,000 تومان</div>
-          <button type="button" class="btn btn-green" onclick="openWalletSubTab('deposit')">واریز</button>
-          <button type="button" class="btn btn-cyan" onclick="openWalletSubTab('withdraw')">برداشت</button>
-          <button type="button" class="btn btn-gold" id="authLoginBtn" onclick="openAuthModal('login')">ورود</button>
-          <button type="button" class="btn btn-cyan" id="authRegisterBtn" onclick="openAuthModal('register')">ثبت‌نام</button>
+        <div>
+          <div class="brand-title">سامانه زنده بازی و پیش‌بینی</div>
+          <div class="brand-sub" id="headerAccountSubtitle">وب اپلیکیشن همگام با سرور • ورود یا ثبت‌نام</div>
         </div>
       </div>
 
-      <div class="collapsible-drawer" id="brandDrawer">
-        <div class="drawer-meta-row">
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <span id="sessionText" style="font-size:0.8rem;font-weight:700;">وضعیت: مهمان</span>
-            <span class="pill pill-fair">همگام‌سازی کامل با سرور</span>
-            <span class="pill pill-warn" id="serverWsPill">سرور: در حال اتصال...</span>
-            <span class="pill pill-live" id="chatStatusBadge">چت زنده</span>
-            <span class="pill pill-admin" id="adminRoleBadge" style="display:none;">دسترسی مدیریتی فعال</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-            <button type="button" class="btn btn-ghost" id="soundBtn" onclick="toggleSound()">🔊 صدا روشن</button>
-            <button type="button" class="btn btn-rose" id="logoutBtn" style="display:none;" onclick="logoutUser()">خروج از حساب</button>
-          </div>
+      <div class="top-actions">
+        <span class="pill pill-info" id="serverWsPill"><i class="fa-solid fa-plug"></i><span>سرور: در حال اتصال...</span></span>
+        <span class="pill pill-admin" id="adminRoleBadge" style="display:none;"><i class="fa-solid fa-user-shield"></i><span>ادمین فعال</span></span>
+
+        <div class="mode-switch">
+          <button type="button" class="mode-btn active-demo" id="demoModeBtn" onclick="setWalletMode('demo')">دمو</button>
+          <button type="button" class="mode-btn" id="realModeBtn" onclick="setWalletMode('real')">واقعی</button>
         </div>
 
-        <nav class="nav-grid" id="mainNav">
-          <button type="button" class="nav-tab active" data-tab="crash" onclick="openTabById('crash')">🚀 انفجار</button>
-          <button type="button" class="nav-tab" data-tab="mines" onclick="openTabById('mines')">💣 مین‌روب</button>
-          <button type="button" class="nav-tab" data-tab="dice" onclick="openTabById('dice')">🎲 تاس</button>
-          <button type="button" class="nav-tab" data-tab="roulette" onclick="openTabById('roulette')">🎡 رولت</button>
-          <button type="button" class="nav-tab" data-tab="slots" onclick="openTabById('slots')">🎰 اسلات</button>
-          <button type="button" class="nav-tab" data-tab="blackjack" onclick="openTabById('blackjack')">🃏 بلک‌جک</button>
-          <button type="button" class="nav-tab" data-tab="plinko" onclick="openTabById('plinko')">🟢 پینکلو</button>
-          <button type="button" class="nav-tab" data-tab="football" onclick="openTabById('football')">⚽ فوتبال زنده</button>
-          <button type="button" class="nav-tab" data-tab="wallet" onclick="openTabById('wallet')">💳 واریز و برداشت</button>
-          <button type="button" class="nav-tab" data-tab="support" onclick="openTabById('support')">🎧 پشتیبانی</button>
-        </nav>
+        <span class="pill" id="walletReadout">10,000,000 تومان</span>
+
+        <button type="button" class="btn btn-neon btn-sm" id="authLoginBtn" onclick="openAuthModal('login')">ورود</button>
+        <button type="button" class="btn btn-emerald btn-sm" id="authRegisterBtn" onclick="openAuthModal('register')">ثبت‌نام</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="logoutBtn" style="display:none;" onclick="logoutUser()">خروج</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="soundBtn" onclick="toggleSound()"><i class="fa-solid fa-volume-high"></i><span>صدا روشن</span></button>
       </div>
     </header>
 
-    <!-- Secret Admin Panel -->
-    <div class="glass-panel stage-card" id="sec-admin">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+    <div class="app-card drawer" id="brandDrawer">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
         <div>
-          <h2 style="font-size:1.08rem;font-weight:900;color:var(--violet-bright);">🛡️ پنل مدیریت مخفی صوفیان بت</h2>
-          <div style="font-size:0.78rem;color:var(--muted);" id="adminSessionSummary">وضعیت سطح دسترسی</div>
+          <strong id="sessionText">وضعیت: مهمان</strong>
+          <span style="margin-right:10px;font-size:0.78rem;color:var(--muted);" id="tickerRoundInfo">راند سرور <strong>#0</strong></span>
         </div>
-        <button type="button" class="btn btn-ghost" onclick="closeAdminPanel()">بستن پنل مدیریت</button>
-      </div>
-
-      <div id="ownerControlsBox" style="display:none;margin-bottom:16px;padding:14px;border-radius:16px;background:rgba(139,92,246,0.08);border:1px solid rgba(196,181,253,0.28);">
-        <div class="wallet-split" style="margin-bottom:12px;">
-          <div class="bet-slot">
-            <strong style="color:var(--gold-bright);font-size:0.9rem;">تغییر کد مخفی فعال‌سازی مدیریت</strong>
-            <div style="font-size:0.76rem;color:var(--muted);">کد فعلی: <span class="mono" id="currentSecretCodeDisplay" style="color:var(--gold-bright);">11228</span></div>
-            <div class="field-group" style="margin-bottom:4px;">
-              <label class="field-label">کد مخفی جدید</label>
-              <input type="text" id="newSecretCodeInput" placeholder="مثلاً: 998877" />
-            </div>
-            <button type="button" class="btn btn-gold" onclick="updateSecretCode()">ذخیره کد مخفی جدید</button>
-          </div>
-
-          <form onsubmit="assignSubAdmin(event)" class="bet-slot">
-            <strong style="color:var(--violet-bright);font-size:0.9rem;">اعطای درجه و امکانات به ادمین جدید</strong>
-            <div class="field-group" style="margin-bottom:4px;">
-              <label class="field-label">نام کاربری یا شناسه شخص</label>
-              <input type="text" id="subAdminUserInput" placeholder="مثلاً: ali_mod" required />
-            </div>
-            <div class="field-group" style="margin-bottom:4px;">
-              <label class="field-label">درجه ادمین</label>
-              <select id="subAdminRankSelect">
-                <option value="ناظر">درجه ۱ — ناظر</option>
-                <option value="پشتیبان مالی">درجه ۲ — پشتیبان مالی</option>
-                <option value="مدیر ارشد">درجه ۳ — مدیر ارشد</option>
-              </select>
-            </div>
-            <div class="perm-grid">
-              <label class="perm-check"><input type="checkbox" id="permApproveDep" checked /><span>تایید / رد واریزها</span></label>
-              <label class="perm-check"><input type="checkbox" id="permManageWd" /><span>مدیریت برداشت وجه</span></label>
-              <label class="perm-check"><input type="checkbox" id="permGrantBal" /><span>شارژ موجودی کاربران</span></label>
-              <label class="perm-check"><input type="checkbox" id="permModChat" checked /><span>مدیریت کامل چت زنده</span></label>
-            </div>
-            <button type="submit" class="btn btn-violet">ثبت ادمین و امکانات</button>
-          </form>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-emerald btn-sm" onclick="openWalletSubTab('deposit')">واریز وجه</button>
+          <button type="button" class="btn btn-neon btn-sm" onclick="openWalletSubTab('withdraw')">برداشت وجه</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="openTabById('support')">پشتیبانی</button>
         </div>
-
-        <h3 style="font-size:0.9rem;font-weight:900;color:var(--violet-bright);margin-bottom:8px;">لیست ادمین‌های درجه‌بندی‌شده</h3>
-        <div class="table-scroll">
-          <table>
-            <thead><tr><th>کاربر</th><th>درجه</th><th>امکانات فعال</th><th>حذف</th></tr></thead>
-            <tbody id="subAdminsTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="adminChatControlBox" style="margin-bottom:16px;padding:14px;border-radius:16px;background:rgba(6,182,212,0.08);border:1px solid rgba(103,232,249,0.28);">
-        <h3 style="font-size:0.92rem;font-weight:900;color:var(--cyan-bright);margin-bottom:10px;">💬 کنترل پنل ادمین روی چت زنده</h3>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px;">
-          <button type="button" class="btn btn-sm btn-gold" onclick="toggleChatLock()">قفل / باز کردن چت</button>
-          <button type="button" class="btn btn-sm btn-cyan" onclick="toggleSlowMode()">حالت آهسته (۵ ثانیه)</button>
-          <button type="button" class="btn btn-sm btn-rose" onclick="clearAllChatMessages()">پاک‌سازی کل چت</button>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-          <input type="text" id="muteUserInput" placeholder="نام کاربری برای میوت / آن‌میوت" style="max-width:220px;" />
-          <input type="number" id="muteMinutesInput" value="10" min="1" max="1440" style="max-width:100px;" />
-          <button type="button" class="btn btn-sm btn-rose" onclick="muteUserFromAdmin()">میوت کاربر (دقیقه)</button>
-          <button type="button" class="btn btn-sm btn-green" onclick="unmuteUserFromAdmin()">رفع میوت</button>
-        </div>
-        <div id="mutedUsersList" style="margin-top:8px;font-size:0.76rem;color:var(--muted);">کاربر میوت‌شده‌ای وجود ندارد.</div>
-      </div>
-
-      <div class="stats-row">
-        <div class="stat-box"><div style="font-size:0.74rem;color:var(--muted);">کاربران ثبت‌شده</div><div style="font-size:1.1rem;font-weight:900;color:var(--gold-bright);" id="adminUserCount">0</div></div>
-        <div class="stat-box"><div style="font-size:0.74rem;color:var(--muted);">درخواست‌های واریز</div><div style="font-size:1.1rem;font-weight:900;color:var(--emerald-bright);" id="adminDepCount">0</div></div>
-        <div class="stat-box"><div style="font-size:0.74rem;color:var(--muted);">درخواست‌های برداشت</div><div style="font-size:1.1rem;font-weight:900;color:var(--cyan-bright);" id="adminWdCount">0</div></div>
-      </div>
-
-      <div id="adminDepositsSection" style="margin-bottom:16px;">
-        <h3 style="font-size:0.92rem;font-weight:900;color:var(--emerald-bright);margin-bottom:8px;">تایید یا رد درخواست‌های واریز</h3>
-        <div class="table-scroll">
-          <table>
-            <thead><tr><th>زمان</th><th>کاربر</th><th>روش</th><th>مبلغ</th><th>کد پیگیری</th><th>وضعیت</th><th>اقدام</th></tr></thead>
-            <tbody id="adminDepositsBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="adminWithdrawsSection" style="margin-bottom:16px;">
-        <h3 style="font-size:0.92rem;font-weight:900;color:var(--cyan-bright);margin-bottom:8px;">تایید یا رد درخواست‌های برداشت</h3>
-        <div class="table-scroll">
-          <table>
-            <thead><tr><th>زمان</th><th>کاربر</th><th>روش</th><th>مبلغ</th><th>مقصد</th><th>وضعیت</th><th>اقدام</th></tr></thead>
-            <tbody id="adminWithdrawsBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="adminUsersSection" style="margin-bottom:16px;">
-        <h3 style="font-size:0.92rem;font-weight:900;color:var(--gold-bright);margin-bottom:8px;">مدیریت موجودی کاربران</h3>
-        <div class="table-scroll">
-          <table>
-            <thead><tr><th>نام کاربری</th><th>تماس</th><th>موجودی واقعی</th><th>موجودی دمو</th><th>عملیات</th></tr></thead>
-            <tbody id="adminUsersBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div>
-        <h3 style="font-size:0.92rem;font-weight:900;color:var(--violet-bright);margin-bottom:8px;">لاگ عملیات مدیریتی</h3>
-        <div id="adminAuditLogBox" style="max-height:150px;overflow-y:auto;font-size:0.76rem;color:#cbd5e1;"></div>
       </div>
     </div>
 
-    <div class="live-ticker" id="liveTicker">
-      <span class="ticker-badge">پخش زنده سرور</span>
-      <span class="ticker-item" id="tickerRoundInfo">در انتظار دریافت راند از سرور...</span>
-    </div>
+    <nav class="app-card nav-tabs">
+      <button type="button" class="nav-tab active" data-tab="crash" onclick="openTabById('crash')"><i class="fa-solid fa-chart-line"></i><span>کرش</span></button>
+      <button type="button" class="nav-tab" data-tab="mines" onclick="openTabById('mines')"><i class="fa-solid fa-bomb"></i><span>مین‌روب</span></button>
+      <button type="button" class="nav-tab" data-tab="dice" onclick="openTabById('dice')"><i class="fa-solid fa-dice"></i><span>تاس</span></button>
+      <button type="button" class="nav-tab" data-tab="roulette" onclick="openTabById('roulette')"><i class="fa-solid fa-dharmachakra"></i><span>رولت</span></button>
+      <button type="button" class="nav-tab" data-tab="slots" onclick="openTabById('slots')"><i class="fa-solid fa-gem"></i><span>اسلات</span></button>
+      <button type="button" class="nav-tab" data-tab="blackjack" onclick="openTabById('blackjack')"><i class="fa-solid fa-club"></i><span>بلک‌جک</span></button>
+      <button type="button" class="nav-tab" data-tab="plinko" onclick="openTabById('plinko')"><i class="fa-solid fa-circle-dot"></i><span>پینکلو</span></button>
+      <button type="button" class="nav-tab" data-tab="football" onclick="openTabById('football')"><i class="fa-solid fa-futbol"></i><span>فوتبال</span></button>
+      <button type="button" class="nav-tab" data-tab="wallet" onclick="openTabById('wallet')"><i class="fa-solid fa-wallet"></i><span>کیف پول</span></button>
+      <button type="button" class="nav-tab" data-tab="support" onclick="openTabById('support')"><i class="fa-solid fa-headset"></i><span>پشتیبانی</span></button>
+      <button type="button" class="nav-tab" id="adminNavTab" data-tab="admin" style="display:none;" onclick="openTabById('admin')"><i class="fa-solid fa-user-shield"></i><span>مدیریت</span></button>
+    </nav>
 
-    <!-- 1. CRASH + SHARED LIVE CHAT -->
+    <!-- 1. CRASH -->
     <section class="section active" id="sec-crash">
       <div class="crash-layout">
-        <div class="glass-panel stage-card">
-          <div class="stage-header">
-            <div class="stage-title-group">
-              <div class="stage-icon">🚀</div>
-              <div>
-                <h1 style="font-size:1.05rem;font-weight:900;color:var(--gold-bright);">بازی انفجار یکسان برای همه • SOFYAN CRASH</h1>
-                <p style="font-size:0.75rem;color:var(--muted);">ضریب و وضعیت راند مستقیماً از سرور Railway برای همه بازیکنان پخش می‌شود</p>
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-              <span class="pill pill-fair mono" id="crashRoundBadge">Round #--</span>
-            </div>
+        <div class="app-card stage-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <strong style="color:var(--neon-primary);"><i class="fa-solid fa-chart-line"></i> بازی کرش زنده</strong>
+            <span class="pill pill-info" id="crashRoundBadge">Round #0</span>
           </div>
 
-          <div class="crash-canvas-box">
+          <div class="crash-stage">
             <canvas class="hd-canvas" id="crashCanvas"></canvas>
             <div class="crash-hud">
               <div class="crash-mult-readout state-waiting" id="crashMultText">1.00x</div>
@@ -477,7 +536,7 @@
           <div class="dual-bet-grid">
             <div class="bet-slot" id="crashSlot1">
               <div class="bet-slot-head">
-                <span style="color:var(--gold-bright);">شرط ۱</span>
+                <span style="color:var(--neon-primary);">شرط ۱</span>
                 <span style="font-size:0.74rem;color:var(--muted);" id="slot1StatusText">آماده ثبت</span>
               </div>
               <div class="field-group" style="margin-bottom:4px;">
@@ -494,12 +553,12 @@
                 <label class="field-label">برداشت خودکار روی ضریب (اختیاری)</label>
                 <input type="number" id="crashAuto1" value="2.00" min="1.05" step="0.05" />
               </div>
-              <button type="button" class="btn btn-gold" id="crashMainBtn1" onclick="handleCrashSlotAction(1)">ثبت شرط ۱</button>
+              <button type="button" class="btn btn-neon" id="crashMainBtn1" onclick="handleCrashSlotAction(1)">ثبت شرط ۱</button>
             </div>
 
             <div class="bet-slot" id="crashSlot2">
               <div class="bet-slot-head">
-                <span style="color:var(--cyan-bright);">شرط ۲</span>
+                <span style="color:var(--neon-emerald);">شرط ۲</span>
                 <span style="font-size:0.74rem;color:var(--muted);" id="slot2StatusText">آماده ثبت</span>
               </div>
               <div class="field-group" style="margin-bottom:4px;">
@@ -516,15 +575,15 @@
                 <label class="field-label">برداشت خودکار روی ضریب (اختیاری)</label>
                 <input type="number" id="crashAuto2" value="1.50" min="1.05" step="0.05" />
               </div>
-              <button type="button" class="btn btn-cyan" id="crashMainBtn2" onclick="handleCrashSlotAction(2)">ثبت شرط ۲</button>
+              <button type="button" class="btn btn-emerald" id="crashMainBtn2" onclick="handleCrashSlotAction(2)">ثبت شرط ۲</button>
             </div>
           </div>
         </div>
 
-        <div class="glass-panel stage-card chat-wrap" id="crashChatPanel">
+        <div class="app-card stage-card chat-wrap" id="crashChatPanel">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:8px;">
-            <strong style="font-size:0.9rem;color:var(--cyan-bright);">💬 گفت‌وگوی زنده کاربران</strong>
-            <span class="pill pill-live" id="chatPanelBadge">باز</span>
+            <strong style="font-size:0.9rem;color:var(--neon-primary);"><i class="fa-solid fa-comments"></i> گفت‌وگوی زنده کاربران</strong>
+            <span class="pill pill-info" id="chatPanelBadge">باز</span>
           </div>
 
           <div class="pinned-banner" id="pinnedMessageBanner">
@@ -533,7 +592,7 @@
           </div>
 
           <div class="mod-toolbar" id="chatModToolbar">
-            <span style="font-weight:800;color:var(--violet-bright);">مدیریت ادمین:</span>
+            <span style="font-weight:800;color:var(--neon-violet);">مدیریت ادمین:</span>
             <button type="button" class="chat-mod-btn" onclick="toggleChatLock()">قفل/باز</button>
             <button type="button" class="chat-mod-btn" onclick="toggleSlowMode()">حالت آهسته</button>
             <button type="button" class="chat-mod-btn" onclick="clearAllChatMessages()">پاک‌سازی همه</button>
@@ -542,8 +601,8 @@
           <div class="chat-stream" id="chatStream"></div>
 
           <form onsubmit="sendChatMessage(event)" style="display:flex;gap:8px;">
-            <input type="text" id="chatInput" placeholder="پیام خود را برای همه بازیکنان بفرستید..." maxlength="240" />
-            <button type="submit" class="btn btn-gold" id="chatSendBtn">ارسال</button>
+            <input type="text" id="chatInput" placeholder="پیام خود را برای کاربران بنویسید..." maxlength="240" />
+            <button type="submit" class="btn btn-neon" id="chatSendBtn"><i class="fa-solid fa-paper-plane"></i><span>ارسال</span></button>
           </form>
         </div>
       </div>
@@ -552,8 +611,8 @@
     <!-- 2. MINES -->
     <section class="section" id="sec-mines">
       <div class="game-arena">
-        <div class="glass-panel stage-card">
-          <h2 style="font-size:1rem;font-weight:900;color:var(--cyan-bright);margin-bottom:10px;">💣 مین‌روب آنلاین (سرور)</h2>
+        <div class="app-card stage-card">
+          <h2 style="font-size:1rem;font-weight:900;color:var(--neon-primary);margin-bottom:10px;"><i class="fa-solid fa-bomb"></i> مین‌روب آنلاین</h2>
           <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="minesBet" value="100000" min="10000" step="10000" /></div>
           <div class="field-group">
             <label class="field-label">تعداد مین‌ها</label>
@@ -565,14 +624,14 @@
             </select>
           </div>
           <div style="display:flex;gap:8px;">
-            <button type="button" class="btn btn-gold" style="flex:1;" id="minesStartBtn" onclick="startMinesGame()">شروع بازی</button>
-            <button type="button" class="btn btn-green" style="flex:1;" id="minesCashBtn" onclick="cashoutMinesGame()" disabled>برداشت سود</button>
+            <button type="button" class="btn btn-neon" style="flex:1;" id="minesStartBtn" onclick="startMinesGame()">شروع بازی</button>
+            <button type="button" class="btn btn-emerald" style="flex:1;" id="minesCashBtn" onclick="cashoutMinesGame()" disabled>برداشت سود</button>
           </div>
         </div>
-        <div class="glass-panel stage-card">
+        <div class="app-card stage-card">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <strong style="color:var(--gold-bright);">ضریب فعلی: <span id="minesMultText">1.00x</span></strong>
-            <span style="font-size:0.82rem;color:var(--emerald-bright);" id="minesPotentialText">سود احتمالی: 0</span>
+            <strong style="color:var(--neon-primary);">ضریب فعلی: <span id="minesMultText">1.00x</span></strong>
+            <span style="font-size:0.82rem;color:var(--neon-emerald);" id="minesPotentialText">سود احتمالی: 0</span>
           </div>
           <div class="mines-grid" id="minesBoard"></div>
           <div style="text-align:center;font-size:0.8rem;color:var(--muted);" id="minesStatusText">برای شروع روی «شروع بازی» کلیک کنید.</div>
@@ -583,8 +642,8 @@
     <!-- 3. DICE -->
     <section class="section" id="sec-dice">
       <div class="game-arena">
-        <div class="glass-panel stage-card">
-          <h2 style="font-size:1rem;font-weight:900;color:var(--gold-bright);margin-bottom:10px;">🎲 شرط‌بندی تاس (سرور)</h2>
+        <div class="app-card stage-card">
+          <h2 style="font-size:1rem;font-weight:900;color:var(--neon-primary);margin-bottom:10px;"><i class="fa-solid fa-dice"></i> شرط‌بندی تاس</h2>
           <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="diceBet" value="100000" min="10000" step="10000" /></div>
           <div class="field-group"><label class="field-label">پیش‌بینی (عدد ۱ تا ۱۰۰)</label><input type="number" id="diceTarget" value="50" min="5" max="95" /></div>
           <div class="field-group">
@@ -594,9 +653,9 @@
               <option value="under">کوچک‌تر از عدد انتخابی</option>
             </select>
           </div>
-          <button type="button" class="btn btn-gold" style="width:100%;" id="dicePlayBtn" onclick="playDice()">پرتاب تاس</button>
+          <button type="button" class="btn btn-neon" style="width:100%;" id="dicePlayBtn" onclick="playDice()">پرتاب تاس</button>
         </div>
-        <div class="glass-panel stage-card">
+        <div class="app-card stage-card">
           <div class="big-readout"><div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px;">نتیجه تاس سرور</div><div class="big-num" id="diceResultNum">--</div></div>
           <div style="text-align:center;font-size:0.84rem;" id="diceStatusText">عدد هدف و جهت را انتخاب کنید.</div>
         </div>
@@ -606,8 +665,8 @@
     <!-- 4. ROULETTE -->
     <section class="section" id="sec-roulette">
       <div class="game-arena">
-        <div class="glass-panel stage-card">
-          <h2 style="font-size:1rem;font-weight:900;color:var(--rose-bright);margin-bottom:10px;">🎡 رولت اروپایی (سرور)</h2>
+        <div class="app-card stage-card">
+          <h2 style="font-size:1rem;font-weight:900;color:var(--neon-primary);margin-bottom:10px;"><i class="fa-solid fa-dharmachakra"></i> رولت اروپایی</h2>
           <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="rouletteBet" value="100000" min="10000" step="10000" /></div>
           <div class="field-group">
             <label class="field-label">انتخاب رنگ یا صفر</label>
@@ -619,7 +678,7 @@
           </div>
           <button type="button" class="btn btn-rose" style="width:100%;" id="roulettePlayBtn" onclick="playRoulette()">چرخش چرخ رولت</button>
         </div>
-        <div class="glass-panel stage-card">
+        <div class="app-card stage-card">
           <div class="big-readout"><div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px;">خانه برنده سرور</div><div class="big-num" id="rouletteResultText">--</div></div>
           <div style="text-align:center;font-size:0.84rem;" id="rouletteStatusText">رنگ مورد نظر را انتخاب کنید.</div>
         </div>
@@ -629,13 +688,13 @@
     <!-- 5. SLOTS -->
     <section class="section" id="sec-slots">
       <div class="game-arena">
-        <div class="glass-panel stage-card">
-          <h2 style="font-size:1rem;font-weight:900;color:var(--gold-bright);margin-bottom:10px;">🎰 اسلات سلطنتی (سرور)</h2>
+        <div class="app-card stage-card">
+          <h2 style="font-size:1rem;font-weight:900;color:var(--neon-primary);margin-bottom:10px;"><i class="fa-solid fa-gem"></i> اسلات نئونی</h2>
           <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="slotsBet" value="100000" min="10000" step="10000" /></div>
-          <button type="button" class="btn btn-gold" style="width:100%;" id="slotsPlayBtn" onclick="playSlots()">اسپین گردونه</button>
+          <button type="button" class="btn btn-neon" style="width:100%;" id="slotsPlayBtn" onclick="playSlots()">اسپین گردونه</button>
         </div>
-        <div class="glass-panel stage-card">
-          <div class="big-readout"><div class="big-num" id="slotsReelsText" style="letter-spacing:8px;">💎 • 👑 • 🍀</div></div>
+        <div class="app-card stage-card">
+          <div class="big-readout"><div class="big-num" id="slotsReelsText" style="letter-spacing:6px;">GEM • CROWN • STAR</div></div>
           <div style="text-align:center;font-size:0.84rem;" id="slotsStatusText">۳ نماد یکسان = برد بزرگ!</div>
         </div>
       </div>
@@ -644,20 +703,20 @@
     <!-- 6. BLACKJACK -->
     <section class="section" id="sec-blackjack">
       <div class="game-arena">
-        <div class="glass-panel stage-card">
-          <h2 style="font-size:1rem;font-weight:900;color:var(--emerald-bright);margin-bottom:10px;">🃏 بلک‌جک ۲۱ (سرور)</h2>
+        <div class="app-card stage-card">
+          <h2 style="font-size:1rem;font-weight:900;color:var(--neon-primary);margin-bottom:10px;"><i class="fa-solid fa-club"></i> بلک‌جک ۲۱</h2>
           <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="bjBet" value="100000" min="10000" step="10000" /></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button type="button" class="btn btn-gold" style="flex:1;" id="bjDealBtn" onclick="dealBlackjack()">پخش کارت</button>
-            <button type="button" class="btn btn-cyan" style="flex:1;" id="bjHitBtn" onclick="hitBlackjack()" disabled>کارت بیشتر</button>
-            <button type="button" class="btn btn-green" style="flex:1;" id="bjStandBtn" onclick="standBlackjack()" disabled>ایست</button>
+            <button type="button" class="btn btn-neon" style="flex:1;" id="bjDealBtn" onclick="dealBlackjack()">پخش کارت</button>
+            <button type="button" class="btn btn-ghost" style="flex:1;" id="bjHitBtn" onclick="hitBlackjack()" disabled>کارت بیشتر</button>
+            <button type="button" class="btn btn-emerald" style="flex:1;" id="bjStandBtn" onclick="standBlackjack()" disabled>ایست</button>
           </div>
         </div>
-        <div class="glass-panel stage-card">
+        <div class="app-card stage-card">
           <div style="text-align:center;font-size:0.82rem;color:var(--muted);">کارت‌های دیلر (<span id="bjDealerSum">0</span>)</div>
           <div class="cards-flex" id="bjDealerCards"></div>
           <hr style="border:none;border-top:1px solid var(--border);margin:8px 0;" />
-          <div style="text-align:center;font-size:0.82rem;color:var(--emerald-bright);">کارت‌های شما (<span id="bjPlayerSum">0</span>)</div>
+          <div style="text-align:center;font-size:0.82rem;color:var(--neon-emerald);">کارت‌های شما (<span id="bjPlayerSum">0</span>)</div>
           <div class="cards-flex" id="bjPlayerCards"></div>
           <div style="text-align:center;font-size:0.84rem;margin-top:6px;" id="bjStatusText">برای شروع دست جدید، «پخش کارت» را بزنید.</div>
         </div>
@@ -667,8 +726,8 @@
     <!-- 7. PLINKO -->
     <section class="section" id="sec-plinko">
       <div class="game-arena">
-        <div class="glass-panel stage-card">
-          <h2 style="font-size:1rem;font-weight:900;color:var(--emerald-bright);margin-bottom:10px;">🟢 پینکلو HD (سرور)</h2>
+        <div class="app-card stage-card">
+          <h2 style="font-size:1rem;font-weight:900;color:var(--neon-primary);margin-bottom:10px;"><i class="fa-solid fa-circle-dot"></i> پینکلو</h2>
           <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="plinkoBet" value="100000" min="10000" step="10000" /></div>
           <div class="field-group">
             <label class="field-label">سطح ریسک</label>
@@ -677,23 +736,23 @@
               <option value="high" selected>پرریسک</option>
             </select>
           </div>
-          <button type="button" class="btn btn-green" style="width:100%;" id="plinkoPlayBtn" onclick="dropPlinkoBall()">رها کردن توپ</button>
+          <button type="button" class="btn btn-emerald" style="width:100%;" id="plinkoPlayBtn" onclick="dropPlinkoBall()">رها کردن توپ</button>
         </div>
-        <div class="glass-panel stage-card">
+        <div class="app-card stage-card">
           <div class="big-readout" style="padding:12px;"><div style="font-size:0.78rem;color:var(--muted);">ضریب دریافتی سرور</div><div class="big-num" id="plinkoMultText">--</div></div>
           <div class="plinko-buckets" id="plinkoBuckets"></div>
         </div>
       </div>
     </section>
 
-    <!-- 8. FOOTBALL (TAKBET-STYLE + PERSIAN + IRAN PRIORITY) -->
+    <!-- 8. FOOTBALL -->
     <section class="section" id="sec-football">
       <div class="fb-top-bar">
         <div class="fb-filter-group">
           <button type="button" class="fb-filter-btn active" data-filter="all" onclick="setMatchFilter('all')">همه مسابقات</button>
-          <button type="button" class="fb-filter-btn" data-filter="iran" onclick="setMatchFilter('iran')">🇮🇷 بازی‌های ایرانی</button>
-          <button type="button" class="fb-filter-btn" data-filter="live" onclick="setMatchFilter('live')">🔴 زنده</button>
-          <button type="button" class="fb-filter-btn" data-filter="upcoming" onclick="setMatchFilter('upcoming')">🕒 پیش از بازی</button>
+          <button type="button" class="fb-filter-btn" data-filter="iran" onclick="setMatchFilter('iran')"><i class="fa-solid fa-flag"></i><span>بازی‌های ایرانی</span></button>
+          <button type="button" class="fb-filter-btn" data-filter="live" onclick="setMatchFilter('live')"><i class="fa-solid fa-circle-play"></i><span>زنده</span></button>
+          <button type="button" class="fb-filter-btn" data-filter="upcoming" onclick="setMatchFilter('upcoming')"><i class="fa-solid fa-clock"></i><span>پیش از بازی</span></button>
         </div>
         <div class="fb-search-box">
           <input type="text" id="fbSearchInput" placeholder="جست‌وجوی تیم یا لیگ..." oninput="renderFootballMatches()" />
@@ -701,26 +760,26 @@
       </div>
 
       <div class="fb-grid">
-        <div class="glass-panel stage-card">
+        <div class="app-card stage-card">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-            <h2 style="font-size:1rem;font-weight:900;color:var(--emerald-bright);">⚽ استادیوم فوتبال زنده و پیش‌بینی (سبک تک‌بت)</h2>
-            <span class="pill pill-live" id="fbMatchesCountBadge">0 مسابقه</span>
+            <h2 style="font-size:1rem;font-weight:900;color:var(--neon-primary);"><i class="fa-solid fa-futbol"></i> پیش‌بینی فوتبال زنده و پیش از بازی</h2>
+            <span class="pill pill-info" id="fbMatchesCountBadge">0 مسابقه</span>
           </div>
 
           <div class="matches-row" id="fbMatchesRow"></div>
 
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:14px;background:rgba(5,9,20,0.78);border:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:14px;background:var(--bg-subtle);border:1px solid var(--border);">
             <strong id="fbHomeName">میزبان</strong>
-            <span style="font-size:1.3rem;font-weight:900;color:var(--gold-bright);" id="fbScoreBoard">0 - 0</span>
+            <span style="font-size:1.25rem;font-weight:900;color:var(--neon-primary);" id="fbScoreBoard">0 - 0</span>
             <strong id="fbAwayName">مهمان</strong>
           </div>
 
           <div class="pitch-box"><canvas class="hd-canvas" id="pitchCanvas"></canvas></div>
-          <div id="fbEventsLog" style="font-size:0.78rem;color:var(--muted);">در حال پخش زنده مسابقه از سرور...</div>
+          <div id="fbEventsLog" style="font-size:0.78rem;color:var(--muted);">در حال دریافت اطلاعات مسابقه...</div>
         </div>
 
-        <div class="glass-panel stage-card">
-          <h3 style="font-size:0.95rem;font-weight:900;color:var(--gold-bright);margin-bottom:4px;">🧾 برگه شرط و بازارهای مسابقه</h3>
+        <div class="app-card stage-card">
+          <h3 style="font-size:0.95rem;font-weight:900;color:var(--neon-primary);margin-bottom:4px;"><i class="fa-solid fa-receipt"></i> برگه شرط و بازارهای مسابقه</h3>
           <div style="font-size:0.75rem;color:var(--muted);margin-bottom:8px;" id="fbSelectedMatchLabel">مسابقه‌ای انتخاب نشده است</div>
 
           <div class="market-block-title">نتیجه مسابقه (1X2)</div>
@@ -784,12 +843,12 @@
           </div>
 
           <div class="slip-summary-box">
-            <div class="slip-row"><span>انتخاب:</span><strong id="slipSelectionText" style="color:var(--gold-bright);">برد میزبان (1)</strong></div>
-            <div class="slip-row"><span>ضریب قطعی:</span><strong id="slipOddText" class="mono" style="color:var(--cyan-bright);">2.10</strong></div>
-            <div class="slip-row"><span>مبلغ کل بازگشت:</span><strong id="slipPotentialText" style="color:var(--emerald-bright);">210,000 تومان</strong></div>
+            <div class="slip-row"><span>انتخاب:</span><strong id="slipSelectionText" style="color:var(--neon-primary);">برد میزبان (1)</strong></div>
+            <div class="slip-row"><span>ضریب قطعی:</span><strong id="slipOddText" class="mono" style="color:var(--text);">2.10</strong></div>
+            <div class="slip-row"><span>مبلغ کل بازگشت:</span><strong id="slipPotentialText" style="color:var(--neon-emerald);">210,000 تومان</strong></div>
           </div>
 
-          <button type="button" class="btn btn-gold" style="width:100%;" onclick="placeFootballBet()">ثبت پیش‌بینی در سرور</button>
+          <button type="button" class="btn btn-neon" style="width:100%;" onclick="placeFootballBet()">ثبت سریع شرط</button>
           <div style="margin-top:10px;font-size:0.76rem;color:var(--muted);" id="fbActiveBetSummary">شرط فعالی ثبت نشده است.</div>
 
           <div class="table-scroll" style="margin-top:10px;">
@@ -804,9 +863,9 @@
 
     <!-- 9. WALLET -->
     <section class="section" id="sec-wallet">
-      <div class="glass-panel stage-card">
+      <div class="app-card stage-card">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
-          <h2 style="font-size:1.05rem;font-weight:900;color:var(--emerald-bright);">💳 مرکز واریز، برداشت و تراکنش‌ها</h2>
+          <h2 style="font-size:1.05rem;font-weight:900;color:var(--neon-primary);"><i class="fa-solid fa-wallet"></i> مرکز واریز، برداشت و تراکنش‌ها</h2>
           <div class="wallet-tabs">
             <button type="button" class="sub-tab-btn active" id="subTabDeposit" onclick="openWalletSubTab('deposit')">واریز وجه</button>
             <button type="button" class="sub-tab-btn" id="subTabWithdraw" onclick="openWalletSubTab('withdraw')">برداشت وجه</button>
@@ -815,39 +874,39 @@
         </div>
 
         <div class="stats-row">
-          <div class="stat-box"><div style="font-size:0.74rem;color:var(--muted);">موجودی واقعی</div><div style="font-size:1.08rem;font-weight:900;color:var(--emerald-bright);" id="walletRealVal">500,000 تومان</div></div>
-          <div class="stat-box"><div style="font-size:0.74rem;color:var(--muted);">موجودی دمو</div><div style="font-size:1.08rem;font-weight:900;color:var(--cyan-bright);" id="walletDemoVal">10,000,000 تومان</div></div>
-          <div class="stat-box"><div style="font-size:0.74rem;color:var(--muted);">شارژ سریع دمو</div><button type="button" class="btn btn-cyan" style="margin-top:6px;" onclick="topupDemoBalance()">+5,000,000 دمو</button></div>
+          <div class="stat-box"><div style="font-size:0.74rem;color:var(--muted);">موجودی واقعی</div><div style="font-size:1.08rem;font-weight:900;color:var(--neon-emerald);" id="walletRealVal">500,000 تومان</div></div>
+          <div class="stat-box"><div style="font-size:0.74rem;color:var(--muted);">موجودی دمو</div><div style="font-size:1.08rem;font-weight:900;color:var(--neon-primary);" id="walletDemoVal">10,000,000 تومان</div></div>
+          <div class="stat-box"><div style="font-size:0.74rem;color:var(--muted);">شارژ سریع دمو</div><button type="button" class="btn btn-neon" style="margin-top:6px;" onclick="topupDemoBalance()">+5,000,000 دمو</button></div>
         </div>
 
         <div id="walletPanel-deposit">
           <div class="wallet-split">
             <div class="bank-card-box">
               <div style="display:flex;justify-content:space-between;align-items:center;">
-                <strong style="color:var(--gold-bright);font-size:0.9rem;">روش‌های واریز فعال</strong>
-                <button type="button" class="btn btn-gold" style="padding:5px 10px;font-size:0.74rem;" onclick="copyDepositCard()">کپی شماره کارت</button>
+                <strong style="color:var(--neon-primary);font-size:0.9rem;">روش‌های واریز فعال</strong>
+                <button type="button" class="btn btn-neon btn-sm" onclick="copyDepositCard()"><i class="fa-regular fa-copy"></i><span>کپی شماره کارت</span></button>
               </div>
               <div class="card-digits mono">6037 - 9974 - 1097 - 2831</div>
-              <div style="font-size:0.86rem;font-weight:800;color:#fff;">صاحب حساب: محمد مددی</div>
+              <div style="font-size:0.86rem;font-weight:800;color:var(--text);">صاحب حساب: محمد مددی</div>
             </div>
 
             <form onsubmit="submitCardDeposit(event)" class="bet-slot">
-              <strong style="color:var(--emerald-bright);font-size:0.9rem;">ثبت درخواست واریز</strong>
+              <strong style="color:var(--neon-emerald);font-size:0.9rem;">ثبت درخواست واریز</strong>
               <div class="method-pills" id="depositMethodChips">
                 <button type="button" class="method-chip active" data-method="کارت‌به‌کارت" onclick="selectDepositMethod('کارت‌به‌کارت')">کارت‌به‌کارت</button>
                 <button type="button" class="method-chip" data-method="درگاه شاپرک" onclick="selectDepositMethod('درگاه شاپرک')">درگاه شاپرک</button>
                 <button type="button" class="method-chip" data-method="ووچر شارژ" onclick="selectDepositMethod('ووچر شارژ')">ووچر شارژ</button>
               </div>
               <div class="field-group" style="margin-bottom:4px;"><label class="field-label">مبلغ واریزی (تومان)</label><input type="number" id="depAmountInput" value="500000" min="10000" step="10000" required /></div>
-              <div class="field-group" style="margin-bottom:4px;"><label class="field-label" id="depRefLabel">شماره پیگیری یا ۴ رقم آخر کارت مبدا</label><input type="text" id="depRefInput" placeholder="مثلاً: 849201" required /></div>
-              <button type="submit" class="btn btn-green" style="width:100%;">ثبت درخواست واریز</button>
+              <div class="field-group" style="margin-bottom:4px;"><label class="field-label">شماره پیگیری یا ۴ رقم آخر کارت مبدا</label><input type="text" id="depRefInput" placeholder="مثلاً: 849201" required /></div>
+              <button type="submit" class="btn btn-emerald" style="width:100%;">ثبت درخواست واریز</button>
             </form>
           </div>
 
-          <h3 style="font-size:0.92rem;font-weight:900;color:var(--gold-bright);margin-bottom:8px;">لیست درخواست‌های واریز</h3>
+          <h3 style="font-size:0.92rem;font-weight:900;color:var(--neon-primary);margin-bottom:8px;">لیست درخواست‌های واریز</h3>
           <div class="table-scroll">
             <table>
-              <thead><tr><th>زمان</th><th>کاربر</th><th>روش</th><th>مبلغ</th><th>کد پیگیری / کد</th><th>وضعیت</th></tr></thead>
+              <thead><tr><th>زمان</th><th>کاربر</th><th>روش</th><th>مبلغ</th><th>کد پیگیری</th><th>وضعیت</th></tr></thead>
               <tbody id="depositsTableBody"></tbody>
             </table>
           </div>
@@ -856,23 +915,23 @@
         <div id="walletPanel-withdraw" style="display:none;">
           <div class="wallet-split">
             <form onsubmit="submitWithdrawRequest(event)" class="bet-slot">
-              <strong style="color:var(--cyan-bright);font-size:0.9rem;">ثبت درخواست برداشت وجه</strong>
+              <strong style="color:var(--neon-primary);font-size:0.9rem;">ثبت درخواست برداشت وجه</strong>
               <div class="method-pills" id="withdrawMethodChips">
                 <button type="button" class="method-chip active" data-method="شبا بانکی" onclick="selectWithdrawMethod('شبا بانکی')">شبا بانکی (IR)</button>
                 <button type="button" class="method-chip" data-method="کارت‌به‌کارت" onclick="selectWithdrawMethod('کارت‌به‌کارت')">کارت‌به‌کارت</button>
                 <button type="button" class="method-chip" data-method="ووچر برداشت" onclick="selectWithdrawMethod('ووچر برداشت')">ووچر برداشت</button>
               </div>
               <div class="field-group" style="margin-bottom:4px;"><label class="field-label">مبلغ برداشت (تومان)</label><input type="number" id="wdAmountInput" value="200000" min="50000" step="10000" required /></div>
-              <div class="field-group" style="margin-bottom:4px;"><label class="field-label" id="wdDestLabel">شماره شبا (IR) یا حساب مقصد</label><input type="text" id="wdDestInput" placeholder="IR..." required /></div>
+              <div class="field-group" style="margin-bottom:4px;"><label class="field-label">شماره شبا (IR) یا حساب مقصد</label><input type="text" id="wdDestInput" placeholder="IR..." required /></div>
               <div class="field-group" style="margin-bottom:4px;"><label class="field-label">نام صاحب حساب مقصد</label><input type="text" id="wdHolderInput" placeholder="نام و نام خانوادگی" required /></div>
-              <button type="submit" class="btn btn-cyan" style="width:100%;">ثبت درخواست برداشت</button>
+              <button type="submit" class="btn btn-neon" style="width:100%;">ثبت درخواست برداشت</button>
             </form>
             <div class="bet-slot">
-              <strong style="color:var(--gold-bright);font-size:0.9rem;">قوانین برداشت</strong>
-              <p style="font-size:0.8rem;color:#cbd5e1;">حداقل برداشت ۵۰,۰۰۰ تومان از کیف پول واقعی است.</p>
+              <strong style="color:var(--neon-primary);font-size:0.9rem;">قوانین برداشت</strong>
+              <p style="font-size:0.8rem;color:var(--muted);">حداقل برداشت ۵۰,۰۰۰ تومان از کیف پول واقعی است.</p>
             </div>
           </div>
-          <h3 style="font-size:0.92rem;font-weight:900;color:var(--cyan-bright);margin-bottom:8px;">تاریخچه درخواست‌های برداشت</h3>
+          <h3 style="font-size:0.92rem;font-weight:900;color:var(--neon-primary);margin-bottom:8px;">تاریخچه درخواست‌های برداشت</h3>
           <div class="table-scroll">
             <table>
               <thead><tr><th>زمان</th><th>کاربر</th><th>روش</th><th>مبلغ</th><th>مقصد</th><th>وضعیت</th></tr></thead>
@@ -895,30 +954,118 @@
     <!-- 10. SUPPORT -->
     <section class="section" id="sec-support">
       <div class="wallet-split">
-        <div class="glass-panel stage-card">
-          <h2 style="font-size:1.05rem;font-weight:900;color:var(--gold-bright);margin-bottom:10px;">🎧 ثبت تیکت پشتیبانی</h2>
+        <div class="app-card stage-card">
+          <h2 style="font-size:1.05rem;font-weight:900;color:var(--neon-primary);margin-bottom:10px;"><i class="fa-solid fa-headset"></i> ثبت تیکت پشتیبانی</h2>
           <form onsubmit="submitSupportTicket(event)">
             <div class="field-group"><label class="field-label">دسته‌بندی</label><select id="ticketCategory"><option value="مالی و واریز">مالی و واریز</option><option value="برداشت وجه">برداشت وجه</option><option value="فنی و بازی‌ها">فنی و بازی‌ها</option></select></div>
             <div class="field-group"><label class="field-label">اولویت</label><select id="ticketPriority"><option value="عادی">عادی</option><option value="فوری">فوری</option></select></div>
             <div class="field-group"><label class="field-label">موضوع درخواست</label><input type="text" id="ticketSubject" placeholder="موضوع" required /></div>
             <div class="field-group"><label class="field-label">توضیحات تیکت</label><textarea id="ticketBody" rows="3" placeholder="پیام خود را بنویسید..." required></textarea></div>
-            <button type="submit" class="btn btn-gold" style="width:100%;">ارسال تیکت</button>
+            <button type="submit" class="btn btn-neon" style="width:100%;">ارسال تیکت</button>
           </form>
         </div>
-        <div class="glass-panel stage-card">
-          <h3 style="font-size:0.98rem;font-weight:900;color:var(--cyan-bright);margin-bottom:10px;">تیکت‌های ثبت‌شده</h3>
+        <div class="app-card stage-card">
+          <h3 style="font-size:0.98rem;font-weight:900;color:var(--neon-primary);margin-bottom:10px;">تیکت‌های ثبت‌شده</h3>
           <div id="ticketsList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. ADMIN -->
+    <section class="section" id="sec-admin">
+      <div class="app-card stage-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+          <div>
+            <h2 style="font-size:1.05rem;font-weight:900;color:var(--neon-violet);margin:0;"><i class="fa-solid fa-user-shield"></i> پنل مدیریت</h2>
+            <div style="font-size:0.78rem;color:var(--muted);" id="adminSessionSummary"></div>
+          </div>
+          <button type="button" class="btn btn-rose btn-sm" onclick="closeAdminPanel()">بستن پنل مدیریت</button>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-box"><div style="font-size:0.74rem;color:var(--muted);">تعداد کاربران</div><div style="font-size:1.05rem;font-weight:900;" id="adminUserCount">0</div></div>
+          <div class="stat-box"><div style="font-size:0.74rem;color:var(--muted);">درخواست‌های واریز</div><div style="font-size:1.05rem;font-weight:900;" id="adminDepCount">0</div></div>
+          <div class="stat-box"><div style="font-size:0.74rem;color:var(--muted);">درخواست‌های برداشت</div><div style="font-size:1.05rem;font-weight:900;" id="adminWdCount">0</div></div>
+        </div>
+
+        <div id="ownerControlsBox" style="margin-bottom:14px;">
+          <div class="admin-grid">
+            <div class="bet-slot">
+              <strong style="color:var(--neon-violet);">کد مخفی مدیریت و زیر‌ادمین</strong>
+              <div style="font-size:0.78rem;">کد فعلی: <strong class="mono" id="currentSecretCodeDisplay">---</strong></div>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="newSecretCodeInput" placeholder="کد جدید..." />
+                <button type="button" class="btn btn-neon btn-sm" onclick="updateSecretCode()">ذخیره کد</button>
+              </div>
+              <hr style="border:none;border-top:1px solid var(--border);margin:6px 0;" />
+              <form onsubmit="assignSubAdmin(event)">
+                <div class="field-group"><label class="field-label">نام کاربری زیر‌ادمین</label><input type="text" id="subAdminUserInput" required /></div>
+                <div class="field-group"><label class="field-label">مقام</label><select id="subAdminRankSelect"><option value="ادمین مالی">ادمین مالی</option><option value="ناظر چت">ناظر چت</option><option value="ادمین ارشد">ادمین ارشد</option></select></div>
+                <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px;">
+                  <label class="perm-check"><input type="checkbox" id="permApproveDep" checked /> تایید واریز</label>
+                  <label class="perm-check"><input type="checkbox" id="permManageWd" checked /> مدیریت برداشت</label>
+                  <label class="perm-check"><input type="checkbox" id="permGrantBal" checked /> شارژ موجودی</label>
+                  <label class="perm-check"><input type="checkbox" id="permModChat" checked /> مدیریت چت</label>
+                </div>
+                <button type="submit" class="btn btn-emerald btn-sm">افزودن زیر‌ادمین</button>
+              </form>
+            </div>
+
+            <div class="bet-slot">
+              <strong style="color:var(--neon-violet);">کنترل میوت کاربران در چت</strong>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <input type="text" id="muteUserInput" placeholder="نام کاربری" style="flex:1;min-width:120px;" />
+                <input type="number" id="muteMinutesInput" value="10" min="1" style="width:80px;" />
+                <button type="button" class="btn btn-rose btn-sm" onclick="muteUserFromAdmin()">میوت</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="unmuteUserFromAdmin()">رفع میوت</button>
+              </div>
+              <strong style="color:var(--neon-violet);margin-top:8px;">گزارش فعالیت‌ها</strong>
+              <div class="audit-log-box" id="adminAuditLogBox"></div>
+            </div>
+          </div>
+
+          <h3 style="font-size:0.9rem;font-weight:800;margin-bottom:6px;">لیست زیر‌ادمین‌ها</h3>
+          <div class="table-scroll" style="margin-bottom:14px;">
+            <table>
+              <thead><tr><th>کاربر</th><th>مقام</th><th>دسترسی‌ها</th><th>عملیات</th></tr></thead>
+              <tbody id="subAdminsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <h3 style="font-size:0.9rem;font-weight:800;margin-bottom:6px;">مدیریت واریزها</h3>
+        <div class="table-scroll" style="margin-bottom:14px;">
+          <table>
+            <thead><tr><th>زمان</th><th>کاربر</th><th>روش</th><th>مبلغ</th><th>کد پیگیری</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+            <tbody id="adminDepositsBody"></tbody>
+          </table>
+        </div>
+
+        <h3 style="font-size:0.9rem;font-weight:800;margin-bottom:6px;">مدیریت برداشت‌ها</h3>
+        <div class="table-scroll" style="margin-bottom:14px;">
+          <table>
+            <thead><tr><th>زمان</th><th>کاربر</th><th>روش</th><th>مبلغ</th><th>مقصد</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+            <tbody id="adminWithdrawsBody"></tbody>
+          </table>
+        </div>
+
+        <h3 style="font-size:0.9rem;font-weight:800;margin-bottom:6px;">کاربران</h3>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>کاربر</th><th>موبایل</th><th>موجودی واقعی</th><th>موجودی دمو</th><th>عملیات</th></tr></thead>
+            <tbody id="adminUsersBody"></tbody>
+          </table>
         </div>
       </div>
     </section>
   </div>
 
-  <!-- Serious Login / Register Modal -->
+  <!-- Auth Modal -->
   <div class="modal-backdrop" id="authModal">
-    <div class="glass-panel modal-card">
+    <div class="app-card modal-card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
         <div>
-          <strong style="font-size:1.05rem;color:var(--gold-bright);">حساب کاربری صوفیان بت</strong>
+          <strong style="font-size:1.05rem;color:var(--neon-primary);">حساب کاربری صوفیان بت</strong>
           <div style="font-size:0.74rem;color:var(--muted);">ورود یا ثبت‌نام برای حفظ موجودی، تراکنش‌ها و هویت در چت</div>
         </div>
         <button type="button" class="btn btn-ghost btn-sm" onclick="closeAuthModal()">ادامه به‌عنوان مهمان</button>
@@ -930,9 +1077,7 @@
       </div>
 
       <form id="loginForm" onsubmit="submitLoginForm(event)">
-        <div class="auth-box-note">
-          با نام کاربری یا شماره موبایل ثبت‌شده وارد حساب خود شوید.
-        </div>
+        <div class="auth-box-note">با نام کاربری یا شماره موبایل ثبت‌شده وارد حساب خود شوید.</div>
         <div class="field-group">
           <label class="field-label">نام کاربری یا شماره موبایل</label>
           <input type="text" id="loginIdentifier" placeholder="مثلاً: sofyan_vip یا 09120000000" required />
@@ -942,13 +1087,11 @@
           <input type="password" id="loginPassword" placeholder="رمز عبور خود را وارد کنید" required />
         </div>
         <div class="field-error" id="loginErrorText"></div>
-        <button type="submit" class="btn btn-gold" style="width:100%;padding:10px;">ورود به حساب کاربری</button>
+        <button type="submit" class="btn btn-neon" style="width:100%;padding:10px;">ورود به حساب کاربری</button>
       </form>
 
       <form id="registerForm" style="display:none;" onsubmit="submitRegisterForm(event)">
-        <div class="auth-box-note">
-          تکمیل اطلاعات دقیق برای ایجاد حساب کاربری و ثبت درخواست‌های واریز/برداشت ضروری است.
-        </div>
+        <div class="auth-box-note">تکمیل اطلاعات دقیق برای ایجاد حساب کاربری و ثبت درخواست‌های واریز/برداشت ضروری است.</div>
         <div class="field-group">
           <label class="field-label">نام و نام خانوادگی *</label>
           <input type="text" id="regFullName" placeholder="مثلاً: علی رضایی" required />
@@ -980,7 +1123,7 @@
           </label>
         </div>
         <div class="field-error" id="registerErrorText"></div>
-        <button type="submit" class="btn btn-green" style="width:100%;padding:10px;">تکمیل ثبت‌نام و ساخت حساب</button>
+        <button type="submit" class="btn btn-emerald" style="width:100%;padding:10px;">تکمیل ثبت‌نام و ساخت حساب</button>
       </form>
     </div>
   </div>
@@ -1065,8 +1208,8 @@
     function updateWsPill(text, mode = "warn") {
       const pill = document.getElementById("serverWsPill");
       if (!pill) return;
-      pill.textContent = text;
-      pill.className = "pill " + (mode === "ok" ? "pill-fair" : mode === "err" ? "pill-warn" : "pill-gold");
+      pill.innerHTML = `<i class="fa-solid fa-plug"></i><span>${escapeHtml(text)}</span>`;
+      pill.className = "pill " + (mode === "ok" ? "pill-ok" : mode === "err" ? "pill-warn" : "pill-info");
     }
 
     function applyServerBalanceAdjustments() {
@@ -1238,7 +1381,7 @@
         } else if (msg.type === "SLOTS_RESULT") {
           document.getElementById("slotsPlayBtn").disabled = false;
           document.getElementById("slotsReelsText").textContent = (msg.reels || []).join(" • ");
-          if (msg.won) { playTone(840, 0.16); document.getElementById("slotsStatusText").textContent = `جک‌پات ${fmtToman(msg.payout)}!`; }
+          if (msg.won) { playTone(840, 0.16); document.getElementById("slotsStatusText").textContent = `برد ${fmtToman(msg.payout)}!`; }
           else { document.getElementById("slotsStatusText").textContent = "ترکیب برنده نشد."; }
         } else if (msg.type === "PLINKO_RESULT") {
           document.getElementById("plinkoPlayBtn").disabled = false;
@@ -1348,7 +1491,7 @@
       const d = document.getElementById("brandDrawer");
       const open = d.classList.toggle("open");
       document.getElementById("brandDrawerBtn").setAttribute("aria-expanded", String(open));
-      document.getElementById("drawerArrow").textContent = open ? "▴" : "▾";
+      document.getElementById("drawerArrow").innerHTML = open ? `<i class="fa-solid fa-chevron-up"></i>` : `<i class="fa-solid fa-chevron-down"></i>`;
     }
 
     function openTabById(tabName) {
@@ -1358,6 +1501,7 @@
       if (sec) sec.classList.add("active");
       if (tabName === "football") { renderFootballMatches(); drawPitchCanvas(); renderFootballBets(); }
       if (tabName === "wallet") renderWalletAll();
+      if (tabName === "admin") renderAdminPanel();
     }
 
     function openWalletSubTab(sub) {
@@ -1444,7 +1588,7 @@
       document.getElementById("depositsTableBody").innerHTML = deps.length
         ? deps.map((d) => `<tr>
             <td>${escapeHtml(d.time)}</td><td>${escapeHtml(d.user)}</td><td>${escapeHtml(d.method || "کارت‌به‌کارت")}</td>
-            <td style="font-weight:800;color:var(--emerald-bright);">${fmtToman(d.amount)}</td>
+            <td style="font-weight:800;color:var(--neon-emerald);">${fmtToman(d.amount)}</td>
             <td class="mono">${escapeHtml(d.ref)}</td>
             <td>${d.status === "approved" ? `<span class="status-badge st-approved">تایید شده</span>` : d.status === "rejected" ? `<span class="status-badge st-rejected">رد شده</span>` : `<span class="status-badge st-pending">در انتظار</span>`}</td>
           </tr>`).join("")
@@ -1454,14 +1598,14 @@
       document.getElementById("withdrawsTableBody").innerHTML = wds.length
         ? wds.map((w) => `<tr>
             <td>${escapeHtml(w.time)}</td><td>${escapeHtml(w.user)}</td><td>${escapeHtml(w.method || "شبا بانکی")}</td>
-            <td style="font-weight:800;color:var(--cyan-bright);">${fmtToman(w.amount)}</td>
+            <td style="font-weight:800;color:var(--neon-primary);">${fmtToman(w.amount)}</td>
             <td>${escapeHtml(w.dest)}</td>
             <td>${w.status === "approved" ? `<span class="status-badge st-approved">پرداخت شده</span>` : w.status === "rejected" ? `<span class="status-badge st-rejected">رد و برگشت</span>` : `<span class="status-badge st-pending">در حال بررسی</span>`}</td>
           </tr>`).join("")
         : `<tr><td colspan="6" style="text-align:center;color:var(--muted);">درخواست برداشتی ثبت نشده است.</td></tr>`;
 
       document.getElementById("txTableBody").innerHTML = localState.txs.length
-        ? localState.txs.map((t) => `<tr><td>${escapeHtml(t.time)}</td><td>${escapeHtml(t.section)}</td><td>${escapeHtml(t.mode)}</td><td style="color:${t.amount >= 0 ? "var(--emerald-bright)" : "var(--rose-bright)"};font-weight:800;">${fmtToman(t.amount)}</td><td>${escapeHtml(t.note)}</td></tr>`).join("")
+        ? localState.txs.map((t) => `<tr><td>${escapeHtml(t.time)}</td><td>${escapeHtml(t.section)}</td><td>${escapeHtml(t.mode)}</td><td style="color:${t.amount >= 0 ? "var(--neon-emerald)" : "var(--neon-rose)"};font-weight:800;">${fmtToman(t.amount)}</td><td>${escapeHtml(t.note)}</td></tr>`).join("")
         : `<tr><td colspan="5" style="text-align:center;color:var(--muted);">تراکنشی ثبت نشده است.</td></tr>`;
     }
 
@@ -1515,6 +1659,7 @@
       localState.activeAdminSession = null;
       serverFootballBets = [];
       document.getElementById("sec-admin").classList.remove("unlocked");
+      if (document.getElementById("sec-admin").classList.contains("active")) openTabById("crash");
       saveLocalState();
       wsSend({ type: "IDENTIFY", username: "مهمان" });
       refreshUI();
@@ -1543,14 +1688,17 @@
         document.getElementById("authRegisterBtn").style.display = "none";
       } else {
         document.getElementById("sessionText").textContent = "وضعیت: مهمان";
-        document.getElementById("headerAccountSubtitle").textContent = "منوی اصلی • برای ثبت رسمی، ورود یا ثبت‌نام کنید";
+        document.getElementById("headerAccountSubtitle").textContent = "وب اپلیکیشن همگام با سرور • ورود یا ثبت‌نام";
         document.getElementById("authLoginBtn").style.display = "inline-flex";
         document.getElementById("authRegisterBtn").style.display = "inline-flex";
       }
 
       document.getElementById("logoutBtn").style.display = (localState.currentUser || localState.activeAdminSession) ? "inline-flex" : "none";
       document.getElementById("adminRoleBadge").style.display = localState.activeAdminSession ? "inline-flex" : "none";
-      document.getElementById("soundBtn").textContent = localState.sound ? "🔊 صدا روشن" : "🔇 صدا خاموش";
+      document.getElementById("adminNavTab").style.display = localState.activeAdminSession ? "inline-flex" : "none";
+      document.getElementById("soundBtn").innerHTML = localState.sound
+        ? `<i class="fa-solid fa-volume-high"></i><span>صدا روشن</span>`
+        : `<i class="fa-solid fa-volume-xmark"></i><span>صدا خاموش</span>`;
       document.getElementById("chatModToolbar").classList.toggle("active", hasChatModPermission());
       if (localState.activeAdminSession) {
         document.getElementById("sec-admin").classList.add("unlocked");
@@ -1585,13 +1733,14 @@
 
     function renderTickets() {
       document.getElementById("ticketsList").innerHTML = localState.tickets.length
-        ? localState.tickets.map((t) => `<div class="chat-bubble" style="margin-bottom:8px;"><strong>${escapeHtml(t.subject)}</strong> <span style="font-size:0.72rem;color:var(--gold-bright);">(${escapeHtml(t.time)})</span><div style="margin-top:4px;color:#cbd5e1;">${escapeHtml(t.body)}</div></div>`).join("")
+        ? localState.tickets.map((t) => `<div class="chat-bubble" style="margin-bottom:8px;"><strong>${escapeHtml(t.subject)}</strong> <span style="font-size:0.72rem;color:var(--neon-primary);">(${escapeHtml(t.time)})</span><div style="margin-top:4px;color:var(--muted);">${escapeHtml(t.body)}</div></div>`).join("")
         : `<div style="font-size:0.8rem;color:var(--muted);">تیکتی ثبت نشده است.</div>`;
     }
 
     function closeAdminPanel() {
       localState.activeAdminSession = null;
       document.getElementById("sec-admin").classList.remove("unlocked");
+      if (document.getElementById("sec-admin").classList.contains("active")) openTabById("crash");
       saveLocalState();
       refreshUI();
     }
@@ -1641,7 +1790,7 @@
         ? serverShared.deposits.map((d) => `<tr>
             <td>${escapeHtml(d.time)}</td><td>${escapeHtml(d.user)}</td><td>${escapeHtml(d.method)}</td>
             <td>${fmtToman(d.amount)}</td><td class="mono">${escapeHtml(d.ref)}</td><td>${escapeHtml(d.status)}</td>
-            <td>${d.status === "pending" ? `<button type="button" class="btn btn-green btn-sm" onclick="wsSend({type:'ADMIN_DECIDE_DEPOSIT',id:'${d.id}',approve:true})">تایید</button><button type="button" class="btn btn-rose btn-sm" onclick="wsSend({type:'ADMIN_DECIDE_DEPOSIT',id:'${d.id}',approve:false})">رد</button>` : "—"}</td>
+            <td>${d.status === "pending" ? `<button type="button" class="btn btn-emerald btn-sm" onclick="wsSend({type:'ADMIN_DECIDE_DEPOSIT',id:'${d.id}',approve:true})">تایید</button><button type="button" class="btn btn-rose btn-sm" onclick="wsSend({type:'ADMIN_DECIDE_DEPOSIT',id:'${d.id}',approve:false})">رد</button>` : "—"}</td>
           </tr>`).join("")
         : `<tr><td colspan="7" style="text-align:center;color:var(--muted);">واریزی نیست</td></tr>`;
 
@@ -1649,12 +1798,12 @@
         ? serverShared.withdrawals.map((w) => `<tr>
             <td>${escapeHtml(w.time)}</td><td>${escapeHtml(w.user)}</td><td>${escapeHtml(w.method)}</td>
             <td>${fmtToman(w.amount)}</td><td>${escapeHtml(w.dest)}</td><td>${escapeHtml(w.status)}</td>
-            <td>${w.status === "pending" ? `<button type="button" class="btn btn-green btn-sm" onclick="wsSend({type:'ADMIN_DECIDE_WITHDRAW',id:'${w.id}',approve:true})">پرداخت</button><button type="button" class="btn btn-rose btn-sm" onclick="wsSend({type:'ADMIN_DECIDE_WITHDRAW',id:'${w.id}',approve:false})">رد</button>` : "—"}</td>
+            <td>${w.status === "pending" ? `<button type="button" class="btn btn-emerald btn-sm" onclick="wsSend({type:'ADMIN_DECIDE_WITHDRAW',id:'${w.id}',approve:true})">پرداخت</button><button type="button" class="btn btn-rose btn-sm" onclick="wsSend({type:'ADMIN_DECIDE_WITHDRAW',id:'${w.id}',approve:false})">رد</button>` : "—"}</td>
           </tr>`).join("")
         : `<tr><td colspan="7" style="text-align:center;color:var(--muted);">برداشتی نیست</td></tr>`;
 
       document.getElementById("adminUsersBody").innerHTML = usersList.length
-        ? usersList.map((u) => `<tr><td>${escapeHtml(u.username)}<div style="font-size:0.7rem;color:var(--muted);">${escapeHtml(u.fullName || "")}</div></td><td class="mono">${escapeHtml(u.phone || "-")}</td><td>${fmtToman(u.real)}</td><td>${fmtToman(u.demo)}</td><td><button type="button" class="btn btn-green btn-sm" onclick="wsSend({type:'ADMIN_GRANT_REAL',username:'${escapeHtml(u.username)}',amount:500000})">+500K واقعی</button></td></tr>`).join("")
+        ? usersList.map((u) => `<tr><td>${escapeHtml(u.username)}<div style="font-size:0.7rem;color:var(--muted);">${escapeHtml(u.fullName || "")}</div></td><td class="mono">${escapeHtml(u.phone || "-")}</td><td>${fmtToman(u.real)}</td><td>${fmtToman(u.demo)}</td><td><button type="button" class="btn btn-emerald btn-sm" onclick="wsSend({type:'ADMIN_GRANT_REAL',username:'${escapeHtml(u.username)}',amount:500000})">+500K واقعی</button></td></tr>`).join("")
         : `<tr><td colspan="5" style="text-align:center;color:var(--muted);">کاربری ثبت نشده است</td></tr>`;
 
       document.getElementById("adminAuditLogBox").innerHTML = (serverShared.auditLogs || []).map((l) => `<div style="padding:3px 0;">${escapeHtml(l.time)} • <strong>${escapeHtml(l.actor)}</strong>: ${escapeHtml(l.action)}</div>`).join("");
@@ -1695,7 +1844,7 @@
       const banner = document.getElementById("pinnedMessageBanner");
       if (pinned) {
         banner.classList.add("visible");
-        document.getElementById("pinnedMessageText").textContent = `📌 ${pinned.user}: ${pinned.text}`;
+        document.getElementById("pinnedMessageText").innerHTML = `<i class="fa-solid fa-thumbtack"></i> ${escapeHtml(pinned.user)}: ${escapeHtml(pinned.text)}`;
         document.getElementById("unpinBtn").style.display = isAdmin ? "inline-flex" : "none";
       } else {
         banner.classList.remove("visible");
@@ -1704,8 +1853,8 @@
       const box = document.getElementById("chatStream");
       box.innerHTML = (serverChat.messages || []).map((m) => {
         if (m.deleted) return isAdmin ? `<div class="chat-bubble" style="opacity:0.5;">[حذف‌شده] <strong>${escapeHtml(m.user)}:</strong> ${escapeHtml(m.text)}</div>` : "";
-        const modBtns = isAdmin ? `<span class="chat-mod-actions"><button type="button" class="chat-mod-btn" onclick="pinChatMessage('${m.id}')">پین</button><button type="button" class="chat-mod-btn" onclick="muteUserByName('${escapeHtml(m.user)}',10)">میوت</button><button type="button" class="chat-mod-btn" style="color:var(--rose-bright);" onclick="deleteChatMessage('${m.id}')">حذف</button></span>` : "";
-        return `<div class="chat-bubble"><div class="chat-bubble-top"><div><strong style="color:var(--cyan-bright);">${escapeHtml(m.user)}</strong> ${m.isAdmin ? `<span class="pill pill-admin" style="padding:1px 6px;font-size:0.65rem;">ادمین</span>` : ""} <span style="font-size:0.68rem;color:var(--muted);">${escapeHtml(m.time || "")}</span></div>${modBtns}</div><div>${escapeHtml(m.text)}</div></div>`;
+        const modBtns = isAdmin ? `<span class="chat-mod-actions"><button type="button" class="chat-mod-btn" onclick="pinChatMessage('${m.id}')">پین</button><button type="button" class="chat-mod-btn" onclick="muteUserByName('${escapeHtml(m.user)}',10)">میوت</button><button type="button" class="chat-mod-btn" style="color:var(--neon-rose);" onclick="deleteChatMessage('${m.id}')">حذف</button></span>` : "";
+        return `<div class="chat-bubble"><div class="chat-bubble-top"><div><strong style="color:var(--neon-primary);">${escapeHtml(m.user)}</strong> ${m.isAdmin ? `<span class="pill pill-admin" style="padding:1px 6px;font-size:0.65rem;">ادمین</span>` : ""} <span style="font-size:0.68rem;color:var(--muted);">${escapeHtml(m.time || "")}</span></div>${modBtns}</div><div>${escapeHtml(m.text)}</div></div>`;
       }).join("");
       box.scrollTop = box.scrollHeight;
     }
@@ -1769,18 +1918,18 @@
         const btn = document.getElementById("crashMainBtn" + idx);
         const st = document.getElementById("slot" + idx + "StatusText");
         if (s.state === "active" && snap.phase === "running" && s.roundIndex === snap.roundIndex) {
-          btn.textContent = `برداشت (${Number(snap.mult).toFixed(2)}x)`; btn.className = "btn btn-green"; btn.disabled = false;
-          st.textContent = `فعال • ${fmtToman(s.bet * snap.mult)}`; st.style.color = "var(--emerald-bright)";
+          btn.textContent = `برداشت (${Number(snap.mult).toFixed(2)}x)`; btn.className = "btn btn-emerald"; btn.disabled = false;
+          st.textContent = `فعال • ${fmtToman(s.bet * snap.mult)}`; st.style.color = "var(--neon-emerald)";
         } else if (s.state === "queued") {
           btn.textContent = "لغو شرط"; btn.className = "btn btn-rose"; btn.disabled = false;
-          st.textContent = `در صف راند #${snap.roundIndex}`; st.style.color = "var(--gold-bright)";
+          st.textContent = `در صف راند #${snap.roundIndex}`; st.style.color = "var(--neon-primary)";
         } else if (s.state === "cashed") {
-          btn.textContent = `برداشت شد (${fmtToman(s.win)})`; btn.className = "btn btn-green"; btn.disabled = true;
-          st.textContent = "برد موفق"; st.style.color = "var(--emerald-bright)";
+          btn.textContent = `برداشت شد (${fmtToman(s.win)})`; btn.className = "btn btn-emerald"; btn.disabled = true;
+          st.textContent = "برد موفق"; st.style.color = "var(--neon-emerald)";
         } else {
-          btn.textContent = `ثبت شرط ${idx}`; btn.className = idx === 1 ? "btn btn-gold" : "btn btn-cyan"; btn.disabled = false;
+          btn.textContent = `ثبت شرط ${idx}`; btn.className = idx === 1 ? "btn btn-neon" : "btn btn-emerald"; btn.disabled = false;
           st.textContent = s.state === "lost" ? "بسته شدن ضریب" : "آماده ثبت";
-          st.style.color = s.state === "lost" ? "var(--rose-bright)" : "var(--muted)";
+          st.style.color = s.state === "lost" ? "var(--neon-rose)" : "var(--muted)";
         }
       });
 
@@ -1818,7 +1967,7 @@
       if (!canvas) return;
       const { ctx, w, h, dpr } = prepareCanvas(canvas);
       ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = "#060b1a";
+      ctx.fillStyle = "#f8fbff";
       ctx.fillRect(0, 0, w, h);
 
       const steps = 40;
@@ -1840,7 +1989,7 @@
 
       ctx.beginPath();
       pts.forEach((p, i) => (i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)));
-      ctx.strokeStyle = snap.phase === "crashed" ? "#fda4af" : "#fde047";
+      ctx.strokeStyle = snap.phase === "crashed" ? "#e11d48" : "#0284c7";
       ctx.lineWidth = 3.5 * dpr;
       ctx.stroke();
     }
@@ -1856,9 +2005,9 @@
         btn.className = "mine-cell";
         const isOpenedSafe = minesGame.opened.includes(i);
         const isMine = revealAll && minesGame.mines.includes(i);
-        if (isMine) { btn.classList.add("mine"); btn.textContent = "💣"; btn.disabled = true; }
-        else if (isOpenedSafe) { btn.classList.add("safe"); btn.textContent = "💎"; btn.disabled = true; }
-        else { btn.textContent = "✦"; btn.disabled = !minesGame.active; }
+        if (isMine) { btn.classList.add("mine"); btn.innerHTML = `<i class="fa-solid fa-bomb"></i>`; btn.disabled = true; }
+        else if (isOpenedSafe) { btn.classList.add("safe"); btn.innerHTML = `<i class="fa-solid fa-gem"></i>`; btn.disabled = true; }
+        else { btn.innerHTML = `<i class="fa-solid fa-plus"></i>`; btn.disabled = !minesGame.active; }
         btn.onclick = () => { if (minesGame.active && !isOpenedSafe) wsSend({ type: "MINES_PICK", cell: i }); };
         board.appendChild(btn);
       }
@@ -1932,7 +2081,6 @@
       if (!wsSend({ type: "PLAY_PLINKO", bet, risk, mode: localState.mode })) document.getElementById("plinkoPlayBtn").disabled = false;
     }
 
-    /* PERSIAN FOOTBALL TRANSLATION, IRAN PRIORITY & TAKBET MARKETS */
     const FA_LEAGUES = {
       "Persian Gulf Pro League": "لیگ برتر خلیج فارس",
       "Azadegan League": "لیگ آزادگان",
@@ -1972,40 +2120,18 @@
       "Real Madrid": "رئال مادرید",
       "Barcelona": "بارسلونا",
       "Manchester City": "منچستر سیتی",
-      "Bayern Munich": "بایرن مونیخ",
-      "Hibernian": "هیبرنیان",
-      "Dundee": "داندی",
-      "Cardiff": "کاردیف",
-      "Preston": "پرستون",
-      "Middlesbrough": "میدلزبرو",
-      "Swansea": "سوانزی",
-      "Portsmouth": "پورتسموث",
-      "West Ham": "وستهام",
-      "Wolves": "ولورهمپتون",
-      "Derby": "دربی کانتی",
-      "Port Vale": "پورت ویل",
-      "Northampton": "نورثهمپتون",
-      "Stevenage": "استیونج",
-      "Sheffield Wednesday": "شفیلد ونزدی",
-      "Bromley": "بروملی",
-      "Wycombe": "ویکوم",
-      "AFC Fylde": "ای‌اف‌سی فیلد",
-      "FC Halifax Town": "هالیفاکس تاون",
-      "Boston United": "بوستون یونایتد",
-      "Barrow": "بارو",
-      "Eastleigh": "ایستلی",
-      "Yeovil Town": "یئوویل تاون",
-      "AFC Hornchurch": "ای‌اف‌سی هورنچرچ",
-      "Sutton Utd": "ساتون یونایتد"
+      "Bayern Munich": "بایرن مونیخ"
     };
 
     function translateLeagueFa(name = "") {
+      if (!name) return "فوتبال";
       if (FA_LEAGUES[name]) return FA_LEAGUES[name];
       const hit = Object.keys(FA_LEAGUES).find((k) => name.toLowerCase().includes(k.toLowerCase()));
       return hit ? FA_LEAGUES[hit] : name;
     }
 
     function translateTeamFa(name = "") {
+      if (!name) return "تیم";
       if (FA_TEAMS[name]) return FA_TEAMS[name];
       const hit = Object.keys(FA_TEAMS).find((k) => name.toLowerCase().includes(k.toLowerCase()));
       return hit ? FA_TEAMS[hit] : name;
@@ -2087,14 +2213,14 @@
         const leagueFa = translateLeagueFa(m.league || "");
         const homeFa = translateTeamFa(m.home || "");
         const awayFa = translateTeamFa(m.away || "");
-        const irBadge = isIranianMatch(m) ? " • 🇮🇷 ایرانی" : "";
+        const irBadge = isIranianMatch(m) ? " • ایران" : "";
         const stBadge = isLiveMatch(m)
           ? `<span class="match-live-tag">${m.min}'</span>`
           : `<span class="match-pre-tag">${escapeHtml(m.status || "NS")}</span>`;
 
         return `<button type="button" class="match-tile ${i === localState.football.selectedIdx ? "selected" : ""}" onclick="localState.football.selectedIdx=${i};renderFootballMatches();">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:4px;">
-            <span style="font-size:0.7rem;color:var(--gold-bright);">${escapeHtml(leagueFa)}${irBadge}</span>
+            <span style="font-size:0.7rem;color:var(--neon-primary);font-weight:700;">${escapeHtml(leagueFa)}${irBadge}</span>
             ${stBadge}
           </div>
           <div style="font-size:0.84rem;font-weight:800;">${escapeHtml(homeFa)} ${m.hScore} - ${m.aScore} ${escapeHtml(awayFa)}</div>
@@ -2248,9 +2374,9 @@
       const canvas = document.getElementById("pitchCanvas");
       if (!canvas) return;
       const { ctx, w, h, dpr } = prepareCanvas(canvas);
-      ctx.fillStyle = "#08442a";
+      ctx.fillStyle = "#0b5d3b";
       ctx.fillRect(0, 0, w, h);
-      ctx.strokeStyle = "rgba(255,255,255,0.28)";
+      ctx.strokeStyle = "rgba(255,255,255,0.34)";
       ctx.lineWidth = 2 * dpr;
       ctx.strokeRect(12 * dpr, 12 * dpr, w - 24 * dpr, h - 24 * dpr);
       ctx.beginPath();
@@ -2263,7 +2389,7 @@
       if (!cur) return;
       ctx.beginPath();
       ctx.arc((cur.ballX ?? 0.5) * w, (cur.ballY ?? 0.5) * h, 6 * dpr, 0, Math.PI * 2);
-      ctx.fillStyle = "#fde047";
+      ctx.fillStyle = "#38bdf8";
       ctx.fill();
     }
 
