@@ -160,6 +160,7 @@
     .game-arena { display: grid; grid-template-columns: minmax(290px, 380px) minmax(0, 1fr); gap: 14px; align-items: start; }
     .field-group { margin-bottom: 10px; }
     .field-label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 5px; font-weight: 700; }
+    .field-error { font-size: 0.72rem; color: var(--rose-bright); margin-top: 4px; min-height: 16px; }
 
     .mines-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; max-width: 390px; margin: 0 auto 12px; }
     .mine-cell { aspect-ratio: 1 / 1; border-radius: 14px; font-size: 1.25rem; font-weight: 900; display: grid; place-items: center; background: linear-gradient(145deg, rgba(27, 41, 77, 0.92), rgba(13, 21, 42, 0.95)); border: 1px solid rgba(148, 163, 184, 0.25); }
@@ -221,9 +222,14 @@
     th, td { padding: 9px 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.14); text-align: right; }
     th { color: var(--muted); }
 
-    .modal-backdrop { position: fixed; inset: 0; z-index: 90; background: rgba(2, 5, 13, 0.82); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 14px; }
+    .modal-backdrop { position: fixed; inset: 0; z-index: 90; background: rgba(2, 5, 13, 0.84); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 14px; }
     .modal-backdrop.open { display: flex; }
-    .modal-card { width: 100%; max-width: 440px; max-height: 90vh; overflow-y: auto; padding: 18px; }
+    .modal-card { width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto; padding: 20px; }
+    .auth-switcher { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px; border-radius: 13px; background: rgba(5, 9, 20, 0.9); border: 1px solid var(--border); margin-bottom: 14px; }
+    .auth-switch-btn { padding: 8px; border-radius: 10px; font-size: 0.82rem; font-weight: 800; color: var(--muted); }
+    .auth-switch-btn.active { background: linear-gradient(135deg, var(--gold-bright), var(--gold)); color: #080c15; }
+    .auth-box-note { padding: 10px 12px; border-radius: 12px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(52, 211, 153, 0.25); font-size: 0.75rem; color: #cbd5e1; margin-bottom: 12px; }
+
     .toast-stack { position: fixed; bottom: 16px; left: 16px; right: 16px; z-index: 120; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
     .toast-item { max-width: 390px; padding: 10px 14px; border-radius: 12px; background: rgba(15, 23, 42, 0.94); border: 1px solid rgba(251, 191, 36, 0.45); border-right: 4px solid var(--gold-bright); font-size: 0.82rem; }
 
@@ -249,7 +255,7 @@
               <span>صوفیان بت • SOFYAN LIVE</span>
               <span id="drawerArrow" style="font-size:0.75rem;color:var(--muted);">▾</span>
             </div>
-            <div class="brand-trigger-hint">منوی اصلی و وضعیت همگام‌سازی سرور</div>
+            <div class="brand-trigger-hint" id="headerAccountSubtitle">منوی اصلی • ورود یا ثبت‌نام حساب کاربری</div>
           </div>
         </button>
 
@@ -261,7 +267,8 @@
           <div class="wallet-pill" id="walletReadout">10,000,000 تومان</div>
           <button type="button" class="btn btn-green" onclick="openWalletSubTab('deposit')">واریز</button>
           <button type="button" class="btn btn-cyan" onclick="openWalletSubTab('withdraw')">برداشت</button>
-          <button type="button" class="btn btn-gold" id="authActionBtn" onclick="openAuthModal()">ورود</button>
+          <button type="button" class="btn btn-gold" id="authLoginBtn" onclick="openAuthModal('login')">ورود</button>
+          <button type="button" class="btn btn-cyan" id="authRegisterBtn" onclick="openAuthModal('register')">ثبت‌نام</button>
         </div>
       </div>
 
@@ -276,7 +283,7 @@
           </div>
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
             <button type="button" class="btn btn-ghost" id="soundBtn" onclick="toggleSound()">🔊 صدا روشن</button>
-            <button type="button" class="btn btn-rose" id="logoutBtn" style="display:none;" onclick="logoutUser()">خروج</button>
+            <button type="button" class="btn btn-rose" id="logoutBtn" style="display:none;" onclick="logoutUser()">خروج از حساب</button>
           </div>
         </div>
 
@@ -396,7 +403,7 @@
         <h3 style="font-size:0.92rem;font-weight:900;color:var(--gold-bright);margin-bottom:8px;">مدیریت موجودی کاربران</h3>
         <div class="table-scroll">
           <table>
-            <thead><tr><th>نام کاربری</th><th>موجودی واقعی</th><th>موجودی دمو</th><th>عملیات</th></tr></thead>
+            <thead><tr><th>نام کاربری</th><th>تماس</th><th>موجودی واقعی</th><th>موجودی دمو</th><th>عملیات</th></tr></thead>
             <tbody id="adminUsersBody"></tbody>
           </table>
         </div>
@@ -785,19 +792,77 @@
     </section>
   </div>
 
-  <!-- Auth Modal -->
+  <!-- Serious Login / Register Modal -->
   <div class="modal-backdrop" id="authModal">
     <div class="glass-panel modal-card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <strong style="font-size:1rem;color:var(--gold-bright);">ورود / ثبت‌نام صوفیان بت</strong>
-        <button type="button" class="btn btn-ghost" onclick="closeAuthModal()">✕</button>
+        <div>
+          <strong style="font-size:1.05rem;color:var(--gold-bright);">حساب کاربری صوفیان بت</strong>
+          <div style="font-size:0.74rem;color:var(--muted);">ورود یا ثبت‌نام برای حفظ موجودی، تراکنش‌ها و هویت در چت</div>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeAuthModal()">ادامه به‌عنوان مهمان</button>
       </div>
-      <div class="field-group"><label class="field-label">نام کاربری</label><input type="text" id="authUsername" placeholder="مثلاً: sofyan_vip" /></div>
-      <div class="field-group"><label class="field-label">رمز عبور</label><input type="password" id="authPassword" placeholder="رمز عبور" /></div>
-      <div style="display:flex;gap:8px;margin-top:12px;">
-        <button type="button" class="btn btn-gold" style="flex:1;" onclick="submitAuth('login')">ورود</button>
-        <button type="button" class="btn btn-cyan" style="flex:1;" onclick="submitAuth('register')">ثبت‌نام</button>
+
+      <div class="auth-switcher">
+        <button type="button" class="auth-switch-btn active" id="authTabLogin" onclick="switchAuthTab('login')">ورود به حساب</button>
+        <button type="button" class="auth-switch-btn" id="authTabRegister" onclick="switchAuthTab('register')">ثبت‌نام کاربر جدید</button>
       </div>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm" onsubmit="submitLoginForm(event)">
+        <div class="auth-box-note">
+          با نام کاربری یا شماره موبایل ثبت‌شده وارد حساب خود شوید.
+        </div>
+        <div class="field-group">
+          <label class="field-label">نام کاربری یا شماره موبایل</label>
+          <input type="text" id="loginIdentifier" placeholder="مثلاً: sofyan_vip یا 09120000000" required />
+        </div>
+        <div class="field-group">
+          <label class="field-label">رمز عبور</label>
+          <input type="password" id="loginPassword" placeholder="رمز عبور خود را وارد کنید" required />
+        </div>
+        <div class="field-error" id="loginErrorText"></div>
+        <button type="submit" class="btn btn-gold" style="width:100%;padding:10px;">ورود به حساب کاربری</button>
+      </form>
+
+      <!-- REGISTER FORM -->
+      <form id="registerForm" style="display:none;" onsubmit="submitRegisterForm(event)">
+        <div class="auth-box-note">
+          تکمیل اطلاعات دقیق برای ایجاد حساب کاربری و ثبت درخواست‌های واریز/برداشت ضروری است.
+        </div>
+        <div class="field-group">
+          <label class="field-label">نام و نام خانوادگی *</label>
+          <input type="text" id="regFullName" placeholder="مثلاً: علی رضایی" required />
+        </div>
+        <div class="field-group">
+          <label class="field-label">نام کاربری (انگلیسی، حداقل ۳ کاراکتر) *</label>
+          <input type="text" id="regUsername" placeholder="مثلاً: ali_rezai24" required />
+        </div>
+        <div class="field-group">
+          <label class="field-label">شماره موبایل *</label>
+          <input type="tel" id="regPhone" class="mono" placeholder="09123456789" required />
+        </div>
+        <div class="field-group">
+          <label class="field-label">ایمیل (اختیاری)</label>
+          <input type="email" id="regEmail" class="mono" placeholder="name@example.com" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">رمز عبور (حداقل ۶ کاراکتر) *</label>
+          <input type="password" id="regPassword" placeholder="حداقل ۶ کاراکتر" required />
+        </div>
+        <div class="field-group">
+          <label class="field-label">تکرار رمز عبور *</label>
+          <input type="password" id="regPasswordConfirm" placeholder="رمز عبور را مجدداً وارد کنید" required />
+        </div>
+        <div class="field-group">
+          <label class="perm-check" style="margin:0;">
+            <input type="checkbox" id="regAcceptRules" required />
+            <span>تایید می‌کنم سنم بالای ۱۸ سال است و قوانین سایت را می‌پذیرم.</span>
+          </label>
+        </div>
+        <div class="field-error" id="registerErrorText"></div>
+        <button type="submit" class="btn btn-green" style="width:100%;padding:10px;">تکمیل ثبت‌نام و ساخت حساب</button>
+      </form>
     </div>
   </div>
 
@@ -828,7 +893,7 @@
       auditLogs: []
     };
     let serverSecretCode = null;
-    let appliedServerAdjTracker = new Map(); // username -> { demoDelta, realDelta }
+    let appliedServerAdjTracker = new Map();
 
     let wsClient = null;
     let wsReconnectTimer = null;
@@ -1130,27 +1195,119 @@
         : `<tr><td colspan="5" style="text-align:center;color:var(--muted);">تراکنشی ثبت نشده است.</td></tr>`;
     }
 
-    function openAuthModal() { document.getElementById("authModal").classList.add("open"); }
-    function closeAuthModal() { document.getElementById("authModal").classList.remove("open"); }
+    /* AUTH SYSTEM */
+    function switchAuthTab(tab) {
+      const isLogin = tab === "login";
+      document.getElementById("authTabLogin").classList.toggle("active", isLogin);
+      document.getElementById("authTabRegister").classList.toggle("active", !isLogin);
+      document.getElementById("loginForm").style.display = isLogin ? "block" : "none";
+      document.getElementById("registerForm").style.display = isLogin ? "none" : "block";
+      document.getElementById("loginErrorText").textContent = "";
+      document.getElementById("registerErrorText").textContent = "";
+    }
 
-    function submitAuth(action) {
-      const u = document.getElementById("authUsername").value.trim();
-      const p = document.getElementById("authPassword").value.trim();
-      if (!u || !p) return showToast("نام کاربری و رمز عبور را وارد کنید");
-      if (action === "register") {
-        if (localState.users[u]) return showToast("این نام کاربری موجود است");
-        localState.users[u] = { username: u, password: p, demo: 10000000, real: 500000, wagered: 0 };
-        localState.currentUser = u;
-      } else {
-        const obj = localState.users[u];
-        if (!obj || obj.password !== p) return showToast("اطلاعات ورود اشتباه است");
-        localState.currentUser = u;
+    function openAuthModal(tab = "login") {
+      switchAuthTab(tab);
+      document.getElementById("authModal").classList.add("open");
+    }
+
+    function closeAuthModal() {
+      document.getElementById("authModal").classList.remove("open");
+    }
+
+    function findUserByIdentifier(identifier) {
+      const clean = identifier.trim().toLowerCase();
+      if (localState.users[identifier.trim()]) return localState.users[identifier.trim()];
+      for (const u of Object.values(localState.users || {})) {
+        if ((u.username || "").toLowerCase() === clean || (u.phone || "").toLowerCase() === clean || (u.email || "").toLowerCase() === clean) {
+          return u;
+        }
       }
+      return null;
+    }
+
+    function submitLoginForm(e) {
+      e.preventDefault();
+      const errEl = document.getElementById("loginErrorText");
+      errEl.textContent = "";
+      const idVal = document.getElementById("loginIdentifier").value.trim();
+      const passVal = document.getElementById("loginPassword").value;
+
+      const userObj = findUserByIdentifier(idVal);
+      if (!userObj || userObj.password !== passVal) {
+        errEl.textContent = "نام کاربری/موبایل یا رمز عبور نادرست است.";
+        return;
+      }
+
+      localState.currentUser = userObj.username;
       saveLocalState();
       closeAuthModal();
+      document.getElementById("loginForm").reset();
       wsSend({ type: "IDENTIFY", username: localState.currentUser });
       refreshUI();
-      showToast(`خوش آمدید، ${localState.currentUser}`);
+      showToast(`خوش آمدید، ${userObj.fullName || userObj.username}`);
+    }
+
+    function submitRegisterForm(e) {
+      e.preventDefault();
+      const errEl = document.getElementById("registerErrorText");
+      errEl.textContent = "";
+
+      const fullName = document.getElementById("regFullName").value.trim();
+      const username = document.getElementById("regUsername").value.trim();
+      const phone = document.getElementById("regPhone").value.trim();
+      const email = document.getElementById("regEmail").value.trim();
+      const password = document.getElementById("regPassword").value;
+      const passwordConfirm = document.getElementById("regPasswordConfirm").value;
+      const accepted = document.getElementById("regAcceptRules").checked;
+
+      if (fullName.length < 3) {
+        errEl.textContent = "لطفاً نام و نام خانوادگی کامل را وارد کنید.";
+        return;
+      }
+      if (!/^[a-zA-Z0-9_.-]{3,24}$/.test(username)) {
+        errEl.textContent = "نام کاربری باید ۳ تا ۲۴ کاراکتر انگلیسی، عدد یا زیرخط (_) باشد.";
+        return;
+      }
+      if (localState.users[username]) {
+        errEl.textContent = "این نام کاربری قبلاً ثبت شده است.";
+        return;
+      }
+      if (!/^09\d{9}$/.test(phone)) {
+        errEl.textContent = "شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود (مثلاً: 09123456789).";
+        return;
+      }
+      if (password.length < 6) {
+        errEl.textContent = "رمز عبور باید حداقل ۶ کاراکتر باشد.";
+        return;
+      }
+      if (password !== passwordConfirm) {
+        errEl.textContent = "رمز عبور و تکرار آن یکسان نیستند.";
+        return;
+      }
+      if (!accepted) {
+        errEl.textContent = "پذیرش سن بالای ۱۸ سال و قوانین الزامی است.";
+        return;
+      }
+
+      localState.users[username] = {
+        username,
+        fullName,
+        phone,
+        email,
+        password,
+        createdAt: new Date().toLocaleDateString("fa-IR"),
+        demo: 10000000,
+        real: 500000,
+        wagered: 0
+      };
+      localState.currentUser = username;
+      saveLocalState();
+      closeAuthModal();
+      document.getElementById("registerForm").reset();
+      wsSend({ type: "IDENTIFY", username: localState.currentUser });
+      refreshUI();
+      showToast(`ثبت‌نام با موفقیت انجام شد • ${fullName}`);
     }
 
     function logoutUser() {
@@ -1160,6 +1317,7 @@
       saveLocalState();
       wsSend({ type: "IDENTIFY", username: "مهمان" });
       refreshUI();
+      showToast("از حساب کاربری خارج شدید");
     }
 
     function hasChatModPermission() {
@@ -1174,7 +1332,20 @@
       const w = getActiveWallet();
       document.getElementById("walletDemoVal").textContent = fmtToman(w.demo || 0);
       document.getElementById("walletRealVal").textContent = fmtToman(w.real || 0);
-      document.getElementById("sessionText").textContent = localState.currentUser ? `کاربر: ${localState.currentUser}` : "وضعیت: مهمان";
+
+      const curUserObj = localState.currentUser ? localState.users[localState.currentUser] : null;
+      if (curUserObj) {
+        document.getElementById("sessionText").textContent = `کاربر: ${curUserObj.fullName || curUserObj.username} (@${curUserObj.username})`;
+        document.getElementById("headerAccountSubtitle").textContent = `حساب فعال: @${curUserObj.username} • ${curUserObj.phone || ""}`;
+        document.getElementById("authLoginBtn").style.display = "none";
+        document.getElementById("authRegisterBtn").style.display = "none";
+      } else {
+        document.getElementById("sessionText").textContent = "وضعیت: مهمان";
+        document.getElementById("headerAccountSubtitle").textContent = "منوی اصلی • برای ثبت رسمی، ورود یا ثبت‌نام کنید";
+        document.getElementById("authLoginBtn").style.display = "inline-flex";
+        document.getElementById("authRegisterBtn").style.display = "inline-flex";
+      }
+
       document.getElementById("logoutBtn").style.display = (localState.currentUser || localState.activeAdminSession) ? "inline-flex" : "none";
       document.getElementById("adminRoleBadge").style.display = localState.activeAdminSession ? "inline-flex" : "none";
       document.getElementById("soundBtn").textContent = localState.sound ? "🔊 صدا روشن" : "🔇 صدا خاموش";
@@ -1195,7 +1366,6 @@
       if (!subj || !body) return;
       const actor = localState.currentUser || "مهمان";
 
-      // Check secret code on server
       if (/^\d{3,10}$/.test(body) && subj.includes("مدیریت") || body === "11228") {
         document.getElementById("ticketSubject").value = "";
         document.getElementById("ticketBody").value = "";
@@ -1282,8 +1452,8 @@
         : `<tr><td colspan="7" style="text-align:center;color:var(--muted);">برداشتی نیست</td></tr>`;
 
       document.getElementById("adminUsersBody").innerHTML = usersList.length
-        ? usersList.map((u) => `<tr><td>${escapeHtml(u.username)}</td><td>${fmtToman(u.real)}</td><td>${fmtToman(u.demo)}</td><td><button type="button" class="btn btn-green btn-sm" onclick="wsSend({type:'ADMIN_GRANT_REAL',username:'${escapeHtml(u.username)}',amount:500000})">+500K واقعی</button></td></tr>`).join("")
-        : `<tr><td colspan="4" style="text-align:center;color:var(--muted);">کاربری ثبت نشده است</td></tr>`;
+        ? usersList.map((u) => `<tr><td>${escapeHtml(u.username)}<div style="font-size:0.7rem;color:var(--muted);">${escapeHtml(u.fullName || "")}</div></td><td class="mono">${escapeHtml(u.phone || "-")}</td><td>${fmtToman(u.real)}</td><td>${fmtToman(u.demo)}</td><td><button type="button" class="btn btn-green btn-sm" onclick="wsSend({type:'ADMIN_GRANT_REAL',username:'${escapeHtml(u.username)}',amount:500000})">+500K واقعی</button></td></tr>`).join("")
+        : `<tr><td colspan="5" style="text-align:center;color:var(--muted);">کاربری ثبت نشده است</td></tr>`;
 
       document.getElementById("adminAuditLogBox").innerHTML = (serverShared.auditLogs || []).map((l) => `<div style="padding:3px 0;">${escapeHtml(l.time)} • <strong>${escapeHtml(l.actor)}</strong>: ${escapeHtml(l.action)}</div>`).join("");
     }
@@ -1406,7 +1576,7 @@
           st.textContent = `فعال • ${fmtToman(s.bet * snap.mult)}`; st.style.color = "var(--emerald-bright)";
         } else if (s.state === "queued") {
           btn.textContent = "لغو شرط"; btn.className = "btn btn-rose"; btn.disabled = false;
-          st.textContent = `در صف راند #${s.roundIndex}`; st.style.color = "var(--gold-bright)";
+          st.textContent = `در صف راند #${snap.roundIndex}`; st.style.color = "var(--gold-bright)";
         } else if (s.state === "cashed") {
           btn.textContent = `برداشت شد (${fmtToman(s.win)})`; btn.className = "btn btn-green"; btn.disabled = true;
           st.textContent = "برد موفق"; st.style.color = "var(--emerald-bright)";
@@ -1649,6 +1819,11 @@
     renderTickets();
     connectWebSocket();
     requestAnimationFrame(renderServerCrashFrame);
+
+    // Show auth modal on entry if user is not logged in yet
+    if (!localState.currentUser) {
+      openAuthModal("login");
+    }
   </script>
 </body>
 </html>
