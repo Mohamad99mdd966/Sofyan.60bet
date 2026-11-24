@@ -50,6 +50,22 @@ db.exec(`
     created_at TEXT NOT NULL
   );
 
+  CREATE TABLE IF NOT EXISTS football_bets (
+    id TEXT PRIMARY KEY,
+    username TEXT NOT NULL,
+    match_id TEXT NOT NULL,
+    match_label TEXT NOT NULL,
+    market TEXT NOT NULL,
+    odd REAL NOT NULL,
+    stake INTEGER NOT NULL,
+    potential_payout INTEGER NOT NULL,
+    mode TEXT NOT NULL DEFAULT 'demo',
+    status TEXT NOT NULL DEFAULT 'open',
+    payout INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    settled_at TEXT DEFAULT ''
+  );
+
   CREATE TABLE IF NOT EXISTS settings (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
@@ -133,6 +149,74 @@ function changeBalance({ username, mode = "demo", type = "game", delta = 0, refI
   return applyBalanceChangeTx({ username, mode, type, delta, refId, note });
 }
 
+const placeFootballBetTx = db.transaction(({ id, username, matchId, matchLabel, market, odd, stake, mode }) => {
+  const cleanMode = mode === "real" ? "real" : "demo";
+  const cleanStake = Math.round(Number(stake || 0));
+  const cleanOdd = Number(odd || 1);
+  const potential = Math.round(cleanStake * cleanOdd);
+
+  changeBalance({
+    username,
+    mode: cleanMode,
+    type: "football_bet",
+    delta: -cleanStake,
+    refId: id,
+    note: `شرط فوتبال: ${matchLabel} (${market})`
+  });
+
+  db.prepare(`
+    INSERT INTO football_bets (id, username, match_id, match_label, market, odd, stake, potential_payout, mode, status, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'open', ?)
+  `).run(id, username, String(matchId), matchLabel, market, cleanOdd, cleanStake, potential, cleanMode, new Date().toISOString());
+
+  return { id, potential, mode: cleanMode, odd: cleanOdd, stake: cleanStake };
+});
+
+function createFootballBet(payload) {
+  return placeFootballBetTx(payload);
+}
+
+function getOpenFootballBetsByMatch(matchId) {
+  return db.prepare(`
+    SELECT * FROM football_bets WHERE match_id = ? AND status = 'open'
+  `).all(String(matchId));
+}
+
+const settleFootballBetTx = db.transaction(({ betId, won, payout, note }) => {
+  const bet = db.prepare("SELECT * FROM football_bets WHERE id = ? AND status = 'open'").get(betId);
+  if (!bet) return null;
+
+  const finalPayout = won ? Math.round(Number(payout || bet.potential_payout)) : 0;
+  const status = won ? "won" : "lost";
+
+  db.prepare(`
+    UPDATE football_bets SET status = ?, payout = ?, settled_at = ? WHERE id = ?
+  `).run(status, finalPayout, new Date().toISOString(), betId);
+
+  if (won && finalPayout > 0) {
+    changeBalance({
+      username: bet.username,
+      mode: bet.mode,
+      type: "football_win",
+      delta: finalPayout,
+      refId: betId,
+      note: note || `برد شرط فوتبال: ${bet.match_label}`
+    });
+  }
+
+  return { ...bet, status, payout: finalPayout };
+});
+
+function settleFootballBet(params) {
+  return settleFootballBetTx(params);
+}
+
+function getUserFootballBets(username, limit = 30) {
+  return db.prepare(`
+    SELECT * FROM football_bets WHERE username = ? ORDER BY created_at DESC LIMIT ?
+  `).all(username, limit);
+}
+
 function getUserPublic(username) {
   const u = ensureUser(username);
   return {
@@ -173,6 +257,10 @@ module.exports = {
   setSetting,
   ensureUser,
   changeBalance,
+  createFootballBet,
+  getOpenFootballBetsByMatch,
+  settleFootballBet,
+  getUserFootballBets,
   getUserPublic,
   listUsersPublic,
   getRecentTransactions
