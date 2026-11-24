@@ -814,7 +814,6 @@
         <button type="button" class="auth-switch-btn" id="authTabRegister" onclick="switchAuthTab('register')">ثبت‌نام کاربر جدید</button>
       </div>
 
-      <!-- LOGIN FORM -->
       <form id="loginForm" onsubmit="submitLoginForm(event)">
         <div class="auth-box-note">
           با نام کاربری یا شماره موبایل ثبت‌شده وارد حساب خود شوید.
@@ -831,7 +830,6 @@
         <button type="submit" class="btn btn-gold" style="width:100%;padding:10px;">ورود به حساب کاربری</button>
       </form>
 
-      <!-- REGISTER FORM -->
       <form id="registerForm" style="display:none;" onsubmit="submitRegisterForm(event)">
         <div class="auth-box-note">
           تکمیل اطلاعات دقیق برای ایجاد حساب کاربری و ثبت درخواست‌های واریز/برداشت ضروری است.
@@ -875,7 +873,7 @@
   <div class="toast-stack" id="toastStack"></div>
 
   <script>
-    const WS_SERVER_URL = "wss://sofyan60bet-production.up.railway.app";
+    const WS_SERVER_URL = "wss://sofyan60bet-production-6dc18fe4.up.railway.app";
     const LOCAL_USER_KEY = "sofyan_local_user_v3";
     const MERCHANT_CARD = "6037997410972831";
     const MERCHANT_HOLDER = "محمد مددی";
@@ -886,7 +884,6 @@
     let localState = loadLocalState();
     let guestWallet = { demo: 10000000, real: 500000, wagered: 0 };
 
-    // Authoritative server state
     let serverRound = { roundIndex: 0, phase: "waiting", mult: 1.0, target: 2.0, progressRatio: 0, remainingSec: 1.0 };
     let serverCrashHistory = [1.42, 2.85, 1.18, 4.60, 1.94, 3.12];
     let serverChat = { locked: false, slowModeSec: 0, pinnedId: null, mutedUsers: {}, messages: [] };
@@ -965,7 +962,8 @@
           if (localState.users[uname]) {
             localState.users[uname].demo = Math.max(0, Number(localState.users[uname].demo || 0) + diffDemo);
             localState.users[uname].real = Math.max(0, Number(localState.users[uname].real || 0) + diffReal);
-          } else if (localState.currentUser === uname || uname === "مهمان") {
+          }
+          if (uname === "مهمان" || (!localState.currentUser && uname === "مهمان")) {
             guestWallet.demo = Math.max(0, Number(guestWallet.demo || 0) + diffDemo);
             guestWallet.real = Math.max(0, Number(guestWallet.real || 0) + diffReal);
           }
@@ -1042,10 +1040,7 @@
           showToast(`پنل مدیریت باز شد (${msg.session?.rank || "ادمین"})`);
         } else if (msg.type === "TOAST" && msg.message) {
           showToast(msg.message);
-        }
-
-        /* SERVER GAME RESULTS */
-        else if (msg.type === "DICE_RESULT") {
+        } else if (msg.type === "DICE_RESULT") {
           document.getElementById("dicePlayBtn").disabled = false;
           document.getElementById("diceResultNum").textContent = msg.roll;
           recordLocalTx("تاس (سرور)", msg.mode, msg.won ? (msg.payout - msg.bet) : -msg.bet);
@@ -1327,7 +1322,6 @@
         : `<tr><td colspan="5" style="text-align:center;color:var(--muted);">تراکنشی ثبت نشده است.</td></tr>`;
     }
 
-    /* AUTH SYSTEM */
     function switchAuthTab(tab) {
       const isLogin = tab === "login";
       document.getElementById("authTabLogin").classList.toggle("active", isLogin);
@@ -1590,7 +1584,6 @@
       document.getElementById("adminAuditLogBox").innerHTML = (serverShared.auditLogs || []).map((l) => `<div style="padding:3px 0;">${escapeHtml(l.time)} • <strong>${escapeHtml(l.actor)}</strong>: ${escapeHtml(l.action)}</div>`).join("");
     }
 
-    /* CHAT */
     function sendChatMessage(e) {
       e.preventDefault();
       const inp = document.getElementById("chatInput");
@@ -1641,7 +1634,6 @@
       box.scrollTop = box.scrollHeight;
     }
 
-    /* CRASH DRIVEN SOLELY BY SERVER ROUND_TICK */
     const crashLocalSlots = {
       1: { roundIndex: -1, bet: 0, mode: "demo", autoMult: 2.0, state: "idle", win: 0 },
       2: { roundIndex: -1, bet: 0, mode: "demo", autoMult: 1.5, state: "idle", win: 0 }
@@ -1780,7 +1772,6 @@
       ctx.stroke();
     }
 
-    /* SERVER-AUTHORITATIVE GAMES */
     let minesGame = { active: false, bet: 0, mines: [], opened: [], mult: 1.0 };
 
     function renderMinesBoard(revealAll = false) {
