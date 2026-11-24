@@ -1,6 +1,7 @@
 {
-  "name": "sofyan-ws-server",
+  "name": "sofyan-live-server",
   "version": "1.0.0",
+  "description": "WebSocket Game & Sync Server for Sofyan Live",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
