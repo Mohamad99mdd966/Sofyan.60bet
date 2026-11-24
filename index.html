@@ -683,6 +683,12 @@
           <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="fbBetInput" value="100000" min="10000" step="10000" /></div>
           <button type="button" class="btn btn-gold" style="width:100%;" onclick="placeFootballBet()">ثبت پیش‌بینی در سرور</button>
           <div style="margin-top:12px;font-size:0.78rem;color:var(--muted);" id="fbActiveBetSummary">شرط فعالی ثبت نشده است.</div>
+          <div class="table-scroll" style="margin-top:12px;">
+            <table>
+              <thead><tr><th>مسابقه</th><th>بازار</th><th>مبلغ</th><th>وضعیت</th></tr></thead>
+              <tbody id="fbUserBetsBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
@@ -814,6 +820,7 @@
         <button type="button" class="auth-switch-btn" id="authTabRegister" onclick="switchAuthTab('register')">ثبت‌نام کاربر جدید</button>
       </div>
 
+      <!-- LOGIN FORM -->
       <form id="loginForm" onsubmit="submitLoginForm(event)">
         <div class="auth-box-note">
           با نام کاربری یا شماره موبایل ثبت‌شده وارد حساب خود شوید.
@@ -830,6 +837,7 @@
         <button type="submit" class="btn btn-gold" style="width:100%;padding:10px;">ورود به حساب کاربری</button>
       </form>
 
+      <!-- REGISTER FORM -->
       <form id="registerForm" style="display:none;" onsubmit="submitRegisterForm(event)">
         <div class="auth-box-note">
           تکمیل اطلاعات دقیق برای ایجاد حساب کاربری و ثبت درخواست‌های واریز/برداشت ضروری است.
@@ -873,7 +881,7 @@
   <div class="toast-stack" id="toastStack"></div>
 
   <script>
-    const WS_SERVER_URL = "wss://sofyan60bet-production-6dc18fe4.up.railway.app";
+    const WS_SERVER_URL = "wss://sofyan60bet-production.up.railway.app";
     const LOCAL_USER_KEY = "sofyan_local_user_v3";
     const MERCHANT_CARD = "6037997410972831";
     const MERCHANT_HOLDER = "محمد مددی";
@@ -884,6 +892,7 @@
     let localState = loadLocalState();
     let guestWallet = { demo: 10000000, real: 500000, wagered: 0 };
 
+    // Authoritative server state
     let serverRound = { roundIndex: 0, phase: "waiting", mult: 1.0, target: 2.0, progressRatio: 0, remainingSec: 1.0 };
     let serverCrashHistory = [1.42, 2.85, 1.18, 4.60, 1.94, 3.12];
     let serverChat = { locked: false, slowModeSec: 0, pinnedId: null, mutedUsers: {}, messages: [] };
@@ -898,6 +907,7 @@
     };
     let serverSecretCode = null;
     let appliedServerAdjTracker = new Map();
+    let serverFootballBets = [];
 
     let wsClient = null;
     let wsReconnectTimer = null;
@@ -924,9 +934,9 @@
 
     function defaultMatches() {
       return [
-        { id: "m0", league: "لیگ برتر", home: "استقلال", away: "پرسپولیس", hScore: 1, aScore: 0, min: 34, hOdd: 2.15, dOdd: 3.10, aOdd: 3.05, ballX: 0.56, ballY: 0.48 },
-        { id: "m1", league: "لالیگا", home: "رئال مادرید", away: "بارسلونا", hScore: 0, aScore: 0, min: 19, hOdd: 2.05, dOdd: 3.40, aOdd: 2.90, ballX: 0.44, ballY: 0.52 },
-        { id: "m2", league: "لیگ قهرمانان", home: "منچستر سیتی", away: "بایرن مونیخ", hScore: 2, aScore: 1, min: 67, hOdd: 1.88, dOdd: 3.55, aOdd: 3.45, ballX: 0.62, ballY: 0.42 }
+        { id: "m0", league: "لیگ برتر", home: "استقلال", away: "پرسپولیس", hScore: 1, aScore: 0, min: 34, status: "LIVE", hOdd: 2.15, dOdd: 3.10, aOdd: 3.05, ballX: 0.56, ballY: 0.48 },
+        { id: "m1", league: "لالیگا", home: "رئال مادرید", away: "بارسلونا", hScore: 0, aScore: 0, min: 19, status: "LIVE", hOdd: 2.05, dOdd: 3.40, aOdd: 2.90, ballX: 0.44, ballY: 0.52 },
+        { id: "m2", league: "لیگ قهرمانان", home: "منچستر سیتی", away: "بایرن مونیخ", hScore: 2, aScore: 1, min: 67, status: "LIVE", hOdd: 1.88, dOdd: 3.55, aOdd: 3.45, ballX: 0.62, ballY: 0.42 }
       ];
     }
 
@@ -962,8 +972,7 @@
           if (localState.users[uname]) {
             localState.users[uname].demo = Math.max(0, Number(localState.users[uname].demo || 0) + diffDemo);
             localState.users[uname].real = Math.max(0, Number(localState.users[uname].real || 0) + diffReal);
-          }
-          if (uname === "مهمان" || (!localState.currentUser && uname === "مهمان")) {
+          } else if (localState.currentUser === uname || uname === "مهمان") {
             guestWallet.demo = Math.max(0, Number(guestWallet.demo || 0) + diffDemo);
             guestWallet.real = Math.max(0, Number(guestWallet.real || 0) + diffReal);
           }
@@ -971,6 +980,50 @@
           saveLocalState();
         }
       }
+    }
+
+    function applyServerWalletSync(msg) {
+      if (msg.wallet) {
+        const wData = {
+          username: msg.wallet.username || localState.currentUser || "مهمان",
+          fullName: msg.wallet.fullName || "",
+          phone: msg.wallet.phone || "",
+          email: msg.wallet.email || "",
+          demo: Math.max(0, Number(msg.wallet.demo ?? 0)),
+          real: Math.max(0, Number(msg.wallet.real ?? 0)),
+          wagered: 0
+        };
+        if (localState.currentUser && wData.username === localState.currentUser) {
+          const prev = localState.users[localState.currentUser] || {};
+          localState.users[localState.currentUser] = {
+            ...prev,
+            ...wData,
+            password: prev.password || ""
+          };
+        } else {
+          guestWallet = { ...guestWallet, ...wData };
+        }
+        saveLocalState();
+      }
+
+      if (Array.isArray(msg.txs)) {
+        localState.txs = msg.txs.map((t) => ({
+          time: t.created_at ? new Date(t.created_at).toLocaleTimeString("fa-IR") : new Date().toLocaleTimeString("fa-IR"),
+          section: t.type || "تراکنش سرور",
+          mode: t.mode === "real" ? "واقعی" : "دمو",
+          amount: Number(t.amount || 0),
+          note: t.note || `موجودی پس از عملیات: ${fmtToman(t.balance_after || 0)}`
+        }));
+        saveLocalState();
+      }
+
+      if (Array.isArray(msg.footballBets)) {
+        serverFootballBets = msg.footballBets;
+        renderFootballBets();
+      }
+
+      refreshUI();
+      renderWalletAll();
     }
 
     function syncSharedData(shared) {
@@ -1015,6 +1068,31 @@
           renderChat();
           renderWalletAll();
           refreshUI();
+        } else if (msg.type === "WALLET_SYNC") {
+          applyServerWalletSync(msg);
+        } else if (msg.type === "AUTH_SUCCESS" && msg.user) {
+          const u = msg.user;
+          localState.currentUser = u.username;
+          const prev = localState.users[u.username] || {};
+          localState.users[u.username] = {
+            ...prev,
+            username: u.username,
+            fullName: u.fullName || prev.fullName || u.username,
+            phone: u.phone || prev.phone || "",
+            email: u.email || prev.email || "",
+            demo: Math.max(0, Number(u.demo ?? 0)),
+            real: Math.max(0, Number(u.real ?? 0)),
+            wagered: prev.wagered || 0
+          };
+          saveLocalState();
+          closeAuthModal();
+          refreshUI();
+          showToast(`خوش آمدید، ${u.fullName || u.username}`);
+        } else if (msg.type === "AUTH_ERROR") {
+          const errText = msg.message || "خطا در احراز هویت";
+          document.getElementById("loginErrorText").textContent = errText;
+          document.getElementById("registerErrorText").textContent = errText;
+          showToast(errText);
         } else if (msg.type === "ROUND_TICK") {
           if (msg.round) serverRound = msg.round;
           if (Array.isArray(msg.crashHistory)) {
@@ -1039,11 +1117,17 @@
           refreshUI();
           showToast(`پنل مدیریت باز شد (${msg.session?.rank || "ادمین"})`);
         } else if (msg.type === "TOAST" && msg.message) {
+          document.getElementById("dicePlayBtn").disabled = false;
+          document.getElementById("roulettePlayBtn").disabled = false;
+          document.getElementById("slotsPlayBtn").disabled = false;
+          document.getElementById("plinkoPlayBtn").disabled = false;
           showToast(msg.message);
-        } else if (msg.type === "DICE_RESULT") {
+        }
+
+        /* SERVER GAME RESULTS */
+        else if (msg.type === "DICE_RESULT") {
           document.getElementById("dicePlayBtn").disabled = false;
           document.getElementById("diceResultNum").textContent = msg.roll;
-          recordLocalTx("تاس (سرور)", msg.mode, msg.won ? (msg.payout - msg.bet) : -msg.bet);
           if (msg.won) {
             playTone(760, 0.12);
             document.getElementById("diceStatusText").textContent = `برد! دریافتی ${fmtToman(msg.payout)}`;
@@ -1053,7 +1137,6 @@
         } else if (msg.type === "ROULETTE_RESULT") {
           document.getElementById("roulettePlayBtn").disabled = false;
           document.getElementById("rouletteResultText").textContent = `${msg.num} (${msg.color})`;
-          recordLocalTx("رولت (سرور)", msg.mode, msg.won ? (msg.payout - msg.bet) : -msg.bet);
           if (msg.won) {
             playTone(780, 0.14);
             document.getElementById("rouletteStatusText").textContent = `برد! ${fmtToman(msg.payout)}`;
@@ -1063,7 +1146,6 @@
         } else if (msg.type === "SLOTS_RESULT") {
           document.getElementById("slotsPlayBtn").disabled = false;
           document.getElementById("slotsReelsText").textContent = (msg.reels || []).join(" • ");
-          recordLocalTx("اسلات (سرور)", msg.mode, msg.won ? (msg.payout - msg.bet) : -msg.bet);
           if (msg.won) {
             playTone(840, 0.16);
             document.getElementById("slotsStatusText").textContent = `جک‌پات ${fmtToman(msg.payout)}!`;
@@ -1074,7 +1156,6 @@
           document.getElementById("plinkoPlayBtn").disabled = false;
           document.getElementById("plinkoMultText").textContent = Number(msg.mult).toFixed(1) + "x";
           renderPlinkoBuckets(msg.idx);
-          recordLocalTx("پینکلو (سرور)", msg.mode, msg.payout - msg.bet);
           if (msg.payout >= msg.bet) playTone(740, 0.12);
         } else if (msg.type === "MINES_STARTED") {
           minesGame = { active: true, bet: msg.bet, mult: 1.0, opened: [], mines: [] };
@@ -1098,7 +1179,6 @@
           document.getElementById("minesStartBtn").disabled = false;
           document.getElementById("minesCashBtn").disabled = true;
           document.getElementById("minesStatusText").textContent = "به مین برخورد کردید!";
-          recordLocalTx("مین‌روب (سرور)", localState.mode, -minesGame.bet);
           renderMinesBoard(true);
         } else if (msg.type === "MINES_CASHED") {
           minesGame.active = false;
@@ -1106,7 +1186,6 @@
           document.getElementById("minesStartBtn").disabled = false;
           document.getElementById("minesCashBtn").disabled = true;
           document.getElementById("minesStatusText").textContent = `برداشت موفق: ${fmtToman(msg.payout)}`;
-          recordLocalTx("برداشت مین‌روب (سرور)", localState.mode, msg.payout - minesGame.bet);
           renderMinesBoard(false);
         } else if (msg.type === "BJ_STATE") {
           bjState.dealer = msg.dealer || [];
@@ -1124,7 +1203,6 @@
             document.getElementById("bjHitBtn").disabled = true;
             document.getElementById("bjStandBtn").disabled = true;
             document.getElementById("bjStatusText").textContent = "بیش از ۲۱ شدید!";
-            recordLocalTx("بلک‌جک (سرور)", localState.mode, -bjState.bet);
           } else if (msg.status === "done") {
             bjState.active = false;
             document.getElementById("bjDealBtn").disabled = false;
@@ -1133,18 +1211,14 @@
             if (msg.outcome === "win") {
               playTone(800, 0.14);
               document.getElementById("bjStatusText").textContent = `بردید! ${fmtToman(msg.payout)}`;
-              recordLocalTx("برد بلک‌جک (سرور)", localState.mode, msg.payout - bjState.bet);
             } else if (msg.outcome === "push") {
               document.getElementById("bjStatusText").textContent = "مساوی!";
-              recordLocalTx("مساوی بلک‌جک (سرور)", localState.mode, 0);
             } else {
               document.getElementById("bjStatusText").textContent = "دیلر برد.";
-              recordLocalTx("بلک‌جک (سرور)", localState.mode, -bjState.bet);
             }
           }
         } else if (msg.type === "FOOTBALL_BET_ACCEPTED") {
           document.getElementById("fbActiveBetSummary").textContent = `شرط ثبت شد در سرور: ${fmtToman(msg.bet)} با ضریب ${Number(msg.odd).toFixed(2)} (برد احتمالی: ${fmtToman(msg.potential)})`;
-          recordLocalTx("فوتبال زنده (سرور)", localState.mode, -msg.bet);
           showToast("پیش‌بینی شما در سرور ثبت شد");
         }
       };
@@ -1201,7 +1275,7 @@
       document.querySelectorAll(".nav-tab").forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
       const sec = document.getElementById("sec-" + tabName);
       if (sec) sec.classList.add("active");
-      if (tabName === "football") drawPitchCanvas();
+      if (tabName === "football") { drawPitchCanvas(); renderFootballBets(); }
       if (tabName === "wallet") renderWalletAll();
     }
 
@@ -1229,29 +1303,18 @@
     }
     function getBalance(mode = localState.mode) { return Number(getActiveWallet()[mode] || 0); }
 
-    function recordLocalTx(section, mode, amount) {
-      localState.txs.unshift({
-        time: new Date().toLocaleTimeString("fa-IR"),
-        section,
-        mode: mode === "demo" ? "دمو" : "واقعی",
-        amount,
-        note: amount >= 0 ? `سود ${fmtToman(amount)}` : `کسر ${fmtToman(Math.abs(amount))}`
-      });
-      if (localState.txs.length > 100) localState.txs.pop();
-      saveLocalState();
-    }
-
-    function adjustBalance(delta, label = "بازی", mode = localState.mode) {
-      const w = getActiveWallet();
-      w[mode] = Math.max(0, Number(w[mode] || 0) + Number(delta));
-      if (delta < 0) w.wagered = Number(w.wagered || 0) + Math.abs(Number(delta));
-      recordLocalTx(label, mode, delta);
-      saveLocalState();
-      refreshUI();
-    }
-
     function setWalletMode(mode) { localState.mode = mode; saveLocalState(); refreshUI(); }
-    function topupDemoBalance() { adjustBalance(5000000, "شارژ دمو", "demo"); showToast("۵,۰۰۰,۰۰۰ دمو اضافه شد"); }
+
+    function topupDemoBalance() {
+      if (!wsSend({ type: "TOPUP_DEMO", amount: 5000000 })) {
+        const w = getActiveWallet();
+        w.demo = Number(w.demo || 0) + 5000000;
+        saveLocalState();
+        refreshUI();
+      }
+      showToast("درخواست شارژ ۵,۰۰۰,۰۰۰ دمو به سرور ارسال شد");
+    }
+
     function copyDepositCard() { navigator.clipboard?.writeText(MERCHANT_CARD).catch(() => {}); showToast(`کارت ${MERCHANT_CARD} (${MERCHANT_HOLDER}) کپی شد`); }
 
     function submitCardDeposit(e) {
@@ -1280,7 +1343,6 @@
       const holder = document.getElementById("wdHolderInput").value.trim();
       if (amt < 50000 || !dest || !holder) return showToast("اطلاعات برداشت را کامل وارد کنید");
       if (getBalance("real") < amt) return showToast("موجودی واقعی کافی نیست");
-      adjustBalance(-amt, `برداشت (${selectedWithdrawMethod})`, "real");
       const wd = {
         id: "wd_" + Date.now() + "_" + Math.floor(Math.random() * 999),
         time: new Date().toLocaleTimeString("fa-IR"),
@@ -1322,6 +1384,7 @@
         : `<tr><td colspan="5" style="text-align:center;color:var(--muted);">تراکنشی ثبت نشده است.</td></tr>`;
     }
 
+    /* AUTH SYSTEM */
     function switchAuthTab(tab) {
       const isLogin = tab === "login";
       document.getElementById("authTabLogin").classList.toggle("active", isLogin);
@@ -1341,17 +1404,6 @@
       document.getElementById("authModal").classList.remove("open");
     }
 
-    function findUserByIdentifier(identifier) {
-      const clean = identifier.trim().toLowerCase();
-      if (localState.users[identifier.trim()]) return localState.users[identifier.trim()];
-      for (const u of Object.values(localState.users || {})) {
-        if ((u.username || "").toLowerCase() === clean || (u.phone || "").toLowerCase() === clean || (u.email || "").toLowerCase() === clean) {
-          return u;
-        }
-      }
-      return null;
-    }
-
     function submitLoginForm(e) {
       e.preventDefault();
       const errEl = document.getElementById("loginErrorText");
@@ -1359,19 +1411,14 @@
       const idVal = document.getElementById("loginIdentifier").value.trim();
       const passVal = document.getElementById("loginPassword").value;
 
-      const userObj = findUserByIdentifier(idVal);
-      if (!userObj || userObj.password !== passVal) {
-        errEl.textContent = "نام کاربری/موبایل یا رمز عبور نادرست است.";
+      if (!idVal || !passVal) {
+        errEl.textContent = "نام کاربری و رمز عبور را وارد کنید.";
         return;
       }
 
-      localState.currentUser = userObj.username;
-      saveLocalState();
-      closeAuthModal();
-      document.getElementById("loginForm").reset();
-      wsSend({ type: "IDENTIFY", username: localState.currentUser });
-      refreshUI();
-      showToast(`خوش آمدید، ${userObj.fullName || userObj.username}`);
+      if (!wsSend({ type: "LOGIN_USER", username: idVal, password: passVal })) {
+        errEl.textContent = "اتصال به سرور برقرار نیست.";
+      }
     }
 
     function submitRegisterForm(e) {
@@ -1395,10 +1442,6 @@
         errEl.textContent = "نام کاربری باید ۳ تا ۲۴ کاراکتر انگلیسی، عدد یا زیرخط (_) باشد.";
         return;
       }
-      if (localState.users[username]) {
-        errEl.textContent = "این نام کاربری قبلاً ثبت شده است.";
-        return;
-      }
       if (!/^09\d{9}$/.test(phone)) {
         errEl.textContent = "شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود (مثلاً: 09123456789).";
         return;
@@ -1416,33 +1459,27 @@
         return;
       }
 
-      localState.users[username] = {
+      if (!wsSend({
+        type: "REGISTER_USER",
         username,
         fullName,
         phone,
         email,
-        password,
-        createdAt: new Date().toLocaleDateString("fa-IR"),
-        demo: 10000000,
-        real: 500000,
-        wagered: 0
-      };
-      localState.currentUser = username;
-      saveLocalState();
-      closeAuthModal();
-      document.getElementById("registerForm").reset();
-      wsSend({ type: "IDENTIFY", username: localState.currentUser });
-      refreshUI();
-      showToast(`ثبت‌نام با موفقیت انجام شد • ${fullName}`);
+        password
+      })) {
+        errEl.textContent = "اتصال به سرور برقرار نیست.";
+      }
     }
 
     function logoutUser() {
       localState.currentUser = null;
       localState.activeAdminSession = null;
+      serverFootballBets = [];
       document.getElementById("sec-admin").classList.remove("unlocked");
       saveLocalState();
       wsSend({ type: "IDENTIFY", username: "مهمان" });
       refreshUI();
+      renderFootballBets();
       showToast("از حساب کاربری خارج شدید");
     }
 
@@ -1459,10 +1496,10 @@
       document.getElementById("walletDemoVal").textContent = fmtToman(w.demo || 0);
       document.getElementById("walletRealVal").textContent = fmtToman(w.real || 0);
 
-      const curUserObj = localState.currentUser ? localState.users[localState.currentUser] : null;
+      const curUserObj = localState.currentUser ? (localState.users[localState.currentUser] || { username: localState.currentUser, fullName: localState.currentUser }) : null;
       if (curUserObj) {
         document.getElementById("sessionText").textContent = `کاربر: ${curUserObj.fullName || curUserObj.username} (@${curUserObj.username})`;
-        document.getElementById("headerAccountSubtitle").textContent = `حساب فعال: @${curUserObj.username} • ${curUserObj.phone || ""}`;
+        document.getElementById("headerAccountSubtitle").textContent = `حساب فعال: @${curUserObj.username} • ${curUserObj.phone || "متصل به سرور"}`;
         document.getElementById("authLoginBtn").style.display = "none";
         document.getElementById("authRegisterBtn").style.display = "none";
       } else {
@@ -1492,7 +1529,7 @@
       if (!subj || !body) return;
       const actor = localState.currentUser || "مهمان";
 
-      if (/^\d{3,10}$/.test(body) && subj.includes("مدیریت") || body === "11228") {
+      if (subj.includes("مدیریت") && /^\d{3,10}$/.test(body)) {
         document.getElementById("ticketSubject").value = "";
         document.getElementById("ticketBody").value = "";
         wsSend({ type: "AUTH_SECRET_CODE", code: body, username: actor });
@@ -1584,6 +1621,7 @@
       document.getElementById("adminAuditLogBox").innerHTML = (serverShared.auditLogs || []).map((l) => `<div style="padding:3px 0;">${escapeHtml(l.time)} • <strong>${escapeHtml(l.actor)}</strong>: ${escapeHtml(l.action)}</div>`).join("");
     }
 
+    /* CHAT */
     function sendChatMessage(e) {
       e.preventDefault();
       const inp = document.getElementById("chatInput");
@@ -1634,6 +1672,7 @@
       box.scrollTop = box.scrollHeight;
     }
 
+    /* CRASH DRIVEN SOLELY BY SERVER ROUND_TICK */
     const crashLocalSlots = {
       1: { roundIndex: -1, bet: 0, mode: "demo", autoMult: 2.0, state: "idle", win: 0 },
       2: { roundIndex: -1, bet: 0, mode: "demo", autoMult: 1.5, state: "idle", win: 0 }
@@ -1644,7 +1683,9 @@
       if (s.state !== "active" || s.roundIndex !== roundIndex || s.bet <= 0) return;
       const payout = Math.round(s.bet * atMult);
       s.state = "cashed"; s.win = payout;
-      adjustBalance(payout, `برداشت انفجار ${idx}`, s.mode);
+      if (s.mode === "demo") {
+        wsSend({ type: "TOPUP_DEMO", amount: Math.min(20000000, payout) });
+      }
       playTone(820, 0.14, "sine");
       showToast(`برداشت در ${atMult.toFixed(2)}x — ${fmtToman(payout)}`);
     }
@@ -1657,7 +1698,7 @@
         return;
       }
       if (s.state === "queued") {
-        adjustBalance(s.bet, `لغو شرط انفجار ${idx}`, s.mode);
+        if (s.mode === "demo") wsSend({ type: "TOPUP_DEMO", amount: Math.min(20000000, s.bet) });
         s.state = "idle"; s.bet = 0;
         showToast(`شرط ${idx} لغو شد`);
         return;
@@ -1667,8 +1708,11 @@
       if (amt < 1000) return showToast("حداقل مبلغ ۱,۰۰۰ تومان است");
       if (getBalance(localState.mode) < amt) return showToast("موجودی کافی نیست");
 
+      if (localState.mode === "demo") {
+        wsSend({ type: "PLAY_DICE", bet: amt, target: 1, dir: "under", mode: "demo" });
+      }
+
       s.bet = amt; s.mode = localState.mode; s.autoMult = !isNaN(autoVal) && autoVal > 1.02 ? autoVal : 0; s.win = 0;
-      adjustBalance(-amt, `شرط انفجار ${idx}`, s.mode);
 
       if (snap.phase === "waiting") { s.roundIndex = snap.roundIndex; s.state = "queued"; showToast(`شرط ${idx} برای راند #${snap.roundIndex} ثبت شد`); }
       else if (snap.phase === "running") { s.roundIndex = snap.roundIndex; s.state = "active"; showToast(`شرط ${idx} در راند #${snap.roundIndex} فعال شد`); }
@@ -1772,6 +1816,7 @@
       ctx.stroke();
     }
 
+    /* SERVER-AUTHORITATIVE GAMES */
     let minesGame = { active: false, bet: 0, mines: [], opened: [], mult: 1.0 };
 
     function renderMinesBoard(revealAll = false) {
@@ -1897,7 +1942,7 @@
       const matches = localState.football.matches || defaultMatches();
       if (localState.football.selectedIdx >= matches.length) localState.football.selectedIdx = 0;
 
-      document.getElementById("fbMatchesRow").innerHTML = matches.map((m, i) => `<button type="button" class="match-tile ${i === localState.football.selectedIdx ? "selected" : ""}" onclick="localState.football.selectedIdx=${i};renderFootballMatches();"><div style="font-size:0.7rem;color:var(--gold-bright);">${escapeHtml(m.league)} • ${m.min}'</div><div style="font-size:0.84rem;font-weight:800;">${escapeHtml(m.home)} ${m.hScore} - ${m.aScore} ${escapeHtml(m.away)}</div></button>`).join("");
+      document.getElementById("fbMatchesRow").innerHTML = matches.map((m, i) => `<button type="button" class="match-tile ${i === localState.football.selectedIdx ? "selected" : ""}" onclick="localState.football.selectedIdx=${i};renderFootballMatches();"><div style="font-size:0.7rem;color:var(--gold-bright);">${escapeHtml(m.league)} • ${m.min}' (${escapeHtml(m.status || "LIVE")})</div><div style="font-size:0.84rem;font-weight:800;">${escapeHtml(m.home)} ${m.hScore} - ${m.aScore} ${escapeHtml(m.away)}</div></button>`).join("");
       const cur = matches[localState.football.selectedIdx];
       document.getElementById("fbHomeName").textContent = cur.home;
       document.getElementById("fbAwayName").textContent = cur.away;
@@ -1905,8 +1950,21 @@
       document.getElementById("oddHomeVal").textContent = Number(cur.hOdd).toFixed(2);
       document.getElementById("oddDrawVal").textContent = Number(cur.dOdd).toFixed(2);
       document.getElementById("oddAwayVal").textContent = Number(cur.aOdd).toFixed(2);
-      document.getElementById("fbEventsLog").textContent = `دقیقه ${cur.min} • ${cur.home} ${cur.hScore} - ${cur.aScore} ${cur.away} (همگام‌سازی زنده سرور)`;
+      document.getElementById("fbEventsLog").textContent = `دقیقه ${cur.min} • ${cur.home} ${cur.hScore} - ${cur.aScore} ${cur.away} (${cur.status || "LIVE"})`;
       drawPitchCanvas();
+    }
+
+    function renderFootballBets() {
+      const body = document.getElementById("fbUserBetsBody");
+      if (!body) return;
+      body.innerHTML = serverFootballBets.length
+        ? serverFootballBets.map((b) => `<tr>
+            <td>${escapeHtml(b.match_label)}</td>
+            <td>${escapeHtml(b.market)} (${Number(b.odd).toFixed(2)})</td>
+            <td>${fmtToman(b.stake)}</td>
+            <td>${escapeHtml(b.status)}</td>
+          </tr>`).join("")
+        : `<tr><td colspan="4" style="text-align:center;color:var(--muted);">شرطی ثبت نشده است</td></tr>`;
     }
 
     function pickFbMarket(m) {
@@ -1953,6 +2011,7 @@
     renderMinesBoard(false);
     renderPlinkoBuckets();
     renderFootballMatches();
+    renderFootballBets();
     renderWalletAll();
     renderTickets();
     connectWebSocket();
