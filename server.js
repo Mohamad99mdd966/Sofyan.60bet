@@ -109,7 +109,6 @@ function startWaitingPhase() {
   roundState.target = generateCrashTarget();
   roundState.progressRatio = 0;
   phaseStartTime = Date.now();
-  // مدت زمان رسیدن به ضریب هدف
   runDurationMs = Math.min(25000, Math.max(1500, Math.log(roundState.target) * 4200));
 }
 
@@ -212,7 +211,6 @@ wss.on("connection", (ws) => {
   ws.username = "مهمان";
   ws.isAdmin = false;
 
-  // ارسال وضعیت اولیه به کاربر
   sendTo(ws, {
     type: "SYNC_INIT",
     round: roundState,
@@ -232,7 +230,6 @@ wss.on("connection", (ws) => {
     const user = msg.username || ws.username || "مهمان";
     if (msg.username) ws.username = msg.username;
 
-    // --- احراز هویت و پنل مدیریت ---
     if (msg.type === "IDENTIFY") {
       ws.username = msg.username || "مهمان";
       return;
@@ -286,7 +283,6 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    // --- واریز و برداشت ---
     if (msg.type === "DEPOSIT_CREATE" && msg.deposit) {
       sharedState.deposits.unshift(msg.deposit);
       broadcast({ type: "SHARED_SYNC", shared: sharedState });
@@ -314,7 +310,7 @@ wss.on("connection", (ws) => {
       const wd = sharedState.withdrawals.find((w) => w.id === msg.id);
       if (wd && wd.status === "pending") {
         wd.status = msg.approve ? "approved" : "rejected";
-        if (!msg.approve) adjustUserDelta(wd.user, "real", wd.amount); // برگشت وجه در صورت رد
+        if (!msg.approve) adjustUserDelta(wd.user, "real", wd.amount);
         addAudit(user, `${msg.approve ? "پرداخت" : "رد"} برداشت ${wd.user}`);
         broadcast({ type: "SHARED_SYNC", shared: sharedState, toast: `وضعیت برداشت ${wd.user} به‌روزرسانی شد` });
       }
@@ -404,8 +400,6 @@ wss.on("connection", (ws) => {
     // ==========================================
     // ۵. بازی‌های آنلاین متصل به سرور
     // ==========================================
-
-    // --- بازی تاس (DICE) ---
     if (msg.type === "PLAY_DICE") {
       const bet = Number(msg.bet || 0);
       const target = Math.min(95, Math.max(5, Number(msg.target || 50)));
@@ -422,11 +416,10 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    // --- بازی رولت (ROULETTE) ---
     if (msg.type === "PLAY_ROULETTE") {
       const bet = Number(msg.bet || 0);
       const pick = msg.pick;
-      const num = Math.floor(Math.random() * 37); // 0 تا 36
+      const num = Math.floor(Math.random() * 37);
       const redNums = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
       const color = num === 0 ? "green" : redNums.includes(num) ? "red" : "black";
       const colorFa = color === "green" ? "سبز" : color === "red" ? "قرمز" : "مشکی";
@@ -440,7 +433,6 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    // --- بازی اسلات (SLOTS) ---
     if (msg.type === "PLAY_SLOTS") {
       const bet = Number(msg.bet || 0);
       const symbols = ["💎", "👑", "🍀", "🍒", "7️⃣", "🔔"];
@@ -464,12 +456,10 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    // --- بازی پینکلو (PLINKO) ---
     if (msg.type === "PLAY_PLINKO") {
       const bet = Number(msg.bet || 0);
       const risk = msg.risk === "high" ? "high" : "low";
       const mults = risk === "high" ? [6.5, 2.5, 1.2, 0.5, 1.2, 2.5, 6.5] : [2.2, 1.4, 1.1, 0.9, 1.1, 1.4, 2.2];
-      // توزیع نرمال به سمت مرکز
       let pos = 0;
       for (let i = 0; i < 6; i++) if (Math.random() >= 0.5) pos++;
       const mult = mults[pos];
@@ -481,7 +471,6 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    // --- بازی مین‌روب (MINES) ---
     if (msg.type === "MINES_START") {
       const bet = Number(msg.bet || 0);
       const count = Math.min(20, Math.max(1, Number(msg.count || 3)));
@@ -535,7 +524,6 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    // --- بازی بلک‌جک (BLACKJACK) ---
     if (msg.type === "BJ_DEAL") {
       const bet = Number(msg.bet || 0);
       adjustUserDelta(user, msg.mode, -bet);
@@ -595,7 +583,6 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    // --- شرط‌بندی فوتبال زنده ---
     if (msg.type === "PLACE_FOOTBALL_BET") {
       const bet = Number(msg.bet || 0);
       const match = sharedState.footballMatches[msg.matchIdx] || sharedState.footballMatches[0];
