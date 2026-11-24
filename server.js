@@ -105,9 +105,6 @@ function addAudit(actor, action) {
   persistShared();
 }
 
-// ==========================================
-// موتور بازی انفجار همگام
-// ==========================================
 let roundState = {
   roundIndex: 1,
   phase: "waiting",
@@ -179,9 +176,6 @@ setInterval(() => {
   });
 }, 100);
 
-// ==========================================
-// همگام‌سازی فوتبال و تسویه خودکار مسابقات پایان یافته (FT)
-// ==========================================
 function settleFinishedMatches(matches) {
   const affectedUsers = new Set();
   for (const match of matches) {
@@ -463,7 +457,6 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    // --- چت زنده ---
     if (msg.type === "CHAT_SEND") {
       if (sharedState.chat.locked && !ws.isAdmin) {
         return sendTo(ws, { type: "TOAST", message: "چت توسط ادمین قفل شده است." });
@@ -544,9 +537,6 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    // ==========================================
-    // بازی‌ها با کسر/واریز اتمیک در دیتابیس
-    // ==========================================
     if (msg.type === "PLAY_DICE") {
       const bet = Math.max(1000, Number(msg.bet || 0));
       const mode = msg.mode === "real" ? "real" : "demo";
