@@ -569,4 +569,187 @@ wss.on("connection", (ws) => {
       ];
       let mult = 0;
       if (reels[0] === reels[1] && reels[1] === reels[2]) {
-        mult = reels[0] === "7️⃣" ? 15 : reels[0] === "👑
+        mult = reels[0] === "7️⃣" ? 15 : reels[0] === "👑" ? 10 : 6;
+      } else if (reels[0] === reels[1] || reels[1] === reels[2] || reels[0] === reels[2]) {
+        mult = 1.5;
+      }
+      const won = mult > 0;
+      const payout = Math.round(bet * mult);
+      if (won && payout > 0) {
+        changeBalance({ username: user, mode, type: "slots_win", delta: payout, note: `برد اسلات (${reels.join("")})` });
+      }
+      sendWalletToUser(user, ws);
+      sendTo(ws, { type: "SLOTS_RESULT", reels, won, payout, bet, mode });
+      return;
+    }
+
+    if (msg.type === "PLAY_PLINKO") {
+      const bet = Math.max(1000, Number(msg.bet || 0));
+      const mode = msg.mode === "real" ? "real" : "demo";
+      try {
+        changeBalance({ username: user, mode, type: "plinko_bet", delta: -bet, note: "شرط پینکلو" });
+      } catch (err) {
+        return sendTo(ws, { type: "TOAST", message: err.message });
+      }
+      const risk = msg.risk === "high" ? "high" : "low";
+      const mults = risk === "high" ? [6.5, 2.5, 1.2, 0.5, 1.2, 2.5, 6.5] : [2.2, 1.4, 1.1, 0.9, 1.1, 1.4, 2.2];
+      let pos = 0;
+      for (let i = 0; i < 6; i++) if (Math.random() >= 0.5) pos++;
+      const mult = mults[pos];
+      const payout = Math.round(bet * mult);
+      if (payout > 0) {
+        changeBalance({ username: user, mode, type: "plinko_payout", delta: payout, note: `نتیجه پینکلو (${mult}x)` });
+      }
+      sendWalletToUser(user, ws);
+      sendTo(ws, { type: "PLINKO_RESULT", idx: pos, mult, payout, bet, mode });
+      return;
+    }
+
+    if (msg.type === "MINES_START") {
+      const bet = Math.max(1000, Number(msg.bet || 0));
+      const mode = msg.mode === "real" ? "real" : "demo";
+      try {
+        changeBalance({ username: user, mode, type: "mines_bet", delta: -bet, note: "شروع مین‌روب" });
+      } catch (err) {
+        return sendTo(ws, { type: "TOAST", message: err.message });
+      }
+      const count = Math.min(20, Math.max(1, Number(msg.count || 3)));
+      const mines = new Set();
+      while (mines.size < count) {
+        mines.add(Math.floor(Math.random() * 25));
+      }
+      activeMinesGames.set(ws, {
+        username: user,
+        bet,
+        mode,
+        count,
+        mines: Array.from(mines),
+        opened: [],
+        mult: 1.0
+      });
+      sendWalletToUser(user, ws);
+      sendTo(ws, { type: "MINES_STARTED", bet });
+      return;
+    }
+
+    if (msg.type === "MINES_PICK") {
+      const game = activeMinesGames.get(ws);
+      if (!game) return;
+      const cell = Number(msg.cell);
+      if (game.opened.includes(cell)) return;
+
+      if (game.mines.includes(cell)) {
+        activeMinesGames.delete(ws);
+        sendTo(ws, { type: "MINES_HIT_MINE", mines: game.mines });
+      } else {
+        game.opened.push(cell);
+        const safeTotal = 25 - game.count;
+        const stepFactor = 25 / Math.max(1, safeTotal - game.opened.length + 1);
+        game.mult = Number((game.mult * stepFactor * 0.96).toFixed(2));
+        const potential = Math.round(game.bet * game.mult);
+        sendTo(ws, { type: "MINES_SAFE", cell, mult: game.mult, potential });
+      }
+      return;
+    }
+
+    if (msg.type === "MINES_CASHOUT") {
+      const game = activeMinesGames.get(ws);
+      if (!game || game.opened.length === 0) return;
+      const payout = Math.round(game.bet * game.mult);
+      changeBalance({ username: game.username, mode: game.mode, type: "mines_win", delta: payout, note: `برداشت مین‌روب (${game.mult}x)` });
+      activeMinesGames.delete(ws);
+      sendWalletToUser(game.username, ws);
+      sendTo(ws, { type: "MINES_CASHED", payout });
+      return;
+    }
+
+    if (msg.type === "BJ_DEAL") {
+      const bet = Math.max(1000, Number(msg.bet || 0));
+      const mode = msg.mode === "real" ? "real" : "demo";
+      try {
+        changeBalance({ username: user, mode, type: "bj_bet", delta: -bet, note: "شروع بلک‌جک" });
+      } catch (err) {
+        return sendTo(ws, { type: "TOAST", message: err.message });
+      }
+      const player = [drawCard(), drawCard()];
+      const dealer = [drawCard()];
+      const pSum = calcBjSum(player);
+      const dSum = calcBjSum(dealer);
+
+      activeBlackjackGames.set(ws, { username: user, bet, mode, player, dealer });
+      sendWalletToUser(user, ws);
+      sendTo(ws, { type: "BJ_STATE", status: "playing", player, dealer, playerSum: pSum, dealerSum: dSum });
+      return;
+    }
+
+    if (msg.type === "BJ_HIT") {
+      const game = activeBlackjackGames.get(ws);
+      if (!game) return;
+      game.player.push(drawCard());
+      const pSum = calcBjSum(game.player);
+      const dSum = calcBjSum(game.dealer);
+
+      if (pSum > 21) {
+        activeBlackjackGames.delete(ws);
+        sendTo(ws, { type: "BJ_STATE", status: "bust", player: game.player, dealer: game.dealer, playerSum: pSum, dealerSum: dSum });
+      } else {
+        sendTo(ws, { type: "BJ_STATE", status: "playing", player: game.player, dealer: game.dealer, playerSum: pSum, dealerSum: dSum });
+      }
+      return;
+    }
+
+    if (msg.type === "BJ_STAND") {
+      const game = activeBlackjackGames.get(ws);
+      if (!game) return;
+      while (calcBjSum(game.dealer) < 17) {
+        game.dealer.push(drawCard());
+      }
+      const pSum = calcBjSum(game.player);
+      const dSum = calcBjSum(game.dealer);
+      let outcome = "lose";
+      let payout = 0;
+
+      if (dSum > 21 || pSum > dSum) {
+        outcome = "win";
+        payout = game.bet * 2;
+      } else if (pSum === dSum) {
+        outcome = "push";
+        payout = game.bet;
+      }
+
+      if (payout > 0) {
+        changeBalance({ username: game.username, mode: game.mode, type: "bj_payout", delta: payout, note: `تسویه بلک‌جک (${outcome})` });
+        sendWalletToUser(game.username, ws);
+      }
+      activeBlackjackGames.delete(ws);
+      sendTo(ws, { type: "BJ_STATE", status: "done", outcome, payout, player: game.player, dealer: game.dealer, playerSum: pSum, dealerSum: dSum });
+      return;
+    }
+
+    if (msg.type === "PLACE_FOOTBALL_BET") {
+      const bet = Math.max(1000, Number(msg.bet || 0));
+      const mode = msg.mode === "real" ? "real" : "demo";
+      try {
+        changeBalance({ username: user, mode, type: "football_bet", delta: -bet, note: "شرط فوتبال زنده" });
+      } catch (err) {
+        return sendTo(ws, { type: "TOAST", message: err.message });
+      }
+      const match = sharedState.footballMatches[msg.matchIdx] || sharedState.footballMatches[0];
+      const odd = msg.market === "home" ? match.hOdd : msg.market === "draw" ? match.dOdd : match.aOdd;
+      const potential = Math.round(bet * odd);
+
+      sendWalletToUser(user, ws);
+      sendTo(ws, { type: "FOOTBALL_BET_ACCEPTED", bet, odd, potential });
+      return;
+    }
+  });
+
+  ws.on("close", () => {
+    activeMinesGames.delete(ws);
+    activeBlackjackGames.delete(ws);
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`SOFYAN LIVE Persistent Server running on port ${PORT}`);
+});
