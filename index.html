@@ -178,14 +178,41 @@
     .plinko-slot { padding: 9px 4px; border-radius: 10px; text-align: center; font-size: 0.78rem; font-weight: 900; color: var(--gold-bright); background: rgba(16, 25, 48, 0.88); border: 1px solid var(--border); }
     .plinko-slot.active-hit { background: rgba(16, 185, 129, 0.25); border-color: var(--emerald-bright); color: var(--emerald-bright); }
 
-    .fb-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr); gap: 14px; align-items: start; }
-    .matches-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; margin-bottom: 12px; }
-    .match-tile { padding: 10px 12px; border-radius: 14px; text-align: right; background: rgba(13, 21, 42, 0.85); border: 1px solid var(--border); }
-    .match-tile.selected { border-color: var(--emerald-bright); }
+    /* TakBet-style Football Styles */
+    .fb-top-bar {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+      margin-bottom: 12px; padding: 10px 12px; border-radius: 16px;
+      background: rgba(7, 12, 26, 0.85); border: 1px solid var(--border);
+    }
+    .fb-filter-group { display: flex; flex-wrap: wrap; gap: 6px; }
+    .fb-filter-btn {
+      padding: 6px 12px; border-radius: 10px; font-size: 0.78rem; font-weight: 800;
+      background: rgba(18, 28, 54, 0.85); border: 1px solid var(--border); color: #cbd5e1;
+    }
+    .fb-filter-btn.active {
+      background: linear-gradient(135deg, var(--emerald-bright), var(--emerald)); color: #041e13; border-color: var(--emerald-bright);
+    }
+    .fb-search-box { max-width: 240px; }
+
+    .fb-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(310px, 1fr); gap: 14px; align-items: start; }
+    .matches-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; margin-bottom: 12px; max-height: 290px; overflow-y: auto; padding-left: 2px; }
+    .match-tile { padding: 10px 12px; border-radius: 14px; text-align: right; background: rgba(13, 21, 42, 0.85); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px; }
+    .match-tile.selected { border-color: var(--emerald-bright); background: rgba(16, 185, 129, 0.12); }
+    .match-live-tag { font-size: 0.68rem; font-weight: 900; padding: 1px 7px; border-radius: 999px; background: rgba(244, 63, 94, 0.2); color: var(--rose-bright); }
+    .match-pre-tag { font-size: 0.68rem; font-weight: 800; padding: 1px 7px; border-radius: 999px; background: rgba(6, 182, 212, 0.18); color: var(--cyan-bright); }
+
     .pitch-box { width: 100%; height: 220px; border-radius: 15px; overflow: hidden; border: 1px solid rgba(52, 211, 153, 0.38); margin: 10px 0; }
-    .odds-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
-    .odd-card { padding: 10px 6px; border-radius: 12px; background: rgba(16, 25, 48, 0.88); border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .market-block-title { font-size: 0.8rem; font-weight: 800; color: var(--muted); margin: 10px 0 6px; }
+    .odds-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 8px; }
+    .odd-card { padding: 9px 6px; border-radius: 12px; background: rgba(16, 25, 48, 0.88); border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.78rem; }
+    .odd-card strong { font-size: 0.88rem; color: var(--emerald-bright); }
     .odd-card.picked { border-color: var(--gold-bright); background: rgba(245, 158, 11, 0.16); }
+
+    .slip-summary-box {
+      padding: 10px 12px; border-radius: 14px; margin-bottom: 10px;
+      background: rgba(5, 9, 20, 0.85); border: 1px solid rgba(251, 191, 36, 0.28); font-size: 0.8rem;
+    }
+    .slip-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; }
 
     .wallet-tabs { display: inline-flex; gap: 6px; padding: 4px; border-radius: 14px; background: rgba(5, 9, 20, 0.85); border: 1px solid var(--border); margin-bottom: 14px; flex-wrap: wrap; }
     .sub-tab-btn { padding: 8px 14px; border-radius: 10px; font-size: 0.8rem; font-weight: 800; color: var(--muted); }
@@ -522,7 +549,7 @@
       </div>
     </section>
 
-    <!-- 2. MINES (SERVER-AUTHORITATIVE) -->
+    <!-- 2. MINES -->
     <section class="section" id="sec-mines">
       <div class="game-arena">
         <div class="glass-panel stage-card">
@@ -553,7 +580,7 @@
       </div>
     </section>
 
-    <!-- 3. DICE (SERVER-AUTHORITATIVE) -->
+    <!-- 3. DICE -->
     <section class="section" id="sec-dice">
       <div class="game-arena">
         <div class="glass-panel stage-card">
@@ -576,7 +603,7 @@
       </div>
     </section>
 
-    <!-- 4. ROULETTE (SERVER-AUTHORITATIVE) -->
+    <!-- 4. ROULETTE -->
     <section class="section" id="sec-roulette">
       <div class="game-arena">
         <div class="glass-panel stage-card">
@@ -599,7 +626,7 @@
       </div>
     </section>
 
-    <!-- 5. SLOTS (SERVER-AUTHORITATIVE) -->
+    <!-- 5. SLOTS -->
     <section class="section" id="sec-slots">
       <div class="game-arena">
         <div class="glass-panel stage-card">
@@ -614,7 +641,7 @@
       </div>
     </section>
 
-    <!-- 6. BLACKJACK (SERVER-AUTHORITATIVE) -->
+    <!-- 6. BLACKJACK -->
     <section class="section" id="sec-blackjack">
       <div class="game-arena">
         <div class="glass-panel stage-card">
@@ -637,7 +664,7 @@
       </div>
     </section>
 
-    <!-- 7. PLINKO (SERVER-AUTHORITATIVE) -->
+    <!-- 7. PLINKO -->
     <section class="section" id="sec-plinko">
       <div class="game-arena">
         <div class="glass-panel stage-card">
@@ -659,31 +686,113 @@
       </div>
     </section>
 
-    <!-- 8. FOOTBALL (SERVER-SYNCED + PERSIAN + IRAN PRIORITY) -->
+    <!-- 8. FOOTBALL (TAKBET-STYLE + PERSIAN + IRAN PRIORITY) -->
     <section class="section" id="sec-football">
+      <div class="fb-top-bar">
+        <div class="fb-filter-group">
+          <button type="button" class="fb-filter-btn active" data-filter="all" onclick="setMatchFilter('all')">همه مسابقات</button>
+          <button type="button" class="fb-filter-btn" data-filter="iran" onclick="setMatchFilter('iran')">🇮🇷 بازی‌های ایرانی</button>
+          <button type="button" class="fb-filter-btn" data-filter="live" onclick="setMatchFilter('live')">🔴 زنده</button>
+          <button type="button" class="fb-filter-btn" data-filter="upcoming" onclick="setMatchFilter('upcoming')">🕒 پیش از بازی</button>
+        </div>
+        <div class="fb-search-box">
+          <input type="text" id="fbSearchInput" placeholder="جست‌وجوی تیم یا لیگ..." oninput="renderFootballMatches()" />
+        </div>
+      </div>
+
       <div class="fb-grid">
         <div class="glass-panel stage-card">
-          <h2 style="font-size:1rem;font-weight:900;color:var(--emerald-bright);margin-bottom:10px;">⚽ استادیوم فوتبال زنده (همگام با سرور)</h2>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+            <h2 style="font-size:1rem;font-weight:900;color:var(--emerald-bright);">⚽ استادیوم فوتبال زنده و پیش‌بینی (سبک تک‌بت)</h2>
+            <span class="pill pill-live" id="fbMatchesCountBadge">0 مسابقه</span>
+          </div>
+
           <div class="matches-row" id="fbMatchesRow"></div>
+
           <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:14px;background:rgba(5,9,20,0.78);border:1px solid var(--border);">
             <strong id="fbHomeName">میزبان</strong>
             <span style="font-size:1.3rem;font-weight:900;color:var(--gold-bright);" id="fbScoreBoard">0 - 0</span>
             <strong id="fbAwayName">مهمان</strong>
           </div>
+
           <div class="pitch-box"><canvas class="hd-canvas" id="pitchCanvas"></canvas></div>
           <div id="fbEventsLog" style="font-size:0.78rem;color:var(--muted);">در حال پخش زنده مسابقه از سرور...</div>
         </div>
+
         <div class="glass-panel stage-card">
-          <h3 style="font-size:0.95rem;font-weight:900;color:var(--gold-bright);margin-bottom:8px;">ثبت شرط مسابقه</h3>
+          <h3 style="font-size:0.95rem;font-weight:900;color:var(--gold-bright);margin-bottom:4px;">🧾 برگه شرط و بازارهای مسابقه</h3>
+          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:8px;" id="fbSelectedMatchLabel">مسابقه‌ای انتخاب نشده است</div>
+
+          <div class="market-block-title">نتیجه مسابقه (1X2)</div>
           <div class="odds-row">
-            <button type="button" class="odd-card picked" id="oddHomeBtn" onclick="pickFbMarket('home')"><span>برد میزبان</span><strong style="color:var(--emerald-bright);" id="oddHomeVal">2.10</strong></button>
-            <button type="button" class="odd-card" id="oddDrawBtn" onclick="pickFbMarket('draw')"><span>مساوی</span><strong style="color:var(--emerald-bright);" id="oddDrawVal">3.20</strong></button>
-            <button type="button" class="odd-card" id="oddAwayBtn" onclick="pickFbMarket('away')"><span>برد مهمان</span><strong style="color:var(--emerald-bright);" id="oddAwayVal">2.85</strong></button>
+            <button type="button" class="odd-card picked" data-market="home" onclick="pickFbMarket('home')">
+              <span>برد میزبان (1)</span>
+              <strong id="oddHomeVal">2.10</strong>
+            </button>
+            <button type="button" class="odd-card" data-market="draw" onclick="pickFbMarket('draw')">
+              <span>مساوی (X)</span>
+              <strong id="oddDrawVal">3.20</strong>
+            </button>
+            <button type="button" class="odd-card" data-market="away" onclick="pickFbMarket('away')">
+              <span>برد مهمان (2)</span>
+              <strong id="oddAwayVal">2.85</strong>
+            </button>
           </div>
-          <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="fbBetInput" value="100000" min="10000" step="10000" /></div>
+
+          <div class="market-block-title">شانس دوگانه (Double Chance)</div>
+          <div class="odds-row">
+            <button type="button" class="odd-card" data-market="dc_1x" onclick="pickFbMarket('dc_1x')">
+              <span>میزبان یا مساوی (1X)</span>
+              <strong id="oddDc1xVal">1.35</strong>
+            </button>
+            <button type="button" class="odd-card" data-market="dc_12" onclick="pickFbMarket('dc_12')">
+              <span>برد یکی از دو تیم (12)</span>
+              <strong id="oddDc12Val">1.30</strong>
+            </button>
+            <button type="button" class="odd-card" data-market="dc_x2" onclick="pickFbMarket('dc_x2')">
+              <span>مساوی یا مهمان (X2)</span>
+              <strong id="oddDcX2Val">1.55</strong>
+            </button>
+          </div>
+
+          <div class="market-block-title">مجموع گل و هر دو تیم گل می‌زنند</div>
+          <div class="odds-row">
+            <button type="button" class="odd-card" data-market="over_25" onclick="pickFbMarket('over_25')">
+              <span>بالاتر از ۲.۵ گل</span>
+              <strong id="oddOver25Val">1.90</strong>
+            </button>
+            <button type="button" class="odd-card" data-market="under_25" onclick="pickFbMarket('under_25')">
+              <span>پایین‌تر از ۲.۵ گل</span>
+              <strong id="oddUnder25Val">1.85</strong>
+            </button>
+            <button type="button" class="odd-card" data-market="btts_yes" onclick="pickFbMarket('btts_yes')">
+              <span>هر دو تیم گل می‌زنند</span>
+              <strong id="oddBttsYesVal">1.78</strong>
+            </button>
+          </div>
+
+          <div class="field-group" style="margin-top:8px;">
+            <label class="field-label">مبلغ شرط (تومان)</label>
+            <input type="number" id="fbBetInput" value="100000" min="10000" step="10000" oninput="updateSlipPreview()" />
+          </div>
+
+          <div class="quick-row">
+            <button type="button" class="chip-btn" onclick="setSlipAmount(50000)">50,000</button>
+            <button type="button" class="chip-btn" onclick="setSlipAmount(100000)">100,000</button>
+            <button type="button" class="chip-btn" onclick="setSlipAmount(500000)">500,000</button>
+            <button type="button" class="chip-btn" onclick="setSlipAmount(1000000)">1,000,000</button>
+          </div>
+
+          <div class="slip-summary-box">
+            <div class="slip-row"><span>انتخاب:</span><strong id="slipSelectionText" style="color:var(--gold-bright);">برد میزبان (1)</strong></div>
+            <div class="slip-row"><span>ضریب قطعی:</span><strong id="slipOddText" class="mono" style="color:var(--cyan-bright);">2.10</strong></div>
+            <div class="slip-row"><span>مبلغ کل بازگشت:</span><strong id="slipPotentialText" style="color:var(--emerald-bright);">210,000 تومان</strong></div>
+          </div>
+
           <button type="button" class="btn btn-gold" style="width:100%;" onclick="placeFootballBet()">ثبت پیش‌بینی در سرور</button>
-          <div style="margin-top:12px;font-size:0.78rem;color:var(--muted);" id="fbActiveBetSummary">شرط فعالی ثبت نشده است.</div>
-          <div class="table-scroll" style="margin-top:12px;">
+          <div style="margin-top:10px;font-size:0.76rem;color:var(--muted);" id="fbActiveBetSummary">شرط فعالی ثبت نشده است.</div>
+
+          <div class="table-scroll" style="margin-top:10px;">
             <table>
               <thead><tr><th>مسابقه</th><th>بازار</th><th>مبلغ</th><th>وضعیت</th></tr></thead>
               <tbody id="fbUserBetsBody"></tbody>
@@ -820,7 +929,6 @@
         <button type="button" class="auth-switch-btn" id="authTabRegister" onclick="switchAuthTab('register')">ثبت‌نام کاربر جدید</button>
       </div>
 
-      <!-- LOGIN FORM -->
       <form id="loginForm" onsubmit="submitLoginForm(event)">
         <div class="auth-box-note">
           با نام کاربری یا شماره موبایل ثبت‌شده وارد حساب خود شوید.
@@ -837,7 +945,6 @@
         <button type="submit" class="btn btn-gold" style="width:100%;padding:10px;">ورود به حساب کاربری</button>
       </form>
 
-      <!-- REGISTER FORM -->
       <form id="registerForm" style="display:none;" onsubmit="submitRegisterForm(event)">
         <div class="auth-box-note">
           تکمیل اطلاعات دقیق برای ایجاد حساب کاربری و ثبت درخواست‌های واریز/برداشت ضروری است.
@@ -888,11 +995,11 @@
 
     let selectedDepositMethod = "کارت‌به‌کارت";
     let selectedWithdrawMethod = "شبا بانکی";
+    let currentMatchFilter = "all";
 
     let localState = loadLocalState();
     let guestWallet = { demo: 10000000, real: 500000, wagered: 0 };
 
-    // Authoritative server state
     let serverRound = { roundIndex: 0, phase: "waiting", mult: 1.0, target: 2.0, progressRatio: 0, remainingSec: 1.0 };
     let serverCrashHistory = [1.42, 2.85, 1.18, 4.60, 1.94, 3.12];
     let serverChat = { locked: false, slowModeSec: 0, pinnedId: null, mutedUsers: {}, messages: [] };
@@ -915,7 +1022,7 @@
     function loadLocalState() {
       try {
         const raw = localStorage.getItem(LOCAL_USER_KEY);
-        if (!raw) return { mode: "demo", sound: true, currentUser: null, activeAdminSession: null, users: {}, txs: [], tickets: [], football: { selectedIdx: 0, market: "home", activeBet: null, matches: defaultMatches() } };
+        if (!raw) return { mode: "demo", sound: true, currentUser: null, activeAdminSession: null, users: {}, txs: [], tickets: [], football: { selectedIdx: 0, market: "home", activeBet: null, matches: defaultMatches(), localBets: [] } };
         const p = JSON.parse(raw);
         return {
           mode: p.mode || "demo",
@@ -925,10 +1032,10 @@
           users: p.users || {},
           txs: p.txs || [],
           tickets: p.tickets || [],
-          football: p.football && p.football.matches ? p.football : { selectedIdx: 0, market: "home", activeBet: null, matches: defaultMatches() }
+          football: p.football && p.football.matches ? { localBets: [], ...p.football } : { selectedIdx: 0, market: "home", activeBet: null, matches: defaultMatches(), localBets: [] }
         };
       } catch {
-        return { mode: "demo", sound: true, currentUser: null, activeAdminSession: null, users: {}, txs: [], tickets: [], football: { selectedIdx: 0, market: "home", activeBet: null, matches: defaultMatches() } };
+        return { mode: "demo", sound: true, currentUser: null, activeAdminSession: null, users: {}, txs: [], tickets: [], football: { selectedIdx: 0, market: "home", activeBet: null, matches: defaultMatches(), localBets: [] } };
       }
     }
 
@@ -995,11 +1102,7 @@
         };
         if (localState.currentUser && wData.username === localState.currentUser) {
           const prev = localState.users[localState.currentUser] || {};
-          localState.users[localState.currentUser] = {
-            ...prev,
-            ...wData,
-            password: prev.password || ""
-          };
+          localState.users[localState.currentUser] = { ...prev, ...wData, password: prev.password || "" };
         } else {
           guestWallet = { ...guestWallet, ...wData };
         }
@@ -1033,7 +1136,9 @@
       if (Array.isArray(shared.crashHistory)) serverCrashHistory = shared.crashHistory;
       if (Array.isArray(shared.footballMatches) && shared.footballMatches.length) {
         localState.football.matches = shared.footballMatches;
+        settleLocalFinishedBets();
         renderFootballMatches();
+        renderFootballBets();
       }
       applyServerBalanceAdjustments();
     }
@@ -1041,9 +1146,7 @@
     function connectWebSocket() {
       if (wsClient && (wsClient.readyState === WebSocket.OPEN || wsClient.readyState === WebSocket.CONNECTING)) return;
       updateWsPill("سرور: در حال اتصال...", "warn");
-      try {
-        wsClient = new WebSocket(WS_SERVER_URL);
-      } catch {
+      try { wsClient = new WebSocket(WS_SERVER_URL); } catch {
         updateWsPill("سرور: خطای اتصال", "err");
         clearTimeout(wsReconnectTimer);
         wsReconnectTimer = setTimeout(connectWebSocket, 2500);
@@ -1122,36 +1225,21 @@
           document.getElementById("slotsPlayBtn").disabled = false;
           document.getElementById("plinkoPlayBtn").disabled = false;
           showToast(msg.message);
-        }
-
-        /* SERVER GAME RESULTS */
-        else if (msg.type === "DICE_RESULT") {
+        } else if (msg.type === "DICE_RESULT") {
           document.getElementById("dicePlayBtn").disabled = false;
           document.getElementById("diceResultNum").textContent = msg.roll;
-          if (msg.won) {
-            playTone(760, 0.12);
-            document.getElementById("diceStatusText").textContent = `برد! دریافتی ${fmtToman(msg.payout)}`;
-          } else {
-            document.getElementById("diceStatusText").textContent = "باختید.";
-          }
+          if (msg.won) { playTone(760, 0.12); document.getElementById("diceStatusText").textContent = `برد! دریافتی ${fmtToman(msg.payout)}`; }
+          else { document.getElementById("diceStatusText").textContent = "باختید."; }
         } else if (msg.type === "ROULETTE_RESULT") {
           document.getElementById("roulettePlayBtn").disabled = false;
           document.getElementById("rouletteResultText").textContent = `${msg.num} (${msg.color})`;
-          if (msg.won) {
-            playTone(780, 0.14);
-            document.getElementById("rouletteStatusText").textContent = `برد! ${fmtToman(msg.payout)}`;
-          } else {
-            document.getElementById("rouletteStatusText").textContent = "باختید.";
-          }
+          if (msg.won) { playTone(780, 0.14); document.getElementById("rouletteStatusText").textContent = `برد! ${fmtToman(msg.payout)}`; }
+          else { document.getElementById("rouletteStatusText").textContent = "باختید."; }
         } else if (msg.type === "SLOTS_RESULT") {
           document.getElementById("slotsPlayBtn").disabled = false;
           document.getElementById("slotsReelsText").textContent = (msg.reels || []).join(" • ");
-          if (msg.won) {
-            playTone(840, 0.16);
-            document.getElementById("slotsStatusText").textContent = `جک‌پات ${fmtToman(msg.payout)}!`;
-          } else {
-            document.getElementById("slotsStatusText").textContent = "ترکیب برنده نشد.";
-          }
+          if (msg.won) { playTone(840, 0.16); document.getElementById("slotsStatusText").textContent = `جک‌پات ${fmtToman(msg.payout)}!`; }
+          else { document.getElementById("slotsStatusText").textContent = "ترکیب برنده نشد."; }
         } else if (msg.type === "PLINKO_RESULT") {
           document.getElementById("plinkoPlayBtn").disabled = false;
           document.getElementById("plinkoMultText").textContent = Number(msg.mult).toFixed(1) + "x";
@@ -1208,17 +1296,12 @@
             document.getElementById("bjDealBtn").disabled = false;
             document.getElementById("bjHitBtn").disabled = true;
             document.getElementById("bjStandBtn").disabled = true;
-            if (msg.outcome === "win") {
-              playTone(800, 0.14);
-              document.getElementById("bjStatusText").textContent = `بردید! ${fmtToman(msg.payout)}`;
-            } else if (msg.outcome === "push") {
-              document.getElementById("bjStatusText").textContent = "مساوی!";
-            } else {
-              document.getElementById("bjStatusText").textContent = "دیلر برد.";
-            }
+            if (msg.outcome === "win") { playTone(800, 0.14); document.getElementById("bjStatusText").textContent = `بردید! ${fmtToman(msg.payout)}`; }
+            else if (msg.outcome === "push") { document.getElementById("bjStatusText").textContent = "مساوی!"; }
+            else { document.getElementById("bjStatusText").textContent = "دیلر برد."; }
           }
         } else if (msg.type === "FOOTBALL_BET_ACCEPTED") {
-          document.getElementById("fbActiveBetSummary").textContent = `شرط ثبت شد در سرور: ${fmtToman(msg.bet)} با ضریب ${Number(msg.odd).toFixed(2)} (برد احتمالی: ${fmtToman(msg.potential)})`;
+          document.getElementById("fbActiveBetSummary").textContent = `شرط ثبت شد در سرور: ${fmtToman(msg.bet)} با ضریب ${Number(msg.odd).toFixed(2)} (بازگشت احتمالی: ${fmtToman(msg.potential)})`;
           showToast("پیش‌بینی شما در سرور ثبت شد");
         }
       };
@@ -1229,9 +1312,7 @@
         wsReconnectTimer = setTimeout(connectWebSocket, 2500);
       };
 
-      wsClient.onerror = () => {
-        updateWsPill("سرور: خطای سوکت", "err");
-      };
+      wsClient.onerror = () => { updateWsPill("سرور: خطای سوکت", "err"); };
     }
 
     function fmtToman(n) { return Math.round(Number(n) || 0).toLocaleString("fa-IR") + " تومان"; }
@@ -1384,7 +1465,6 @@
         : `<tr><td colspan="5" style="text-align:center;color:var(--muted);">تراکنشی ثبت نشده است.</td></tr>`;
     }
 
-    /* AUTH SYSTEM */
     function switchAuthTab(tab) {
       const isLogin = tab === "login";
       document.getElementById("authTabLogin").classList.toggle("active", isLogin);
@@ -1395,14 +1475,8 @@
       document.getElementById("registerErrorText").textContent = "";
     }
 
-    function openAuthModal(tab = "login") {
-      switchAuthTab(tab);
-      document.getElementById("authModal").classList.add("open");
-    }
-
-    function closeAuthModal() {
-      document.getElementById("authModal").classList.remove("open");
-    }
+    function openAuthModal(tab = "login") { switchAuthTab(tab); document.getElementById("authModal").classList.add("open"); }
+    function closeAuthModal() { document.getElementById("authModal").classList.remove("open"); }
 
     function submitLoginForm(e) {
       e.preventDefault();
@@ -1410,22 +1484,14 @@
       errEl.textContent = "";
       const idVal = document.getElementById("loginIdentifier").value.trim();
       const passVal = document.getElementById("loginPassword").value;
-
-      if (!idVal || !passVal) {
-        errEl.textContent = "نام کاربری و رمز عبور را وارد کنید.";
-        return;
-      }
-
-      if (!wsSend({ type: "LOGIN_USER", username: idVal, password: passVal })) {
-        errEl.textContent = "اتصال به سرور برقرار نیست.";
-      }
+      if (!idVal || !passVal) { errEl.textContent = "نام کاربری و رمز عبور را وارد کنید."; return; }
+      if (!wsSend({ type: "LOGIN_USER", username: idVal, password: passVal })) errEl.textContent = "اتصال به سرور برقرار نیست.";
     }
 
     function submitRegisterForm(e) {
       e.preventDefault();
       const errEl = document.getElementById("registerErrorText");
       errEl.textContent = "";
-
       const fullName = document.getElementById("regFullName").value.trim();
       const username = document.getElementById("regUsername").value.trim();
       const phone = document.getElementById("regPhone").value.trim();
@@ -1434,41 +1500,14 @@
       const passwordConfirm = document.getElementById("regPasswordConfirm").value;
       const accepted = document.getElementById("regAcceptRules").checked;
 
-      if (fullName.length < 3) {
-        errEl.textContent = "لطفاً نام و نام خانوادگی کامل را وارد کنید.";
-        return;
-      }
-      if (!/^[a-zA-Z0-9_.-]{3,24}$/.test(username)) {
-        errEl.textContent = "نام کاربری باید ۳ تا ۲۴ کاراکتر انگلیسی، عدد یا زیرخط (_) باشد.";
-        return;
-      }
-      if (!/^09\d{9}$/.test(phone)) {
-        errEl.textContent = "شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود (مثلاً: 09123456789).";
-        return;
-      }
-      if (password.length < 6) {
-        errEl.textContent = "رمز عبور باید حداقل ۶ کاراکتر باشد.";
-        return;
-      }
-      if (password !== passwordConfirm) {
-        errEl.textContent = "رمز عبور و تکرار آن یکسان نیستند.";
-        return;
-      }
-      if (!accepted) {
-        errEl.textContent = "پذیرش سن بالای ۱۸ سال و قوانین الزامی است.";
-        return;
-      }
+      if (fullName.length < 3) { errEl.textContent = "لطفاً نام و نام خانوادگی کامل را وارد کنید."; return; }
+      if (!/^[a-zA-Z0-9_.-]{3,24}$/.test(username)) { errEl.textContent = "نام کاربری باید ۳ تا ۲۴ کاراکتر انگلیسی، عدد یا زیرخط (_) باشد."; return; }
+      if (!/^09\d{9}$/.test(phone)) { errEl.textContent = "شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود."; return; }
+      if (password.length < 6) { errEl.textContent = "رمز عبور باید حداقل ۶ کاراکتر باشد."; return; }
+      if (password !== passwordConfirm) { errEl.textContent = "رمز عبور و تکرار آن یکسان نیستند."; return; }
+      if (!accepted) { errEl.textContent = "پذیرش سن بالای ۱۸ سال و قوانین الزامی است."; return; }
 
-      if (!wsSend({
-        type: "REGISTER_USER",
-        username,
-        fullName,
-        phone,
-        email,
-        password
-      })) {
-        errEl.textContent = "اتصال به سرور برقرار نیست.";
-      }
+      if (!wsSend({ type: "REGISTER_USER", username, fullName, phone, email, password })) errEl.textContent = "اتصال به سرور برقرار نیست.";
     }
 
     function logoutUser() {
@@ -1621,7 +1660,6 @@
       document.getElementById("adminAuditLogBox").innerHTML = (serverShared.auditLogs || []).map((l) => `<div style="padding:3px 0;">${escapeHtml(l.time)} • <strong>${escapeHtml(l.actor)}</strong>: ${escapeHtml(l.action)}</div>`).join("");
     }
 
-    /* CHAT */
     function sendChatMessage(e) {
       e.preventDefault();
       const inp = document.getElementById("chatInput");
@@ -1672,7 +1710,6 @@
       box.scrollTop = box.scrollHeight;
     }
 
-    /* CRASH DRIVEN SOLELY BY SERVER ROUND_TICK */
     const crashLocalSlots = {
       1: { roundIndex: -1, bet: 0, mode: "demo", autoMult: 2.0, state: "idle", win: 0 },
       2: { roundIndex: -1, bet: 0, mode: "demo", autoMult: 1.5, state: "idle", win: 0 }
@@ -1683,9 +1720,7 @@
       if (s.state !== "active" || s.roundIndex !== roundIndex || s.bet <= 0) return;
       const payout = Math.round(s.bet * atMult);
       s.state = "cashed"; s.win = payout;
-      if (s.mode === "demo") {
-        wsSend({ type: "TOPUP_DEMO", amount: Math.min(20000000, payout) });
-      }
+      if (s.mode === "demo") wsSend({ type: "TOPUP_DEMO", amount: Math.min(20000000, payout) });
       playTone(820, 0.14, "sine");
       showToast(`برداشت در ${atMult.toFixed(2)}x — ${fmtToman(payout)}`);
     }
@@ -1707,13 +1742,9 @@
       const autoVal = parseFloat(document.getElementById("crashAuto" + idx).value);
       if (amt < 1000) return showToast("حداقل مبلغ ۱,۰۰۰ تومان است");
       if (getBalance(localState.mode) < amt) return showToast("موجودی کافی نیست");
-
-      if (localState.mode === "demo") {
-        wsSend({ type: "PLAY_DICE", bet: amt, target: 1, dir: "under", mode: "demo" });
-      }
+      if (localState.mode === "demo") wsSend({ type: "PLAY_DICE", bet: amt, target: 1, dir: "under", mode: "demo" });
 
       s.bet = amt; s.mode = localState.mode; s.autoMult = !isNaN(autoVal) && autoVal > 1.02 ? autoVal : 0; s.win = 0;
-
       if (snap.phase === "waiting") { s.roundIndex = snap.roundIndex; s.state = "queued"; showToast(`شرط ${idx} برای راند #${snap.roundIndex} ثبت شد`); }
       else if (snap.phase === "running") { s.roundIndex = snap.roundIndex; s.state = "active"; showToast(`شرط ${idx} در راند #${snap.roundIndex} فعال شد`); }
       else { s.roundIndex = snap.roundIndex + 1; s.state = "queued"; showToast(`شرط ${idx} برای راند #${snap.roundIndex + 1} ثبت شد`); }
@@ -1733,9 +1764,7 @@
         if (s.state === "queued" && snap.phase === "running" && s.roundIndex === snap.roundIndex) s.state = "active";
         if (s.state === "active" && snap.phase === "crashed" && s.roundIndex === snap.roundIndex) s.state = "lost";
         if ((s.state === "cashed" || s.state === "lost") && s.roundIndex < snap.roundIndex) { s.state = "idle"; s.bet = 0; }
-        if (s.state === "active" && snap.phase === "running" && s.autoMult > 1 && snap.mult >= s.autoMult) {
-          cashoutCrashSlot(idx, s.autoMult, snap.roundIndex);
-        }
+        if (s.state === "active" && snap.phase === "running" && s.autoMult > 1 && snap.mult >= s.autoMult) cashoutCrashSlot(idx, s.autoMult, snap.roundIndex);
 
         const btn = document.getElementById("crashMainBtn" + idx);
         const st = document.getElementById("slot" + idx + "StatusText");
@@ -1816,7 +1845,6 @@
       ctx.stroke();
     }
 
-    /* SERVER-AUTHORITATIVE GAMES */
     let minesGame = { active: false, bet: 0, mines: [], opened: [], mult: 1.0 };
 
     function renderMinesBoard(revealAll = false) {
@@ -1828,24 +1856,10 @@
         btn.className = "mine-cell";
         const isOpenedSafe = minesGame.opened.includes(i);
         const isMine = revealAll && minesGame.mines.includes(i);
-
-        if (isMine) {
-          btn.classList.add("mine");
-          btn.textContent = "💣";
-          btn.disabled = true;
-        } else if (isOpenedSafe) {
-          btn.classList.add("safe");
-          btn.textContent = "💎";
-          btn.disabled = true;
-        } else {
-          btn.textContent = "✦";
-          btn.disabled = !minesGame.active;
-        }
-
-        btn.onclick = () => {
-          if (!minesGame.active || isOpenedSafe) return;
-          wsSend({ type: "MINES_PICK", cell: i });
-        };
+        if (isMine) { btn.classList.add("mine"); btn.textContent = "💣"; btn.disabled = true; }
+        else if (isOpenedSafe) { btn.classList.add("safe"); btn.textContent = "💎"; btn.disabled = true; }
+        else { btn.textContent = "✦"; btn.disabled = !minesGame.active; }
+        btn.onclick = () => { if (minesGame.active && !isOpenedSafe) wsSend({ type: "MINES_PICK", cell: i }); };
         board.appendChild(btn);
       }
     }
@@ -1856,11 +1870,7 @@
       if (bet < 1000 || getBalance() < bet) return showToast("مبلغ نامعتبر یا موجودی ناکافی");
       wsSend({ type: "MINES_START", bet, count, mode: localState.mode });
     }
-
-    function cashoutMinesGame() {
-      if (!minesGame.active) return;
-      wsSend({ type: "MINES_CASHOUT" });
-    }
+    function cashoutMinesGame() { if (minesGame.active) wsSend({ type: "MINES_CASHOUT" }); }
 
     function playDice() {
       const bet = Number(document.getElementById("diceBet").value || 0);
@@ -1868,9 +1878,7 @@
       const dir = document.getElementById("diceDir").value;
       if (bet < 1000 || getBalance() < bet) return showToast("مبلغ نامعتبر یا موجودی ناکافی");
       document.getElementById("dicePlayBtn").disabled = true;
-      if (!wsSend({ type: "PLAY_DICE", bet, target, dir, mode: localState.mode })) {
-        document.getElementById("dicePlayBtn").disabled = false;
-      }
+      if (!wsSend({ type: "PLAY_DICE", bet, target, dir, mode: localState.mode })) document.getElementById("dicePlayBtn").disabled = false;
     }
 
     function playRoulette() {
@@ -1878,18 +1886,14 @@
       const pick = document.getElementById("roulettePick").value;
       if (bet < 1000 || getBalance() < bet) return showToast("مبلغ نامعتبر یا موجودی ناکافی");
       document.getElementById("roulettePlayBtn").disabled = true;
-      if (!wsSend({ type: "PLAY_ROULETTE", bet, pick, mode: localState.mode })) {
-        document.getElementById("roulettePlayBtn").disabled = false;
-      }
+      if (!wsSend({ type: "PLAY_ROULETTE", bet, pick, mode: localState.mode })) document.getElementById("roulettePlayBtn").disabled = false;
     }
 
     function playSlots() {
       const bet = Number(document.getElementById("slotsBet").value || 0);
       if (bet < 1000 || getBalance() < bet) return showToast("مبلغ نامعتبر یا موجودی ناکافی");
       document.getElementById("slotsPlayBtn").disabled = true;
-      if (!wsSend({ type: "PLAY_SLOTS", bet, mode: localState.mode })) {
-        document.getElementById("slotsPlayBtn").disabled = false;
-      }
+      if (!wsSend({ type: "PLAY_SLOTS", bet, mode: localState.mode })) document.getElementById("slotsPlayBtn").disabled = false;
     }
 
     let bjState = { active: false, bet: 0, dealer: [], player: [] };
@@ -1907,16 +1911,8 @@
       bjState.bet = bet;
       wsSend({ type: "BJ_DEAL", bet, mode: localState.mode });
     }
-
-    function hitBlackjack() {
-      if (!bjState.active) return;
-      wsSend({ type: "BJ_HIT" });
-    }
-
-    function standBlackjack() {
-      if (!bjState.active) return;
-      wsSend({ type: "BJ_STAND" });
-    }
+    function hitBlackjack() { if (bjState.active) wsSend({ type: "BJ_HIT" }); }
+    function standBlackjack() { if (bjState.active) wsSend({ type: "BJ_STAND" }); }
 
     function getPlinkoMults() {
       return document.getElementById("plinkoRisk").value === "high"
@@ -1933,12 +1929,10 @@
       const risk = document.getElementById("plinkoRisk").value;
       if (bet < 1000 || getBalance() < bet) return showToast("مبلغ نامعتبر یا موجودی ناکافی");
       document.getElementById("plinkoPlayBtn").disabled = true;
-      if (!wsSend({ type: "PLAY_PLINKO", bet, risk, mode: localState.mode })) {
-        document.getElementById("plinkoPlayBtn").disabled = false;
-      }
+      if (!wsSend({ type: "PLAY_PLINKO", bet, risk, mode: localState.mode })) document.getElementById("plinkoPlayBtn").disabled = false;
     }
 
-    /* PERSIAN FOOTBALL TRANSLATION & IRAN PRIORITY */
+    /* PERSIAN FOOTBALL TRANSLATION, IRAN PRIORITY & TAKBET MARKETS */
     const FA_LEAGUES = {
       "Persian Gulf Pro League": "لیگ برتر خلیج فارس",
       "Azadegan League": "لیگ آزادگان",
@@ -2028,17 +2022,65 @@
       );
     }
 
-    function getSortedFootballMatches() {
+    function isLiveMatch(m) {
+      const st = String(m.status || "LIVE").toUpperCase();
+      return !["NS", "FT", "AET", "PEN", "PST", "CANC"].includes(st);
+    }
+
+    function getFilteredSortedMatches() {
+      const q = (document.getElementById("fbSearchInput")?.value || "").trim().toLowerCase();
       const rawMatches = localState.football.matches || defaultMatches();
-      return [...rawMatches].sort((a, b) => {
-        const aIr = isIranianMatch(a) ? 0 : 1;
-        const bIr = isIranianMatch(b) ? 0 : 1;
-        return aIr - bIr;
+      const sorted = [...rawMatches].sort((a, b) => {
+        const irDiff = (isIranianMatch(a) ? 0 : 1) - (isIranianMatch(b) ? 0 : 1);
+        if (irDiff !== 0) return irDiff;
+        return (isLiveMatch(a) ? 0 : 1) - (isLiveMatch(b) ? 0 : 1);
+      });
+
+      return sorted.filter((m) => {
+        if (currentMatchFilter === "iran" && !isIranianMatch(m)) return false;
+        if (currentMatchFilter === "live" && !isLiveMatch(m)) return false;
+        if (currentMatchFilter === "upcoming" && isLiveMatch(m)) return false;
+        if (q) {
+          const hay = `${translateLeagueFa(m.league)} ${translateTeamFa(m.home)} ${translateTeamFa(m.away)} ${m.league} ${m.home} ${m.away}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
       });
     }
 
+    function setMatchFilter(filterKey) {
+      currentMatchFilter = filterKey;
+      localState.football.selectedIdx = 0;
+      document.querySelectorAll(".fb-filter-btn").forEach((b) => b.classList.toggle("active", b.dataset.filter === filterKey));
+      renderFootballMatches();
+    }
+
+    function computeMarketsForMatch(m) {
+      const h = Math.max(1.15, Number(m.hOdd || 2.1));
+      const d = Math.max(1.50, Number(m.dOdd || 3.2));
+      const a = Math.max(1.15, Number(m.aOdd || 2.9));
+      return {
+        home: { label: "برد میزبان (1)", odd: h },
+        draw: { label: "مساوی (X)", odd: d },
+        away: { label: "برد مهمان (2)", odd: a },
+        dc_1x: { label: "میزبان یا مساوی (1X)", odd: Number(Math.max(1.08, ((h * d) / (h + d)) * 1.15).toFixed(2)) },
+        dc_12: { label: "برد یکی از دو تیم (12)", odd: Number(Math.max(1.08, ((h * a) / (h + a)) * 1.15).toFixed(2)) },
+        dc_x2: { label: "مساوی یا مهمان (X2)", odd: Number(Math.max(1.08, ((d * a) / (d + a)) * 1.15).toFixed(2)) },
+        over_25: { label: "بالاتر از ۲.۵ گل", odd: 1.90 },
+        under_25: { label: "پایین‌تر از ۲.۵ گل", odd: 1.85 },
+        btts_yes: { label: "هر دو تیم گل می‌زنند", odd: 1.78 }
+      };
+    }
+
     function renderFootballMatches() {
-      const matches = getSortedFootballMatches();
+      const matches = getFilteredSortedMatches();
+      document.getElementById("fbMatchesCountBadge").textContent = `${matches.length} مسابقه`;
+
+      if (!matches.length) {
+        document.getElementById("fbMatchesRow").innerHTML = `<div style="font-size:0.8rem;color:var(--muted);">مسابقه‌ای با این فیلتر یافت نشد.</div>`;
+        return;
+      }
+
       if (localState.football.selectedIdx >= matches.length) localState.football.selectedIdx = 0;
 
       document.getElementById("fbMatchesRow").innerHTML = matches.map((m, i) => {
@@ -2046,52 +2088,160 @@
         const homeFa = translateTeamFa(m.home || "");
         const awayFa = translateTeamFa(m.away || "");
         const irBadge = isIranianMatch(m) ? " • 🇮🇷 ایرانی" : "";
-        return `<button type="button" class="match-tile ${i === localState.football.selectedIdx ? "selected" : ""}" onclick="localState.football.selectedIdx=${i};renderFootballMatches();"><div style="font-size:0.7rem;color:var(--gold-bright);">${escapeHtml(leagueFa)} • ${m.min}' (${escapeHtml(m.status || "LIVE")})${irBadge}</div><div style="font-size:0.84rem;font-weight:800;">${escapeHtml(homeFa)} ${m.hScore} - ${m.aScore} ${escapeHtml(awayFa)}</div></button>`;
+        const stBadge = isLiveMatch(m)
+          ? `<span class="match-live-tag">${m.min}'</span>`
+          : `<span class="match-pre-tag">${escapeHtml(m.status || "NS")}</span>`;
+
+        return `<button type="button" class="match-tile ${i === localState.football.selectedIdx ? "selected" : ""}" onclick="localState.football.selectedIdx=${i};renderFootballMatches();">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:4px;">
+            <span style="font-size:0.7rem;color:var(--gold-bright);">${escapeHtml(leagueFa)}${irBadge}</span>
+            ${stBadge}
+          </div>
+          <div style="font-size:0.84rem;font-weight:800;">${escapeHtml(homeFa)} ${m.hScore} - ${m.aScore} ${escapeHtml(awayFa)}</div>
+        </button>`;
       }).join("");
 
       const cur = matches[localState.football.selectedIdx];
       const curLeagueFa = translateLeagueFa(cur.league || "");
       const curHomeFa = translateTeamFa(cur.home || "");
       const curAwayFa = translateTeamFa(cur.away || "");
+      const mkts = computeMarketsForMatch(cur);
 
       document.getElementById("fbHomeName").textContent = curHomeFa;
       document.getElementById("fbAwayName").textContent = curAwayFa;
       document.getElementById("fbScoreBoard").textContent = `${cur.hScore} - ${cur.aScore}`;
-      document.getElementById("oddHomeVal").textContent = Number(cur.hOdd).toFixed(2);
-      document.getElementById("oddDrawVal").textContent = Number(cur.dOdd).toFixed(2);
-      document.getElementById("oddAwayVal").textContent = Number(cur.aOdd).toFixed(2);
+      document.getElementById("fbSelectedMatchLabel").textContent = `${curLeagueFa} • ${curHomeFa} - ${curAwayFa}`;
       document.getElementById("fbEventsLog").textContent = `${curLeagueFa} • دقیقه ${cur.min} • ${curHomeFa} ${cur.hScore} - ${cur.aScore} ${curAwayFa} (${cur.status || "LIVE"})`;
+
+      document.getElementById("oddHomeVal").textContent = mkts.home.odd.toFixed(2);
+      document.getElementById("oddDrawVal").textContent = mkts.draw.odd.toFixed(2);
+      document.getElementById("oddAwayVal").textContent = mkts.away.odd.toFixed(2);
+      document.getElementById("oddDc1xVal").textContent = mkts.dc_1x.odd.toFixed(2);
+      document.getElementById("oddDc12Val").textContent = mkts.dc_12.odd.toFixed(2);
+      document.getElementById("oddDcX2Val").textContent = mkts.dc_x2.odd.toFixed(2);
+      document.getElementById("oddOver25Val").textContent = mkts.over_25.odd.toFixed(2);
+      document.getElementById("oddUnder25Val").textContent = mkts.under_25.odd.toFixed(2);
+      document.getElementById("oddBttsYesVal").textContent = mkts.btts_yes.odd.toFixed(2);
+
+      pickFbMarket(localState.football.market || "home", false);
       drawPitchCanvas();
+    }
+
+    function pickFbMarket(m, shouldSave = true) {
+      localState.football.market = m;
+      if (shouldSave) saveLocalState();
+      document.querySelectorAll(".odd-card").forEach((btn) => btn.classList.toggle("picked", btn.dataset.market === m));
+      updateSlipPreview();
+    }
+
+    function setSlipAmount(val) {
+      document.getElementById("fbBetInput").value = val;
+      updateSlipPreview();
+    }
+
+    function updateSlipPreview() {
+      const matches = getFilteredSortedMatches();
+      const cur = matches[localState.football.selectedIdx] || matches[0];
+      if (!cur) return;
+      const mkts = computeMarketsForMatch(cur);
+      const chosen = mkts[localState.football.market] || mkts.home;
+      const stake = Math.max(0, Number(document.getElementById("fbBetInput").value || 0));
+
+      document.getElementById("slipSelectionText").textContent = chosen.label;
+      document.getElementById("slipOddText").textContent = Number(chosen.odd).toFixed(2);
+      document.getElementById("slipPotentialText").textContent = fmtToman(stake * chosen.odd);
+    }
+
+    function settleLocalFinishedBets() {
+      const allMatches = localState.football.matches || [];
+      let changed = false;
+      (localState.football.localBets || []).forEach((b) => {
+        if (b.status !== "در انتظار") return;
+        const m = allMatches.find((x) => String(x.id) === String(b.matchId));
+        if (!m) return;
+        const st = String(m.status || "").toUpperCase();
+        if (st === "FT" || st === "AET" || st === "PEN") {
+          const hs = Number(m.hScore || 0);
+          const as = Number(m.aScore || 0);
+          let won = false;
+          if (b.market === "home") won = hs > as;
+          else if (b.market === "draw") won = hs === as;
+          else if (b.market === "away") won = as > hs;
+          else if (b.market === "dc_1x") won = hs >= as;
+          else if (b.market === "dc_12") won = hs !== as;
+          else if (b.market === "dc_x2") won = as >= hs;
+          else if (b.market === "over_25") won = (hs + as) > 2.5;
+          else if (b.market === "under_25") won = (hs + as) < 2.5;
+          else if (b.market === "btts_yes") won = hs > 0 && as > 0;
+
+          if (won) {
+            const payout = Math.round(b.stake * b.odd);
+            getActiveWallet()[b.mode] = Number(getActiveWallet()[b.mode] || 0) + payout;
+            b.status = `برد (${fmtToman(payout)})`;
+          } else {
+            b.status = "باخت";
+          }
+          changed = true;
+        }
+      });
+      if (changed) { saveLocalState(); refreshUI(); }
     }
 
     function renderFootballBets() {
       const body = document.getElementById("fbUserBetsBody");
       if (!body) return;
-      body.innerHTML = serverFootballBets.length
-        ? serverFootballBets.map((b) => `<tr>
+      const rows = serverFootballBets.length ? serverFootballBets : (localState.football.localBets || []);
+      body.innerHTML = rows.length
+        ? rows.map((b) => `<tr>
             <td>${escapeHtml(b.match_label)}</td>
-            <td>${escapeHtml(b.market)} (${Number(b.odd).toFixed(2)})</td>
+            <td>${escapeHtml(b.marketLabel || b.market)} (${Number(b.odd).toFixed(2)})</td>
             <td>${fmtToman(b.stake)}</td>
             <td>${escapeHtml(b.status)}</td>
           </tr>`).join("")
         : `<tr><td colspan="4" style="text-align:center;color:var(--muted);">شرطی ثبت نشده است</td></tr>`;
     }
 
-    function pickFbMarket(m) {
-      localState.football.market = m;
-      ["home", "draw", "away"].forEach((k) => document.getElementById("odd" + k.charAt(0).toUpperCase() + k.slice(1) + "Btn").classList.toggle("picked", k === m));
-    }
-
     function placeFootballBet() {
+      const matches = getFilteredSortedMatches();
+      const cur = matches[localState.football.selectedIdx] || matches[0];
       const amt = Number(document.getElementById("fbBetInput").value || 0);
+      if (!cur) return showToast("مسابقه‌ای انتخاب نشده است");
       if (amt < 1000 || getBalance() < amt) return showToast("مبلغ نامعتبر یا موجودی ناکافی");
-      wsSend({
+
+      const mkts = computeMarketsForMatch(cur);
+      const chosen = mkts[localState.football.market] || mkts.home;
+      const serverMarket = ["home", "draw", "away"].includes(localState.football.market) ? localState.football.market : "home";
+
+      const sent = wsSend({
         type: "PLACE_FOOTBALL_BET",
         bet: amt,
         matchIdx: localState.football.selectedIdx,
-        market: localState.football.market,
+        market: serverMarket,
         mode: localState.mode
       });
+
+      if (!sent || !["home", "draw", "away"].includes(localState.football.market)) {
+        if (!sent) {
+          getActiveWallet()[localState.mode] = Math.max(0, getBalance(localState.mode) - amt);
+        }
+        localState.football.localBets = localState.football.localBets || [];
+        localState.football.localBets.unshift({
+          id: "fb_" + Date.now(),
+          matchId: cur.id,
+          match_label: `${translateTeamFa(cur.home)} - ${translateTeamFa(cur.away)}`,
+          market: localState.football.market,
+          marketLabel: chosen.label,
+          odd: chosen.odd,
+          stake: amt,
+          mode: localState.mode,
+          status: "در انتظار"
+        });
+        saveLocalState();
+        refreshUI();
+        renderFootballBets();
+        document.getElementById("fbActiveBetSummary").textContent = `شرط ثبت شد: ${chosen.label} • مبلغ ${fmtToman(amt)} (بازگشت احتمالی: ${fmtToman(amt * chosen.odd)})`;
+        showToast("پیش‌بینی ثبت شد");
+      }
     }
 
     function drawPitchCanvas() {
@@ -2108,10 +2258,11 @@
       ctx.lineTo(w / 2, h - 12 * dpr);
       ctx.stroke();
 
-      const matches = getSortedFootballMatches();
+      const matches = getFilteredSortedMatches();
       const cur = matches[localState.football.selectedIdx] || matches[0];
+      if (!cur) return;
       ctx.beginPath();
-      ctx.arc(cur.ballX * w, cur.ballY * h, 6 * dpr, 0, Math.PI * 2);
+      ctx.arc((cur.ballX ?? 0.5) * w, (cur.ballY ?? 0.5) * h, 6 * dpr, 0, Math.PI * 2);
       ctx.fillStyle = "#fde047";
       ctx.fill();
     }
