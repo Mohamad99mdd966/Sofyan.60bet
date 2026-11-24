@@ -1,13 +1,16 @@
 {
-  "name": "sofyan-live-server",
-  "version": "2.0.0",
-  "description": "Persistent WebSocket & Sportsbook Server for Sofyan Live",
+  "name": "sofyan-60bet",
+  "version": "1.0.0",
+  "description": "SOFYAN LIVE Persistent Server",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
+  "engines": {
+    "node": "22.x"
+  },
   "dependencies": {
-    "better-sqlite3": "^11.0.0",
+    "better-sqlite3": "^11.7.0",
     "ws": "^8.18.0"
   }
 }
