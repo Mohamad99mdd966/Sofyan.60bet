@@ -6,10 +6,19 @@ const {
   ensureUser,
   verifyPassword,
   changeBalance,
+  createFootballBet,
+  getOpenFootballBetsByMatch,
+  settleFootballBet,
+  getUserFootballBets,
   getUserPublic,
   listUsersPublic,
   getRecentTransactions
 } = require("./db");
+const {
+  POLL_INTERVAL_MS,
+  refreshFootballMatches,
+  resolveWinnerMarket
+} = require("./footballService");
 
 const PORT = process.env.PORT || 8080;
 let SECRET_ADMIN_CODE = process.env.ADMIN_SECRET_CODE || getSetting("admin_secret_code", "11228");
@@ -38,9 +47,9 @@ const sharedState = {
     ]
   }))),
   footballMatches: [
-    { id: "m0", league: "لیگ برتر", home: "استقلال", away: "پرسپولیس", hScore: 1, aScore: 0, min: 34, hOdd: 2.15, dOdd: 3.10, aOdd: 3.05, ballX: 0.56, ballY: 0.48 },
-    { id: "m1", league: "لالیگا", home: "رئال مادرید", away: "بارسلونا", hScore: 0, aScore: 0, min: 19, hOdd: 2.05, dOdd: 3.40, aOdd: 2.90, ballX: 0.44, ballY: 0.52 },
-    { id: "m2", league: "لیگ قهرمانان", home: "منچستر سیتی", away: "بایرن مونیخ", hScore: 2, aScore: 1, min: 67, hOdd: 1.88, dOdd: 3.55, aOdd: 3.45, ballX: 0.62, ballY: 0.42 }
+    { id: "m0", league: "لیگ برتر", home: "استقلال", away: "پرسپولیس", hScore: 1, aScore: 0, min: 34, status: "LIVE", hOdd: 2.15, dOdd: 3.10, aOdd: 3.05, ballX: 0.56, ballY: 0.48 },
+    { id: "m1", league: "لالیگا", home: "رئال مادرید", away: "بارسلونا", hScore: 0, aScore: 0, min: 19, status: "LIVE", hOdd: 2.05, dOdd: 3.40, aOdd: 2.90, ballX: 0.44, ballY: 0.52 },
+    { id: "m2", league: "لیگ قهرمانان", home: "منچستر سیتی", away: "بایرن مونیخ", hScore: 2, aScore: 1, min: 67, status: "LIVE", hOdd: 1.88, dOdd: 3.55, aOdd: 3.45, ballX: 0.62, ballY: 0.42 }
   ]
 };
 
@@ -76,7 +85,8 @@ function sendTo(ws, payload) {
 function sendWalletToUser(targetUsername, targetWs = null) {
   const wallet = getUserPublic(targetUsername);
   const txs = getRecentTransactions(targetUsername, 50);
-  const payload = { type: "WALLET_SYNC", wallet, txs };
+  const footballBets = getUserFootballBets(targetUsername, 30);
+  const payload = { type: "WALLET_SYNC", wallet, txs, footballBets };
   if (targetWs) sendTo(targetWs, payload);
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN && client.username === targetUsername) {
@@ -169,15 +179,46 @@ setInterval(() => {
   });
 }, 100);
 
-// به‌روزرسانی موقت فوتبال تا گام دوم (اتصال به API واقعی)
-setInterval(() => {
-  sharedState.footballMatches.forEach((m) => {
-    m.min = m.min >= 90 ? 1 : m.min + 1;
-    m.ballX = Number((0.15 + Math.random() * 0.7).toFixed(2));
-    m.ballY = Number((0.15 + Math.random() * 0.7).toFixed(2));
-  });
-  broadcast({ type: "SHARED_SYNC", shared: sharedState });
-}, 4000);
+// ==========================================
+// همگام‌سازی فوتبال و تسویه خودکار مسابقات پایان یافته (FT)
+// ==========================================
+function settleFinishedMatches(matches) {
+  const affectedUsers = new Set();
+  for (const match of matches) {
+    if (match.status !== "FT") continue;
+    const openBets = getOpenFootballBetsByMatch(match.id);
+    for (const bet of openBets) {
+      const won = resolveWinnerMarket(match, bet.market);
+      if (won === null) continue;
+      const settled = settleFootballBet({
+        betId: bet.id,
+        won,
+        payout: bet.potential_payout,
+        note: `تسویه خودکار (${match.home} ${match.hScore}-${match.aScore} ${match.away})`
+      });
+      if (settled) {
+        affectedUsers.add(bet.username);
+      }
+    }
+  }
+  affectedUsers.forEach((uname) => sendWalletToUser(uname));
+}
+
+async function syncFootballLoop() {
+  try {
+    const matches = await refreshFootballMatches(false);
+    if (Array.isArray(matches) && matches.length > 0) {
+      sharedState.footballMatches = matches;
+      settleFinishedMatches(matches);
+      broadcast({ type: "SHARED_SYNC", shared: sharedState });
+    }
+  } catch (err) {
+    console.error("syncFootballLoop error:", err.message);
+  }
+}
+
+syncFootballLoop();
+setInterval(syncFootballLoop, Math.max(10000, POLL_INTERVAL_MS));
 
 function drawCard() {
   const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
@@ -729,17 +770,30 @@ wss.on("connection", (ws) => {
     if (msg.type === "PLACE_FOOTBALL_BET") {
       const bet = Math.max(1000, Number(msg.bet || 0));
       const mode = msg.mode === "real" ? "real" : "demo";
-      try {
-        changeBalance({ username: user, mode, type: "football_bet", delta: -bet, note: "شرط فوتبال زنده" });
-      } catch (err) {
-        return sendTo(ws, { type: "TOAST", message: err.message });
-      }
       const match = sharedState.footballMatches[msg.matchIdx] || sharedState.footballMatches[0];
-      const odd = msg.market === "home" ? match.hOdd : msg.market === "draw" ? match.dOdd : match.aOdd;
-      const potential = Math.round(bet * odd);
+      if (!match) {
+        return sendTo(ws, { type: "TOAST", message: "مسابقه یافت نشد." });
+      }
+      const market = ["home", "draw", "away"].includes(msg.market) ? msg.market : "home";
+      const odd = market === "home" ? match.hOdd : market === "draw" ? match.dOdd : match.aOdd;
+      const betId = "fb_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
 
-      sendWalletToUser(user, ws);
-      sendTo(ws, { type: "FOOTBALL_BET_ACCEPTED", bet, odd, potential });
+      try {
+        const created = createFootballBet({
+          id: betId,
+          username: user,
+          matchId: match.id,
+          matchLabel: `${match.home} vs ${match.away}`,
+          market,
+          odd,
+          stake: bet,
+          mode
+        });
+        sendWalletToUser(user, ws);
+        sendTo(ws, { type: "FOOTBALL_BET_ACCEPTED", betId: created.id, bet, odd, potential: created.potential });
+      } catch (err) {
+        sendTo(ws, { type: "TOAST", message: err.message || "خطا در ثبت شرط فوتبال." });
+      }
       return;
     }
   });
