@@ -10,7 +10,6 @@ const server = http.createServer((req, res) => {
 
 const wss = new WebSocketServer({ server });
 
-// ثابت نگه‌داشتن نقطه شروع راندها برای هماهنگی پایدار بین همه کاربران و ری‌استارت‌ها
 const ROUND_EPOCH_MS = 1767225600000;
 const WAITING_MS = 2200;
 const CRASH_PAUSE_MS = 2200;
@@ -33,17 +32,46 @@ const sharedState = {
         id: "m_server_init",
         user: "سیستم",
         isAdmin: true,
-        text: "سرور همگام‌سازی راند و چت زنده برای همه کاربران فعال است.",
+        text: "سرور همگام‌سازی راند، بازی‌ها و چت زنده برای همه کاربران فعال است.",
         time: new Date().toLocaleTimeString("fa-IR"),
         deleted: false
       }
     ]
   },
-  crashHistory: [1.42, 2.85, 1.18, 4.60, 1.94, 3.12]
+  crashHistory: [1.42, 2.85, 1.18, 4.60, 1.94, 3.12],
+  footballMatches: [
+    { id: "m0", league: "لیگ برتر", home: "استقلال", away: "پرسپولیس", hScore: 1, aScore: 0, min: 34, hOdd: 2.15, dOdd: 3.10, aOdd: 3.05, ballX: 0.56, ballY: 0.48 },
+    { id: "m1", league: "لالیگا", home: "رئال مادرید", away: "بارسلونا", hScore: 0, aScore: 0, min: 19, hOdd: 2.05, dOdd: 3.40, aOdd: 2.90, ballX: 0.44, ballY: 0.52 },
+    { id: "m2", league: "لیگ قهرمانان", home: "منچستر سیتی", away: "بایرن مونیخ", hScore: 2, aScore: 1, min: 67, hOdd: 1.88, dOdd: 3.55, aOdd: 3.45, ballX: 0.62, ballY: 0.42 }
+  ]
 };
 
 const userLastChatMap = new Map();
+const minesSessions = new Map(); // sessionKey -> { bet, mode, mines, opened: Set, mult }
+const bjSessions = new Map();    // sessionKey -> { bet, mode, deck, dealer, player }
 let lastRecordedRound = -1;
+
+function getPlayerKey(ws, data) {
+  const u = String(data?.username || ws.username || "مهمان").trim().slice(0, 32) || "مهمان";
+  return u;
+}
+
+function applyDeltaToUser(username, delta, mode = "demo") {
+  const u = String(username || "مهمان").trim() || "مهمان";
+  sharedState.usersBalanceAdjustments[u] = sharedState.usersBalanceAdjustments[u] || {
+    demoDelta: 0,
+    realDelta: 0,
+    wageredDelta: 0
+  };
+  if (mode === "real") {
+    sharedState.usersBalanceAdjustments[u].realDelta += Number(delta || 0);
+  } else {
+    sharedState.usersBalanceAdjustments[u].demoDelta += Number(delta || 0);
+  }
+  if (delta < 0) {
+    sharedState.usersBalanceAdjustments[u].wageredDelta += Math.abs(Number(delta || 0));
+  }
+}
 
 function addServerAudit(actor, action) {
   sharedState.auditLogs.unshift({
@@ -55,10 +83,7 @@ function addServerAudit(actor, action) {
 }
 
 function deterministicCrashPoint(roundIndex, secretSalt = "sofyan_crash_v1") {
-  const hash = crypto
-    .createHmac("sha256", secretSalt)
-    .update(`round:${roundIndex}`)
-    .digest("hex");
+  const hash = crypto.createHmac("sha256", secretSalt).update(`round:${roundIndex}`).digest("hex");
   const u = parseInt(hash.slice(0, 8), 16) / 0xffffffff;
   if (u < 0.32) return Number((1.12 + (u / 0.32) * 0.78).toFixed(2));
   if (u < 0.75) return Number((1.90 + ((u - 0.32) / 0.43) * 2.20).toFixed(2));
@@ -118,9 +143,7 @@ function getAuthoritativeRoundSnapshot(nowMs = Date.now()) {
 function broadcast(packetObj) {
   const raw = JSON.stringify(packetObj);
   wss.clients.forEach((client) => {
-    if (client.readyState === 1) {
-      client.send(raw);
-    }
+    if (client.readyState === 1) client.send(raw);
   });
 }
 
@@ -149,35 +172,307 @@ function getSharedPayload() {
     usersBalanceAdjustments: sharedState.usersBalanceAdjustments,
     auditLogs: sharedState.auditLogs,
     chat: sanitizeChatForBroadcast(),
-    crashHistory: sharedState.crashHistory
+    crashHistory: sharedState.crashHistory,
+    footballMatches: sharedState.footballMatches
   };
+}
+
+/* Blackjack helpers on server */
+function createDeck() {
+  const ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
+  const suits = ["♠", "♥", "♦", "♣"];
+  const deck = [];
+  for (const r of ranks) {
+    for (const s of suits) deck.push({ rank: r, suit: s, red: s === "♥" || s === "♦" });
+  }
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = crypto.randomInt(0, i + 1);
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  return deck;
+}
+
+function calcHand(cards) {
+  let sum = 0;
+  let aces = 0;
+  for (const c of cards) {
+    if (c.rank === "A") { sum += 11; aces += 1; }
+    else if (["K", "Q", "J"].includes(c.rank)) sum += 10;
+    else sum += Number(c.rank);
+  }
+  while (sum > 21 && aces > 0) { sum -= 10; aces -= 1; }
+  return sum;
 }
 
 wss.on("connection", (ws) => {
   ws.username = "مهمان";
   ws.adminSession = null;
 
-  ws.send(
-    JSON.stringify({
-      type: "SYNC_INIT",
-      round: getAuthoritativeRoundSnapshot(),
-      shared: getSharedPayload()
-    })
-  );
+  ws.send(JSON.stringify({
+    type: "SYNC_INIT",
+    round: getAuthoritativeRoundSnapshot(),
+    shared: getSharedPayload()
+  }));
 
   ws.on("message", (rawMsg) => {
     let data;
-    try {
-      data = JSON.parse(String(rawMsg));
-    } catch {
-      return;
-    }
+    try { data = JSON.parse(String(rawMsg)); } catch { return; }
 
     if (data.type === "IDENTIFY") {
       ws.username = String(data.username || "مهمان").trim().slice(0, 32) || "مهمان";
       return;
     }
 
+    /* DICE */
+    if (data.type === "PLAY_DICE") {
+      const user = getPlayerKey(ws, data);
+      const mode = data.mode === "real" ? "real" : "demo";
+      const bet = Math.max(1000, Number(data.bet || 0));
+      const target = Math.min(95, Math.max(5, Number(data.target || 50)));
+      const dir = data.dir === "under" ? "under" : "over";
+
+      applyDeltaToUser(user, -bet, mode);
+      const roll = crypto.randomInt(1, 101);
+      const won = dir === "over" ? roll > target : roll < target;
+      let payout = 0;
+      if (won) {
+        const mult = dir === "over"
+          ? Math.max(1.2, 95 / Math.max(5, 100 - target))
+          : Math.max(1.2, 95 / Math.max(5, target));
+        payout = Math.round(bet * Number(mult.toFixed(2)));
+        applyDeltaToUser(user, payout, mode);
+      }
+
+      ws.send(JSON.stringify({ type: "DICE_RESULT", roll, won, payout, bet, mode }));
+      broadcast({ type: "SHARED_SYNC", shared: getSharedPayload() });
+      return;
+    }
+
+    /* ROULETTE */
+    if (data.type === "PLAY_ROULETTE") {
+      const user = getPlayerKey(ws, data);
+      const mode = data.mode === "real" ? "real" : "demo";
+      const bet = Math.max(1000, Number(data.bet || 0));
+      const pick = ["red", "black", "green"].includes(data.pick) ? data.pick : "red";
+
+      applyDeltaToUser(user, -bet, mode);
+      const num = crypto.randomInt(0, 37);
+      const color = num === 0 ? "green" : num % 2 === 1 ? "red" : "black";
+      const won = pick === color;
+      const payout = won ? bet * (color === "green" ? 14 : 2) : 0;
+      if (payout > 0) applyDeltaToUser(user, payout, mode);
+
+      ws.send(JSON.stringify({ type: "ROULETTE_RESULT", num, color, won, payout, bet, mode }));
+      broadcast({ type: "SHARED_SYNC", shared: getSharedPayload() });
+      return;
+    }
+
+    /* SLOTS */
+    if (data.type === "PLAY_SLOTS") {
+      const user = getPlayerKey(ws, data);
+      const mode = data.mode === "real" ? "real" : "demo";
+      const bet = Math.max(1000, Number(data.bet || 0));
+      const syms = ["💎", "👑", "🍀"];
+
+      applyDeltaToUser(user, -bet, mode);
+      const reels = [
+        syms[crypto.randomInt(0, syms.length)],
+        syms[crypto.randomInt(0, syms.length)],
+        syms[crypto.randomInt(0, syms.length)]
+      ];
+      const won = reels[0] === reels[1] && reels[1] === reels[2];
+      const payout = won ? bet * 8 : 0;
+      if (payout > 0) applyDeltaToUser(user, payout, mode);
+
+      ws.send(JSON.stringify({ type: "SLOTS_RESULT", reels, won, payout, bet, mode }));
+      broadcast({ type: "SHARED_SYNC", shared: getSharedPayload() });
+      return;
+    }
+
+    /* PLINKO */
+    if (data.type === "PLAY_PLINKO") {
+      const user = getPlayerKey(ws, data);
+      const mode = data.mode === "real" ? "real" : "demo";
+      const bet = Math.max(1000, Number(data.bet || 0));
+      const mults = data.risk === "low" ? [2.2, 1.4, 1.1, 0.9, 1.1, 1.4, 2.2] : [6.5, 2.5, 1.2, 0.5, 1.2, 2.5, 6.5];
+
+      applyDeltaToUser(user, -bet, mode);
+      const idx = crypto.randomInt(0, mults.length);
+      const mult = mults[idx];
+      const payout = Math.round(bet * mult);
+      applyDeltaToUser(user, payout, mode);
+
+      ws.send(JSON.stringify({ type: "PLINKO_RESULT", idx, mult, payout, bet, mode }));
+      broadcast({ type: "SHARED_SYNC", shared: getSharedPayload() });
+      return;
+    }
+
+    /* MINES */
+    if (data.type === "MINES_START") {
+      const user = getPlayerKey(ws, data);
+      const mode = data.mode === "real" ? "real" : "demo";
+      const bet = Math.max(1000, Number(data.bet || 0));
+      const count = Math.min(18, Math.max(1, Number(data.count || 3)));
+
+      applyDeltaToUser(user, -bet, mode);
+      const set = new Set();
+      while (set.size < count) set.add(crypto.randomInt(0, 25));
+
+      minesSessions.set(user, { bet, mode, count, mines: [...set], opened: [], mult: 1.0 });
+      ws.send(JSON.stringify({ type: "MINES_STARTED", bet, count, mult: 1.0 }));
+      broadcast({ type: "SHARED_SYNC", shared: getSharedPayload() });
+      return;
+    }
+
+    if (data.type === "MINES_PICK") {
+      const user = getPlayerKey(ws, data);
+      const cell = Number(data.cell);
+      const sess = minesSessions.get(user);
+      if (!sess || cell < 0 || cell > 24 || sess.opened.includes(cell)) return;
+
+      if (sess.mines.includes(cell)) {
+        const revealedMines = sess.mines;
+        minesSessions.delete(user);
+        ws.send(JSON.stringify({ type: "MINES_HIT_MINE", cell, mines: revealedMines }));
+        return;
+      }
+
+      sess.opened.push(cell);
+      sess.mult = Number((sess.mult * (1 + sess.count * 0.08)).toFixed(2));
+      ws.send(JSON.stringify({
+        type: "MINES_SAFE",
+        cell,
+        mult: sess.mult,
+        potential: Math.round(sess.bet * sess.mult)
+      }));
+      return;
+    }
+
+    if (data.type === "MINES_CASHOUT") {
+      const user = getPlayerKey(ws, data);
+      const sess = minesSessions.get(user);
+      if (!sess) return;
+      const payout = Math.round(sess.bet * sess.mult);
+      minesSessions.delete(user);
+      applyDeltaToUser(user, payout, sess.mode);
+      ws.send(JSON.stringify({ type: "MINES_CASHED", payout, mult: sess.mult }));
+      broadcast({ type: "SHARED_SYNC", shared: getSharedPayload() });
+      return;
+    }
+
+    /* BLACKJACK */
+    if (data.type === "BJ_DEAL") {
+      const user = getPlayerKey(ws, data);
+      const mode = data.mode === "real" ? "real" : "demo";
+      const bet = Math.max(1000, Number(data.bet || 0));
+
+      applyDeltaToUser(user, -bet, mode);
+      const deck = createDeck();
+      const player = [deck.pop(), deck.pop()];
+      const dealer = [deck.pop()];
+      bjSessions.set(user, { bet, mode, deck, player, dealer });
+
+      ws.send(JSON.stringify({
+        type: "BJ_STATE",
+        status: "playing",
+        player,
+        dealer,
+        playerSum: calcHand(player),
+        dealerSum: calcHand(dealer)
+      }));
+      broadcast({ type: "SHARED_SYNC", shared: getSharedPayload() });
+      return;
+    }
+
+    if (data.type === "BJ_HIT") {
+      const user = getPlayerKey(ws, data);
+      const sess = bjSessions.get(user);
+      if (!sess) return;
+      sess.player.push(sess.deck.pop());
+      const pSum = calcHand(sess.player);
+      if (pSum > 21) {
+        const dealer = sess.dealer;
+        bjSessions.delete(user);
+        ws.send(JSON.stringify({
+          type: "BJ_STATE",
+          status: "bust",
+          player: sess.player,
+          dealer,
+          playerSum: pSum,
+          dealerSum: calcHand(dealer)
+        }));
+        return;
+      }
+      ws.send(JSON.stringify({
+        type: "BJ_STATE",
+        status: "playing",
+        player: sess.player,
+        dealer: sess.dealer,
+        playerSum: pSum,
+        dealerSum: calcHand(sess.dealer)
+      }));
+      return;
+    }
+
+    if (data.type === "BJ_STAND") {
+      const user = getPlayerKey(ws, data);
+      const sess = bjSessions.get(user);
+      if (!sess) return;
+      while (calcHand(sess.dealer) < 17) sess.dealer.push(sess.deck.pop());
+      const pSum = calcHand(sess.player);
+      const dSum = calcHand(sess.dealer);
+      bjSessions.delete(user);
+
+      let outcome = "lose";
+      let payout = 0;
+      if (dSum > 21 || pSum > dSum) {
+        outcome = "win";
+        payout = sess.bet * 2;
+        applyDeltaToUser(user, payout, sess.mode);
+      } else if (pSum === dSum) {
+        outcome = "push";
+        payout = sess.bet;
+        applyDeltaToUser(user, payout, sess.mode);
+      }
+
+      ws.send(JSON.stringify({
+        type: "BJ_STATE",
+        status: "done",
+        outcome,
+        payout,
+        player: sess.player,
+        dealer: sess.dealer,
+        playerSum: pSum,
+        dealerSum: dSum
+      }));
+      broadcast({ type: "SHARED_SYNC", shared: getSharedPayload() });
+      return;
+    }
+
+    /* FOOTBALL BET */
+    if (data.type === "PLACE_FOOTBALL_BET") {
+      const user = getPlayerKey(ws, data);
+      const mode = data.mode === "real" ? "real" : "demo";
+      const bet = Math.max(1000, Number(data.bet || 0));
+      const idx = Math.min(sharedState.footballMatches.length - 1, Math.max(0, Number(data.matchIdx || 0)));
+      const market = ["home", "draw", "away"].includes(data.market) ? data.market : "home";
+      const match = sharedState.footballMatches[idx];
+      const odd = market === "home" ? match.hOdd : market === "draw" ? match.dOdd : match.aOdd;
+
+      applyDeltaToUser(user, -bet, mode);
+      ws.send(JSON.stringify({
+        type: "FOOTBALL_BET_ACCEPTED",
+        matchIdx: idx,
+        market,
+        odd,
+        bet,
+        potential: Math.round(bet * odd)
+      }));
+      broadcast({ type: "SHARED_SYNC", shared: getSharedPayload() });
+      return;
+    }
+
+    /* ADMIN & WALLET & CHAT (unchanged core) */
     if (data.type === "AUTH_SECRET_CODE") {
       const code = String(data.code || "").trim();
       const actor = String(data.username || ws.username || "مهمان").trim();
@@ -277,11 +572,7 @@ wss.on("connection", (ws) => {
       const item = sharedState.deposits.find((d) => d.id === data.id);
       if (item && item.status === "pending") {
         item.status = data.approve ? "approved" : "rejected";
-        if (data.approve) {
-          const u = item.user || "مهمان";
-          sharedState.usersBalanceAdjustments[u] = sharedState.usersBalanceAdjustments[u] || { demoDelta: 0, realDelta: 0, wageredDelta: 0 };
-          sharedState.usersBalanceAdjustments[u].realDelta += Number(item.amount || 0);
-        }
+        if (data.approve) applyDeltaToUser(item.user || "مهمان", Number(item.amount || 0), "real");
         addServerAudit(ws.adminSession.actor, `${data.approve ? "تایید" : "رد"} واریز ${item.amount} برای ${item.user}`);
         broadcast({ type: "SHARED_SYNC", shared: getSharedPayload(), toast: data.approve ? "واریز تایید شد" : "واریز رد شد" });
       }
@@ -292,11 +583,7 @@ wss.on("connection", (ws) => {
       const item = sharedState.withdrawals.find((w) => w.id === data.id);
       if (item && item.status === "pending") {
         item.status = data.approve ? "approved" : "rejected";
-        if (!data.approve) {
-          const u = item.user || "مهمان";
-          sharedState.usersBalanceAdjustments[u] = sharedState.usersBalanceAdjustments[u] || { demoDelta: 0, realDelta: 0, wageredDelta: 0 };
-          sharedState.usersBalanceAdjustments[u].realDelta += Number(item.amount || 0);
-        }
+        if (!data.approve) applyDeltaToUser(item.user || "مهمان", Number(item.amount || 0), "real");
         addServerAudit(ws.adminSession.actor, `${data.approve ? "پرداخت" : "رد"} برداشت ${item.amount} برای ${item.user}`);
         broadcast({ type: "SHARED_SYNC", shared: getSharedPayload(), toast: data.approve ? "برداشت پرداخت شد" : "برداشت رد و برگشت داده شد" });
       }
@@ -307,8 +594,7 @@ wss.on("connection", (ws) => {
       const u = String(data.username || "").trim();
       const amt = Number(data.amount || 500000);
       if (u) {
-        sharedState.usersBalanceAdjustments[u] = sharedState.usersBalanceAdjustments[u] || { demoDelta: 0, realDelta: 0, wageredDelta: 0 };
-        sharedState.usersBalanceAdjustments[u].realDelta += amt;
+        applyDeltaToUser(u, amt, "real");
         addServerAudit(ws.adminSession.actor, `شارژ ${amt} واقعی برای ${u}`);
         broadcast({ type: "SHARED_SYNC", shared: getSharedPayload(), toast: `${amt.toLocaleString("fa-IR")} واقعی به ${u} اضافه شد` });
       }
@@ -352,7 +638,6 @@ wss.on("connection", (ws) => {
       };
       sharedState.chat.messages.push(msgObj);
       if (sharedState.chat.messages.length > 120) sharedState.chat.messages.shift();
-
       broadcast({ type: "CHAT_SYNC", chat: sanitizeChatForBroadcast() });
       return;
     }
@@ -418,6 +703,7 @@ wss.on("connection", (ws) => {
   });
 });
 
+/* Crash loop every 100ms */
 setInterval(() => {
   const snap = getAuthoritativeRoundSnapshot(Date.now());
   if (snap.phase === "crashed" && lastRecordedRound !== snap.roundIndex) {
@@ -431,6 +717,20 @@ setInterval(() => {
     crashHistory: sharedState.crashHistory
   });
 }, 100);
+
+/* Live football tick every 4 seconds */
+setInterval(() => {
+  sharedState.footballMatches.forEach((m) => {
+    m.min = m.min >= 90 ? 1 : m.min + 1;
+    m.ballX = Number(Math.min(0.92, Math.max(0.08, m.ballX + (crypto.randomInt(-10, 11) / 100))).toFixed(2));
+    m.ballY = Number(Math.min(0.88, Math.max(0.12, m.ballY + (crypto.randomInt(-10, 11) / 100))).toFixed(2));
+    if (crypto.randomInt(0, 100) < 6) {
+      if (crypto.randomInt(0, 2) === 0) m.hScore += 1;
+      else m.aScore += 1;
+    }
+  });
+  broadcast({ type: "SHARED_SYNC", shared: getSharedPayload() });
+}, 4000);
 
 server.listen(PORT, () => {
   console.log(`Sofyan WebSocket Server running on port ${PORT}`);
