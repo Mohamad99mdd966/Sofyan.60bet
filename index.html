@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>صوفیان بت • SOFYAN LIVE — همگام‌سازی لحظه‌ای با سرور</title>
+  <title>صوفیان بت • SOFYAN LIVE — همگام‌سازی کامل با سرور</title>
   <style>
     :root {
       --bg-950: #040711;
@@ -276,7 +276,7 @@
         <div class="drawer-meta-row">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <span id="sessionText" style="font-size:0.8rem;font-weight:700;">وضعیت: مهمان</span>
-            <span class="pill pill-fair">سرور مرکزی انفجار</span>
+            <span class="pill pill-fair">همگام‌سازی کامل با سرور</span>
             <span class="pill pill-warn" id="serverWsPill">سرور: در حال اتصال...</span>
             <span class="pill pill-live" id="chatStatusBadge">چت زنده</span>
             <span class="pill pill-admin" id="adminRoleBadge" style="display:none;">دسترسی مدیریتی فعال</span>
@@ -522,11 +522,11 @@
       </div>
     </section>
 
-    <!-- OTHER GAMES -->
+    <!-- 2. MINES (SERVER-AUTHORITATIVE) -->
     <section class="section" id="sec-mines">
       <div class="game-arena">
         <div class="glass-panel stage-card">
-          <h2 style="font-size:1rem;font-weight:900;color:var(--cyan-bright);margin-bottom:10px;">💣 تنظیمات مین‌روب</h2>
+          <h2 style="font-size:1rem;font-weight:900;color:var(--cyan-bright);margin-bottom:10px;">💣 مین‌روب آنلاین (سرور)</h2>
           <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="minesBet" value="100000" min="10000" step="10000" /></div>
           <div class="field-group">
             <label class="field-label">تعداد مین‌ها</label>
@@ -553,10 +553,11 @@
       </div>
     </section>
 
+    <!-- 3. DICE (SERVER-AUTHORITATIVE) -->
     <section class="section" id="sec-dice">
       <div class="game-arena">
         <div class="glass-panel stage-card">
-          <h2 style="font-size:1rem;font-weight:900;color:var(--gold-bright);margin-bottom:10px;">🎲 شرط‌بندی تاس</h2>
+          <h2 style="font-size:1rem;font-weight:900;color:var(--gold-bright);margin-bottom:10px;">🎲 شرط‌بندی تاس (سرور)</h2>
           <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="diceBet" value="100000" min="10000" step="10000" /></div>
           <div class="field-group"><label class="field-label">پیش‌بینی (عدد ۱ تا ۱۰۰)</label><input type="number" id="diceTarget" value="50" min="5" max="95" /></div>
           <div class="field-group">
@@ -566,19 +567,20 @@
               <option value="under">کوچک‌تر از عدد انتخابی</option>
             </select>
           </div>
-          <button type="button" class="btn btn-gold" style="width:100%;" onclick="playDice()">پرتاب تاس</button>
+          <button type="button" class="btn btn-gold" style="width:100%;" id="dicePlayBtn" onclick="playDice()">پرتاب تاس</button>
         </div>
         <div class="glass-panel stage-card">
-          <div class="big-readout"><div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px;">نتیجه تاس</div><div class="big-num" id="diceResultNum">--</div></div>
+          <div class="big-readout"><div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px;">نتیجه تاس سرور</div><div class="big-num" id="diceResultNum">--</div></div>
           <div style="text-align:center;font-size:0.84rem;" id="diceStatusText">عدد هدف و جهت را انتخاب کنید.</div>
         </div>
       </div>
     </section>
 
+    <!-- 4. ROULETTE (SERVER-AUTHORITATIVE) -->
     <section class="section" id="sec-roulette">
       <div class="game-arena">
         <div class="glass-panel stage-card">
-          <h2 style="font-size:1rem;font-weight:900;color:var(--rose-bright);margin-bottom:10px;">🎡 رولت اروپایی</h2>
+          <h2 style="font-size:1rem;font-weight:900;color:var(--rose-bright);margin-bottom:10px;">🎡 رولت اروپایی (سرور)</h2>
           <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="rouletteBet" value="100000" min="10000" step="10000" /></div>
           <div class="field-group">
             <label class="field-label">انتخاب رنگ یا صفر</label>
@@ -588,21 +590,22 @@
               <option value="green">سبز / صفر (14x)</option>
             </select>
           </div>
-          <button type="button" class="btn btn-rose" style="width:100%;" onclick="playRoulette()">چرخش چرخ رولت</button>
+          <button type="button" class="btn btn-rose" style="width:100%;" id="roulettePlayBtn" onclick="playRoulette()">چرخش چرخ رولت</button>
         </div>
         <div class="glass-panel stage-card">
-          <div class="big-readout"><div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px;">خانه برنده</div><div class="big-num" id="rouletteResultText">--</div></div>
+          <div class="big-readout"><div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px;">خانه برنده سرور</div><div class="big-num" id="rouletteResultText">--</div></div>
           <div style="text-align:center;font-size:0.84rem;" id="rouletteStatusText">رنگ مورد نظر را انتخاب کنید.</div>
         </div>
       </div>
     </section>
 
+    <!-- 5. SLOTS (SERVER-AUTHORITATIVE) -->
     <section class="section" id="sec-slots">
       <div class="game-arena">
         <div class="glass-panel stage-card">
-          <h2 style="font-size:1rem;font-weight:900;color:var(--gold-bright);margin-bottom:10px;">🎰 اسلات سلطنتی</h2>
+          <h2 style="font-size:1rem;font-weight:900;color:var(--gold-bright);margin-bottom:10px;">🎰 اسلات سلطنتی (سرور)</h2>
           <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="slotsBet" value="100000" min="10000" step="10000" /></div>
-          <button type="button" class="btn btn-gold" style="width:100%;" onclick="playSlots()">اسپین گردونه</button>
+          <button type="button" class="btn btn-gold" style="width:100%;" id="slotsPlayBtn" onclick="playSlots()">اسپین گردونه</button>
         </div>
         <div class="glass-panel stage-card">
           <div class="big-readout"><div class="big-num" id="slotsReelsText" style="letter-spacing:8px;">💎 • 👑 • 🍀</div></div>
@@ -611,10 +614,11 @@
       </div>
     </section>
 
+    <!-- 6. BLACKJACK (SERVER-AUTHORITATIVE) -->
     <section class="section" id="sec-blackjack">
       <div class="game-arena">
         <div class="glass-panel stage-card">
-          <h2 style="font-size:1rem;font-weight:900;color:var(--emerald-bright);margin-bottom:10px;">🃏 بلک‌جک ۲۱</h2>
+          <h2 style="font-size:1rem;font-weight:900;color:var(--emerald-bright);margin-bottom:10px;">🃏 بلک‌جک ۲۱ (سرور)</h2>
           <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="bjBet" value="100000" min="10000" step="10000" /></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button type="button" class="btn btn-gold" style="flex:1;" id="bjDealBtn" onclick="dealBlackjack()">پخش کارت</button>
@@ -633,10 +637,11 @@
       </div>
     </section>
 
+    <!-- 7. PLINKO (SERVER-AUTHORITATIVE) -->
     <section class="section" id="sec-plinko">
       <div class="game-arena">
         <div class="glass-panel stage-card">
-          <h2 style="font-size:1rem;font-weight:900;color:var(--emerald-bright);margin-bottom:10px;">🟢 پینکلو HD</h2>
+          <h2 style="font-size:1rem;font-weight:900;color:var(--emerald-bright);margin-bottom:10px;">🟢 پینکلو HD (سرور)</h2>
           <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="plinkoBet" value="100000" min="10000" step="10000" /></div>
           <div class="field-group">
             <label class="field-label">سطح ریسک</label>
@@ -645,19 +650,20 @@
               <option value="high" selected>پرریسک</option>
             </select>
           </div>
-          <button type="button" class="btn btn-green" style="width:100%;" onclick="dropPlinkoBall()">رها کردن توپ</button>
+          <button type="button" class="btn btn-green" style="width:100%;" id="plinkoPlayBtn" onclick="dropPlinkoBall()">رها کردن توپ</button>
         </div>
         <div class="glass-panel stage-card">
-          <div class="big-readout" style="padding:12px;"><div style="font-size:0.78rem;color:var(--muted);">ضریب دریافتی</div><div class="big-num" id="plinkoMultText">--</div></div>
+          <div class="big-readout" style="padding:12px;"><div style="font-size:0.78rem;color:var(--muted);">ضریب دریافتی سرور</div><div class="big-num" id="plinkoMultText">--</div></div>
           <div class="plinko-buckets" id="plinkoBuckets"></div>
         </div>
       </div>
     </section>
 
+    <!-- 8. FOOTBALL (SERVER-SYNCED) -->
     <section class="section" id="sec-football">
       <div class="fb-grid">
         <div class="glass-panel stage-card">
-          <h2 style="font-size:1rem;font-weight:900;color:var(--emerald-bright);margin-bottom:10px;">⚽ استادیوم فوتبال زنده</h2>
+          <h2 style="font-size:1rem;font-weight:900;color:var(--emerald-bright);margin-bottom:10px;">⚽ استادیوم فوتبال زنده (همگام با سرور)</h2>
           <div class="matches-row" id="fbMatchesRow"></div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:14px;background:rgba(5,9,20,0.78);border:1px solid var(--border);">
             <strong id="fbHomeName">میزبان</strong>
@@ -665,7 +671,7 @@
             <strong id="fbAwayName">مهمان</strong>
           </div>
           <div class="pitch-box"><canvas class="hd-canvas" id="pitchCanvas"></canvas></div>
-          <div id="fbEventsLog" style="font-size:0.78rem;color:var(--muted);">در حال پخش زنده مسابقه...</div>
+          <div id="fbEventsLog" style="font-size:0.78rem;color:var(--muted);">در حال پخش زنده مسابقه از سرور...</div>
         </div>
         <div class="glass-panel stage-card">
           <h3 style="font-size:0.95rem;font-weight:900;color:var(--gold-bright);margin-bottom:8px;">ثبت شرط مسابقه</h3>
@@ -675,7 +681,7 @@
             <button type="button" class="odd-card" id="oddAwayBtn" onclick="pickFbMarket('away')"><span>برد مهمان</span><strong style="color:var(--emerald-bright);" id="oddAwayVal">2.85</strong></button>
           </div>
           <div class="field-group"><label class="field-label">مبلغ شرط (تومان)</label><input type="number" id="fbBetInput" value="100000" min="10000" step="10000" /></div>
-          <button type="button" class="btn btn-gold" style="width:100%;" onclick="placeFootballBet()">ثبت پیش‌بینی</button>
+          <button type="button" class="btn btn-gold" style="width:100%;" onclick="placeFootballBet()">ثبت پیش‌بینی در سرور</button>
           <div style="margin-top:12px;font-size:0.78rem;color:var(--muted);" id="fbActiveBetSummary">شرط فعالی ثبت نشده است.</div>
         </div>
       </div>
@@ -890,7 +896,8 @@
       deposits: [],
       withdrawals: [],
       usersBalanceAdjustments: {},
-      auditLogs: []
+      auditLogs: [],
+      footballMatches: defaultMatches()
     };
     let serverSecretCode = null;
     let appliedServerAdjTracker = new Map();
@@ -920,9 +927,9 @@
 
     function defaultMatches() {
       return [
-        { league: "لیگ برتر", home: "استقلال", away: "پرسپولیس", hScore: 1, aScore: 0, min: 34, hOdd: 2.15, dOdd: 3.10, aOdd: 3.05, ballX: 0.56, ballY: 0.48 },
-        { league: "لالیگا", home: "رئال مادرید", away: "بارسلونا", hScore: 0, aScore: 0, min: 19, hOdd: 2.05, dOdd: 3.40, aOdd: 2.90, ballX: 0.44, ballY: 0.52 },
-        { league: "لیگ قهرمانان", home: "منچستر سیتی", away: "بایرن مونیخ", hScore: 2, aScore: 1, min: 67, hOdd: 1.88, dOdd: 3.55, aOdd: 3.45, ballX: 0.62, ballY: 0.42 }
+        { id: "m0", league: "لیگ برتر", home: "استقلال", away: "پرسپولیس", hScore: 1, aScore: 0, min: 34, hOdd: 2.15, dOdd: 3.10, aOdd: 3.05, ballX: 0.56, ballY: 0.48 },
+        { id: "m1", league: "لالیگا", home: "رئال مادرید", away: "بارسلونا", hScore: 0, aScore: 0, min: 19, hOdd: 2.05, dOdd: 3.40, aOdd: 2.90, ballX: 0.44, ballY: 0.52 },
+        { id: "m2", league: "لیگ قهرمانان", home: "منچستر سیتی", away: "بایرن مونیخ", hScore: 2, aScore: 1, min: 67, hOdd: 1.88, dOdd: 3.55, aOdd: 3.45, ballX: 0.62, ballY: 0.42 }
       ];
     }
 
@@ -932,8 +939,13 @@
 
     function wsSend(obj) {
       if (wsClient && wsClient.readyState === WebSocket.OPEN) {
-        try { wsClient.send(JSON.stringify(obj)); } catch {}
+        try {
+          wsClient.send(JSON.stringify({ username: localState.currentUser || "مهمان", ...obj }));
+          return true;
+        } catch {}
       }
+      showToast("اتصال به سرور برقرار نیست!");
+      return false;
     }
 
     function updateWsPill(text, mode = "warn") {
@@ -963,6 +975,18 @@
       }
     }
 
+    function syncSharedData(shared) {
+      if (!shared) return;
+      serverShared = { ...serverShared, ...shared };
+      if (shared.chat) serverChat = shared.chat;
+      if (Array.isArray(shared.crashHistory)) serverCrashHistory = shared.crashHistory;
+      if (Array.isArray(shared.footballMatches) && shared.footballMatches.length) {
+        localState.football.matches = shared.footballMatches;
+        renderFootballMatches();
+      }
+      applyServerBalanceAdjustments();
+    }
+
     function connectWebSocket() {
       if (wsClient && (wsClient.readyState === WebSocket.OPEN || wsClient.readyState === WebSocket.CONNECTING)) return;
       updateWsPill("سرور: در حال اتصال...", "warn");
@@ -988,10 +1012,7 @@
           if (msg.round) serverRound = msg.round;
           if (Array.isArray(msg.crashHistory)) serverCrashHistory = msg.crashHistory;
           if (msg.chat) serverChat = msg.chat;
-          if (msg.shared) {
-            serverShared = { ...serverShared, ...msg.shared };
-            applyServerBalanceAdjustments();
-          }
+          if (msg.shared) syncSharedData(msg.shared);
           renderCrashHistory();
           renderChat();
           renderWalletAll();
@@ -1008,10 +1029,7 @@
             renderChat();
           }
         } else if (msg.type === "SHARED_SYNC") {
-          if (msg.shared) {
-            serverShared = { ...serverShared, ...msg.shared };
-            applyServerBalanceAdjustments();
-          }
+          if (msg.shared) syncSharedData(msg.shared);
           if (msg.toast) showToast(msg.toast);
           renderWalletAll();
           renderChat();
@@ -1024,6 +1042,115 @@
           showToast(`پنل مدیریت باز شد (${msg.session?.rank || "ادمین"})`);
         } else if (msg.type === "TOAST" && msg.message) {
           showToast(msg.message);
+        }
+
+        /* SERVER GAME RESULTS */
+        else if (msg.type === "DICE_RESULT") {
+          document.getElementById("dicePlayBtn").disabled = false;
+          document.getElementById("diceResultNum").textContent = msg.roll;
+          recordLocalTx("تاس (سرور)", msg.mode, msg.won ? (msg.payout - msg.bet) : -msg.bet);
+          if (msg.won) {
+            playTone(760, 0.12);
+            document.getElementById("diceStatusText").textContent = `برد! دریافتی ${fmtToman(msg.payout)}`;
+          } else {
+            document.getElementById("diceStatusText").textContent = "باختید.";
+          }
+        } else if (msg.type === "ROULETTE_RESULT") {
+          document.getElementById("roulettePlayBtn").disabled = false;
+          document.getElementById("rouletteResultText").textContent = `${msg.num} (${msg.color})`;
+          recordLocalTx("رولت (سرور)", msg.mode, msg.won ? (msg.payout - msg.bet) : -msg.bet);
+          if (msg.won) {
+            playTone(780, 0.14);
+            document.getElementById("rouletteStatusText").textContent = `برد! ${fmtToman(msg.payout)}`;
+          } else {
+            document.getElementById("rouletteStatusText").textContent = "باختید.";
+          }
+        } else if (msg.type === "SLOTS_RESULT") {
+          document.getElementById("slotsPlayBtn").disabled = false;
+          document.getElementById("slotsReelsText").textContent = (msg.reels || []).join(" • ");
+          recordLocalTx("اسلات (سرور)", msg.mode, msg.won ? (msg.payout - msg.bet) : -msg.bet);
+          if (msg.won) {
+            playTone(840, 0.16);
+            document.getElementById("slotsStatusText").textContent = `جک‌پات ${fmtToman(msg.payout)}!`;
+          } else {
+            document.getElementById("slotsStatusText").textContent = "ترکیب برنده نشد.";
+          }
+        } else if (msg.type === "PLINKO_RESULT") {
+          document.getElementById("plinkoPlayBtn").disabled = false;
+          document.getElementById("plinkoMultText").textContent = Number(msg.mult).toFixed(1) + "x";
+          renderPlinkoBuckets(msg.idx);
+          recordLocalTx("پینکلو (سرور)", msg.mode, msg.payout - msg.bet);
+          if (msg.payout >= msg.bet) playTone(740, 0.12);
+        } else if (msg.type === "MINES_STARTED") {
+          minesGame = { active: true, bet: msg.bet, mult: 1.0, opened: [], mines: [] };
+          document.getElementById("minesStartBtn").disabled = true;
+          document.getElementById("minesCashBtn").disabled = false;
+          document.getElementById("minesMultText").textContent = "1.00x";
+          document.getElementById("minesPotentialText").textContent = "سود احتمالی: " + fmtToman(msg.bet);
+          document.getElementById("minesStatusText").textContent = "یکی از خانه‌ها را انتخاب کنید.";
+          renderMinesBoard(false);
+        } else if (msg.type === "MINES_SAFE") {
+          minesGame.mult = msg.mult;
+          minesGame.opened.push(msg.cell);
+          playTone(680, 0.08);
+          document.getElementById("minesMultText").textContent = Number(msg.mult).toFixed(2) + "x";
+          document.getElementById("minesPotentialText").textContent = "سود احتمالی: " + fmtToman(msg.potential);
+          renderMinesBoard(false);
+        } else if (msg.type === "MINES_HIT_MINE") {
+          minesGame.active = false;
+          minesGame.mines = msg.mines || [];
+          playTone(220, 0.2, "sawtooth");
+          document.getElementById("minesStartBtn").disabled = false;
+          document.getElementById("minesCashBtn").disabled = true;
+          document.getElementById("minesStatusText").textContent = "به مین برخورد کردید!";
+          recordLocalTx("مین‌روب (سرور)", localState.mode, -minesGame.bet);
+          renderMinesBoard(true);
+        } else if (msg.type === "MINES_CASHED") {
+          minesGame.active = false;
+          playTone(820, 0.14);
+          document.getElementById("minesStartBtn").disabled = false;
+          document.getElementById("minesCashBtn").disabled = true;
+          document.getElementById("minesStatusText").textContent = `برداشت موفق: ${fmtToman(msg.payout)}`;
+          recordLocalTx("برداشت مین‌روب (سرور)", localState.mode, msg.payout - minesGame.bet);
+          renderMinesBoard(false);
+        } else if (msg.type === "BJ_STATE") {
+          bjState.dealer = msg.dealer || [];
+          bjState.player = msg.player || [];
+          renderBjCards(msg.playerSum, msg.dealerSum);
+          if (msg.status === "playing") {
+            bjState.active = true;
+            document.getElementById("bjDealBtn").disabled = true;
+            document.getElementById("bjHitBtn").disabled = false;
+            document.getElementById("bjStandBtn").disabled = false;
+            document.getElementById("bjStatusText").textContent = "نوبت شماست: کارت بیشتر یا ایست؟";
+          } else if (msg.status === "bust") {
+            bjState.active = false;
+            document.getElementById("bjDealBtn").disabled = false;
+            document.getElementById("bjHitBtn").disabled = true;
+            document.getElementById("bjStandBtn").disabled = true;
+            document.getElementById("bjStatusText").textContent = "بیش از ۲۱ شدید!";
+            recordLocalTx("بلک‌جک (سرور)", localState.mode, -bjState.bet);
+          } else if (msg.status === "done") {
+            bjState.active = false;
+            document.getElementById("bjDealBtn").disabled = false;
+            document.getElementById("bjHitBtn").disabled = true;
+            document.getElementById("bjStandBtn").disabled = true;
+            if (msg.outcome === "win") {
+              playTone(800, 0.14);
+              document.getElementById("bjStatusText").textContent = `بردید! ${fmtToman(msg.payout)}`;
+              recordLocalTx("برد بلک‌جک (سرور)", localState.mode, msg.payout - bjState.bet);
+            } else if (msg.outcome === "push") {
+              document.getElementById("bjStatusText").textContent = "مساوی!";
+              recordLocalTx("مساوی بلک‌جک (سرور)", localState.mode, 0);
+            } else {
+              document.getElementById("bjStatusText").textContent = "دیلر برد.";
+              recordLocalTx("بلک‌جک (سرور)", localState.mode, -bjState.bet);
+            }
+          }
+        } else if (msg.type === "FOOTBALL_BET_ACCEPTED") {
+          document.getElementById("fbActiveBetSummary").textContent = `شرط ثبت شد در سرور: ${fmtToman(msg.bet)} با ضریب ${Number(msg.odd).toFixed(2)} (برد احتمالی: ${fmtToman(msg.potential)})`;
+          recordLocalTx("فوتبال زنده (سرور)", localState.mode, -msg.bet);
+          showToast("پیش‌بینی شما در سرور ثبت شد");
         }
       };
 
@@ -1107,18 +1234,23 @@
     }
     function getBalance(mode = localState.mode) { return Number(getActiveWallet()[mode] || 0); }
 
+    function recordLocalTx(section, mode, amount) {
+      localState.txs.unshift({
+        time: new Date().toLocaleTimeString("fa-IR"),
+        section,
+        mode: mode === "demo" ? "دمو" : "واقعی",
+        amount,
+        note: amount >= 0 ? `سود ${fmtToman(amount)}` : `کسر ${fmtToman(Math.abs(amount))}`
+      });
+      if (localState.txs.length > 100) localState.txs.pop();
+      saveLocalState();
+    }
+
     function adjustBalance(delta, label = "بازی", mode = localState.mode) {
       const w = getActiveWallet();
       w[mode] = Math.max(0, Number(w[mode] || 0) + Number(delta));
       if (delta < 0) w.wagered = Number(w.wagered || 0) + Math.abs(Number(delta));
-      localState.txs.unshift({
-        time: new Date().toLocaleTimeString("fa-IR"),
-        section: label,
-        mode: mode === "demo" ? "دمو" : "واقعی",
-        amount: delta,
-        note: delta >= 0 ? `افزایش ${fmtToman(delta)}` : `کاهش ${fmtToman(Math.abs(delta))}`
-      });
-      if (localState.txs.length > 100) localState.txs.pop();
+      recordLocalTx(label, mode, delta);
       saveLocalState();
       refreshUI();
     }
@@ -1648,50 +1780,50 @@
       ctx.stroke();
     }
 
-    /* OTHER GAMES */
-    let minesGame = { active: false, bet: 0, mines: [], mult: 1.0 };
+    /* SERVER-AUTHORITATIVE GAMES */
+    let minesGame = { active: false, bet: 0, mines: [], opened: [], mult: 1.0 };
+
     function renderMinesBoard(revealAll = false) {
       const board = document.getElementById("minesBoard");
       board.innerHTML = "";
       for (let i = 0; i < 25; i++) {
         const btn = document.createElement("button");
-        btn.type = "button"; btn.className = "mine-cell";
-        btn.textContent = revealAll && minesGame.mines.includes(i) ? "💣" : "✦";
-        if (revealAll && minesGame.mines.includes(i)) btn.classList.add("mine");
-        btn.disabled = !minesGame.active;
+        btn.type = "button";
+        btn.className = "mine-cell";
+        const isOpenedSafe = minesGame.opened.includes(i);
+        const isMine = revealAll && minesGame.mines.includes(i);
+
+        if (isMine) {
+          btn.classList.add("mine");
+          btn.textContent = "💣";
+          btn.disabled = true;
+        } else if (isOpenedSafe) {
+          btn.classList.add("safe");
+          btn.textContent = "💎";
+          btn.disabled = true;
+        } else {
+          btn.textContent = "✦";
+          btn.disabled = !minesGame.active;
+        }
+
         btn.onclick = () => {
-          if (!minesGame.active || btn.dataset.opened === "1") return;
-          if (minesGame.mines.includes(i)) {
-            minesGame.active = false; btn.dataset.opened = "1"; btn.classList.add("mine"); btn.textContent = "💣";
-            document.getElementById("minesStartBtn").disabled = false; document.getElementById("minesCashBtn").disabled = true;
-            document.getElementById("minesStatusText").textContent = "به مین برخورد کردید!";
-            renderMinesBoard(true); return;
-          }
-          btn.dataset.opened = "1"; btn.classList.add("safe"); btn.textContent = "💎"; btn.disabled = true;
-          minesGame.mult = Number((minesGame.mult * (1 + minesGame.mines.length * 0.08)).toFixed(2));
-          document.getElementById("minesMultText").textContent = minesGame.mult.toFixed(2) + "x";
-          document.getElementById("minesPotentialText").textContent = "سود احتمالی: " + fmtToman(minesGame.bet * minesGame.mult);
+          if (!minesGame.active || isOpenedSafe) return;
+          wsSend({ type: "MINES_PICK", cell: i });
         };
         board.appendChild(btn);
       }
     }
+
     function startMinesGame() {
       const bet = Number(document.getElementById("minesBet").value || 0);
       const count = Number(document.getElementById("minesCount").value || 3);
       if (bet < 1000 || getBalance() < bet) return showToast("مبلغ نامعتبر یا موجودی ناکافی");
-      adjustBalance(-bet, "شروع مین‌روب");
-      const set = new Set(); while (set.size < count) set.add(Math.floor(Math.random() * 25));
-      minesGame = { active: true, bet, mines: [...set], mult: 1.0 };
-      document.getElementById("minesStartBtn").disabled = true; document.getElementById("minesCashBtn").disabled = false;
-      document.getElementById("minesMultText").textContent = "1.00x"; document.getElementById("minesPotentialText").textContent = "سود احتمالی: " + fmtToman(bet);
-      renderMinesBoard(false);
+      wsSend({ type: "MINES_START", bet, count, mode: localState.mode });
     }
+
     function cashoutMinesGame() {
       if (!minesGame.active) return;
-      const win = Math.round(minesGame.bet * minesGame.mult);
-      minesGame.active = false; adjustBalance(win, "برداشت مین‌روب");
-      document.getElementById("minesStartBtn").disabled = false; document.getElementById("minesCashBtn").disabled = true;
-      document.getElementById("minesStatusText").textContent = `برداشت موفق: ${fmtToman(win)}`;
+      wsSend({ type: "MINES_CASHOUT" });
     }
 
     function playDice() {
@@ -1699,114 +1831,129 @@
       const target = Math.min(95, Math.max(5, Number(document.getElementById("diceTarget").value || 50)));
       const dir = document.getElementById("diceDir").value;
       if (bet < 1000 || getBalance() < bet) return showToast("مبلغ نامعتبر یا موجودی ناکافی");
-      adjustBalance(-bet, "تاس");
-      const roll = Math.floor(Math.random() * 100) + 1;
-      document.getElementById("diceResultNum").textContent = roll;
-      if (dir === "over" ? roll > target : roll < target) {
-        const mult = dir === "over" ? Math.max(1.2, 95 / Math.max(5, 100 - target)) : Math.max(1.2, 95 / Math.max(5, target));
-        const payout = Math.round(bet * Number(mult.toFixed(2)));
-        adjustBalance(payout, "برد تاس");
-        document.getElementById("diceStatusText").textContent = `برد! دریافتی ${fmtToman(payout)}`;
-      } else document.getElementById("diceStatusText").textContent = "باختید.";
+      document.getElementById("dicePlayBtn").disabled = true;
+      if (!wsSend({ type: "PLAY_DICE", bet, target, dir, mode: localState.mode })) {
+        document.getElementById("dicePlayBtn").disabled = false;
+      }
     }
 
     function playRoulette() {
       const bet = Number(document.getElementById("rouletteBet").value || 0);
       const pick = document.getElementById("roulettePick").value;
       if (bet < 1000 || getBalance() < bet) return showToast("مبلغ نامعتبر یا موجودی ناکافی");
-      adjustBalance(-bet, "رولت");
-      const num = Math.floor(Math.random() * 37);
-      const color = num === 0 ? "green" : num % 2 === 1 ? "red" : "black";
-      document.getElementById("rouletteResultText").textContent = `${num} (${color})`;
-      if (pick === color) {
-        const payout = bet * (color === "green" ? 14 : 2);
-        adjustBalance(payout, "برد رولت");
-        document.getElementById("rouletteStatusText").textContent = `برد! ${fmtToman(payout)}`;
-      } else document.getElementById("rouletteStatusText").textContent = "باختید.";
+      document.getElementById("roulettePlayBtn").disabled = true;
+      if (!wsSend({ type: "PLAY_ROULETTE", bet, pick, mode: localState.mode })) {
+        document.getElementById("roulettePlayBtn").disabled = false;
+      }
     }
 
     function playSlots() {
       const bet = Number(document.getElementById("slotsBet").value || 0);
       if (bet < 1000 || getBalance() < bet) return showToast("مبلغ نامعتبر یا موجودی ناکافی");
-      adjustBalance(-bet, "اسلات");
-      const syms = ["💎", "👑", "🍀"];
-      const r1 = syms[Math.floor(Math.random() * syms.length)], r2 = syms[Math.floor(Math.random() * syms.length)], r3 = syms[Math.floor(Math.random() * syms.length)];
-      document.getElementById("slotsReelsText").textContent = `${r1} • ${r2} • ${r3}`;
-      if (r1 === r2 && r2 === r3) { adjustBalance(bet * 8, "جک‌پات اسلات"); document.getElementById("slotsStatusText").textContent = `جک‌پات ${fmtToman(bet * 8)}!`; }
-      else document.getElementById("slotsStatusText").textContent = "ترکیب برنده نشد.";
+      document.getElementById("slotsPlayBtn").disabled = true;
+      if (!wsSend({ type: "PLAY_SLOTS", bet, mode: localState.mode })) {
+        document.getElementById("slotsPlayBtn").disabled = false;
+      }
     }
 
     let bjState = { active: false, bet: 0, dealer: [], player: [] };
-    function drawCard() { const ranks = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"], suits = ["♠","♥","♦","♣"]; const r = ranks[Math.floor(Math.random()*ranks.length)], s = suits[Math.floor(Math.random()*suits.length)]; return { rank: r, suit: s, red: s === "♥" || s === "♦" }; }
-    function calcHand(cards) { let sum = 0, aces = 0; for (const c of cards) { if (c.rank === "A") { sum += 11; aces++; } else if (["K","Q","J"].includes(c.rank)) sum += 10; else sum += Number(c.rank); } while (sum > 21 && aces > 0) { sum -= 10; aces--; } return sum; }
-    function renderBjCards() {
+
+    function renderBjCards(pSum = 0, dSum = 0) {
       document.getElementById("bjDealerCards").innerHTML = bjState.dealer.map((c) => `<div class="play-card ${c.red ? "red" : ""}">${c.rank}<span>${c.suit}</span></div>`).join("");
       document.getElementById("bjPlayerCards").innerHTML = bjState.player.map((c) => `<div class="play-card ${c.red ? "red" : ""}">${c.rank}<span>${c.suit}</span></div>`).join("");
-      document.getElementById("bjDealerSum").textContent = calcHand(bjState.dealer); document.getElementById("bjPlayerSum").textContent = calcHand(bjState.player);
+      document.getElementById("bjDealerSum").textContent = dSum;
+      document.getElementById("bjPlayerSum").textContent = pSum;
     }
+
     function dealBlackjack() {
       const bet = Number(document.getElementById("bjBet").value || 0);
       if (bet < 1000 || getBalance() < bet) return showToast("مبلغ نامعتبر یا موجودی ناکافی");
-      adjustBalance(-bet, "بلک‌جک");
-      bjState = { active: true, bet, dealer: [drawCard()], player: [drawCard(), drawCard()] };
-      document.getElementById("bjDealBtn").disabled = true; document.getElementById("bjHitBtn").disabled = false; document.getElementById("bjStandBtn").disabled = false;
-      renderBjCards();
-    }
-    function hitBlackjack() {
-      if (!bjState.active) return;
-      bjState.player.push(drawCard()); renderBjCards();
-      if (calcHand(bjState.player) > 21) { bjState.active = false; document.getElementById("bjDealBtn").disabled = false; document.getElementById("bjHitBtn").disabled = true; document.getElementById("bjStandBtn").disabled = true; document.getElementById("bjStatusText").textContent = "بیش از ۲۱ شدید!"; }
-    }
-    function standBlackjack() {
-      if (!bjState.active) return;
-      while (calcHand(bjState.dealer) < 17) bjState.dealer.push(drawCard());
-      bjState.active = false; renderBjCards();
-      const p = calcHand(bjState.player), d = calcHand(bjState.dealer);
-      document.getElementById("bjDealBtn").disabled = false; document.getElementById("bjHitBtn").disabled = true; document.getElementById("bjStandBtn").disabled = true;
-      if (d > 21 || p > d) { adjustBalance(bjState.bet * 2, "برد بلک‌جک"); document.getElementById("bjStatusText").textContent = `بردید! ${fmtToman(bjState.bet * 2)}`; }
-      else if (p === d) { adjustBalance(bjState.bet, "مساوی بلک‌جک"); document.getElementById("bjStatusText").textContent = "مساوی!"; }
-      else document.getElementById("bjStatusText").textContent = "دیلر برد.";
+      bjState.bet = bet;
+      wsSend({ type: "BJ_DEAL", bet, mode: localState.mode });
     }
 
-    function getPlinkoMults() { return document.getElementById("plinkoRisk").value === "high" ? [6.5, 2.5, 1.2, 0.5, 1.2, 2.5, 6.5] : [2.2, 1.4, 1.1, 0.9, 1.1, 1.4, 2.2]; }
-    function renderPlinkoBuckets(hitIdx = -1) { document.getElementById("plinkoBuckets").innerHTML = getPlinkoMults().map((m, i) => `<div class="plinko-slot ${i === hitIdx ? "active-hit" : ""}">${m.toFixed(1)}x</div>`).join(""); }
+    function hitBlackjack() {
+      if (!bjState.active) return;
+      wsSend({ type: "BJ_HIT" });
+    }
+
+    function standBlackjack() {
+      if (!bjState.active) return;
+      wsSend({ type: "BJ_STAND" });
+    }
+
+    function getPlinkoMults() {
+      return document.getElementById("plinkoRisk").value === "high"
+        ? [6.5, 2.5, 1.2, 0.5, 1.2, 2.5, 6.5]
+        : [2.2, 1.4, 1.1, 0.9, 1.1, 1.4, 2.2];
+    }
+
+    function renderPlinkoBuckets(hitIdx = -1) {
+      document.getElementById("plinkoBuckets").innerHTML = getPlinkoMults().map((m, i) => `<div class="plinko-slot ${i === hitIdx ? "active-hit" : ""}">${m.toFixed(1)}x</div>`).join("");
+    }
+
     function dropPlinkoBall() {
       const bet = Number(document.getElementById("plinkoBet").value || 0);
+      const risk = document.getElementById("plinkoRisk").value;
       if (bet < 1000 || getBalance() < bet) return showToast("مبلغ نامعتبر یا موجودی ناکافی");
-      adjustBalance(-bet, "پینکلو");
-      const mults = getPlinkoMults(); const idx = Math.floor(Math.random() * mults.length); const mult = mults[idx];
-      adjustBalance(Math.round(bet * mult), "جایزه پینکلو");
-      document.getElementById("plinkoMultText").textContent = mult.toFixed(1) + "x";
-      renderPlinkoBuckets(idx);
+      document.getElementById("plinkoPlayBtn").disabled = true;
+      if (!wsSend({ type: "PLAY_PLINKO", bet, risk, mode: localState.mode })) {
+        document.getElementById("plinkoPlayBtn").disabled = false;
+      }
     }
 
     function renderFootballMatches() {
-      document.getElementById("fbMatchesRow").innerHTML = localState.football.matches.map((m, i) => `<button type="button" class="match-tile ${i === localState.football.selectedIdx ? "selected" : ""}" onclick="localState.football.selectedIdx=${i};renderFootballMatches();"><div style="font-size:0.7rem;color:var(--gold-bright);">${m.league} • ${m.min}'</div><div style="font-size:0.84rem;font-weight:800;">${m.home} ${m.hScore} - ${m.aScore} ${m.away}</div></button>`).join("");
-      const cur = localState.football.matches[localState.football.selectedIdx];
-      document.getElementById("fbHomeName").textContent = cur.home; document.getElementById("fbAwayName").textContent = cur.away;
+      const matches = localState.football.matches || defaultMatches();
+      if (localState.football.selectedIdx >= matches.length) localState.football.selectedIdx = 0;
+
+      document.getElementById("fbMatchesRow").innerHTML = matches.map((m, i) => `<button type="button" class="match-tile ${i === localState.football.selectedIdx ? "selected" : ""}" onclick="localState.football.selectedIdx=${i};renderFootballMatches();"><div style="font-size:0.7rem;color:var(--gold-bright);">${escapeHtml(m.league)} • ${m.min}'</div><div style="font-size:0.84rem;font-weight:800;">${escapeHtml(m.home)} ${m.hScore} - ${m.aScore} ${escapeHtml(m.away)}</div></button>`).join("");
+      const cur = matches[localState.football.selectedIdx];
+      document.getElementById("fbHomeName").textContent = cur.home;
+      document.getElementById("fbAwayName").textContent = cur.away;
       document.getElementById("fbScoreBoard").textContent = `${cur.hScore} - ${cur.aScore}`;
-      document.getElementById("oddHomeVal").textContent = cur.hOdd.toFixed(2); document.getElementById("oddDrawVal").textContent = cur.dOdd.toFixed(2); document.getElementById("oddAwayVal").textContent = cur.aOdd.toFixed(2);
+      document.getElementById("oddHomeVal").textContent = Number(cur.hOdd).toFixed(2);
+      document.getElementById("oddDrawVal").textContent = Number(cur.dOdd).toFixed(2);
+      document.getElementById("oddAwayVal").textContent = Number(cur.aOdd).toFixed(2);
+      document.getElementById("fbEventsLog").textContent = `دقیقه ${cur.min} • ${cur.home} ${cur.hScore} - ${cur.aScore} ${cur.away} (همگام‌سازی زنده سرور)`;
       drawPitchCanvas();
     }
+
     function pickFbMarket(m) {
       localState.football.market = m;
       ["home", "draw", "away"].forEach((k) => document.getElementById("odd" + k.charAt(0).toUpperCase() + k.slice(1) + "Btn").classList.toggle("picked", k === m));
     }
+
     function placeFootballBet() {
       const amt = Number(document.getElementById("fbBetInput").value || 0);
       if (amt < 1000 || getBalance() < amt) return showToast("مبلغ نامعتبر یا موجودی ناکافی");
-      adjustBalance(-amt, "فوتبال زنده");
-      const cur = localState.football.matches[localState.football.selectedIdx];
-      const odd = localState.football.market === "home" ? cur.hOdd : localState.football.market === "draw" ? cur.dOdd : cur.aOdd;
-      document.getElementById("fbActiveBetSummary").textContent = `شرط ثبت شد: ${fmtToman(amt)} با ضریب ${odd.toFixed(2)}`;
+      wsSend({
+        type: "PLACE_FOOTBALL_BET",
+        bet: amt,
+        matchIdx: localState.football.selectedIdx,
+        market: localState.football.market,
+        mode: localState.mode
+      });
     }
+
     function drawPitchCanvas() {
       const canvas = document.getElementById("pitchCanvas");
       if (!canvas) return;
       const { ctx, w, h, dpr } = prepareCanvas(canvas);
-      ctx.fillStyle = "#08442a"; ctx.fillRect(0, 0, w, h);
-      const cur = localState.football.matches[localState.football.selectedIdx];
-      ctx.beginPath(); ctx.arc(cur.ballX * w, cur.ballY * h, 6 * dpr, 0, Math.PI * 2); ctx.fillStyle = "#fde047"; ctx.fill();
+      ctx.fillStyle = "#08442a";
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = "rgba(255,255,255,0.28)";
+      ctx.lineWidth = 2 * dpr;
+      ctx.strokeRect(12 * dpr, 12 * dpr, w - 24 * dpr, h - 24 * dpr);
+      ctx.beginPath();
+      ctx.moveTo(w / 2, 12 * dpr);
+      ctx.lineTo(w / 2, h - 12 * dpr);
+      ctx.stroke();
+
+      const cur = (localState.football.matches || defaultMatches())[localState.football.selectedIdx];
+      ctx.beginPath();
+      ctx.arc(cur.ballX * w, cur.ballY * h, 6 * dpr, 0, Math.PI * 2);
+      ctx.fillStyle = "#fde047";
+      ctx.fill();
     }
 
     refreshUI();
@@ -1820,7 +1967,6 @@
     connectWebSocket();
     requestAnimationFrame(renderServerCrashFrame);
 
-    // Show auth modal on entry if user is not logged in yet
     if (!localState.currentUser) {
       openAuthModal("login");
     }
