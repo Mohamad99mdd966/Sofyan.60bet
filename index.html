@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>صوفیان بت • SOFYAN LIVE — پلتفرم کامل شرط‌بندی و کازینو</title>
+  <title>صوفیان بت • SOFYAN LIVE — پلتفرم شرط‌بندی و کازینو</title>
   <style>
     :root {
       --bg-950: #040711;
@@ -85,6 +85,11 @@
       padding: 9px 12px;
       font-size: 0.85rem;
       outline: none;
+    }
+
+    input[type="checkbox"] {
+      width: auto;
+      accent-color: var(--emerald-bright);
     }
 
     input:focus, select:focus, textarea:focus {
@@ -353,10 +358,19 @@
       box-shadow: 0 0 22px rgba(245, 158, 11, 0.35);
     }
 
-    .nav-tab.admin-only { display: none; }
-    .nav-tab.admin-only.visible { display: block; }
+    /* Hidden Admin Workspace (only opened via secret support ticket code) */
+    #sec-admin {
+      display: none;
+      margin-bottom: 16px;
+      border: 1px solid rgba(196, 181, 253, 0.45);
+      box-shadow: 0 0 35px rgba(139, 92, 246, 0.18);
+    }
 
-    /* TakBet-style Live Ticker */
+    #sec-admin.unlocked {
+      display: block;
+      animation: fadeSection 0.24s ease;
+    }
+
     .live-ticker {
       display: flex;
       align-items: center;
@@ -383,11 +397,7 @@
       white-space: nowrap;
     }
 
-    .ticker-item {
-      color: #cbd5e1;
-      white-space: nowrap;
-    }
-
+    .ticker-item { color: #cbd5e1; white-space: nowrap; }
     .ticker-item strong { color: var(--emerald-bright); }
 
     .info-trigger-bar {
@@ -590,7 +600,6 @@
 
     .chip-btn:hover { border-color: var(--gold); color: var(--gold-bright); }
 
-    /* Game Arenas */
     .game-arena {
       display: grid;
       grid-template-columns: minmax(290px, 380px) minmax(0, 1fr);
@@ -709,7 +718,6 @@
       box-shadow: 0 0 18px rgba(52, 211, 153, 0.35);
     }
 
-    /* Football */
     .fb-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr);
@@ -769,7 +777,6 @@
       background: rgba(245, 158, 11, 0.16);
     }
 
-    /* Wallet, Card-to-Card & Withdraw */
     .wallet-tabs {
       display: inline-flex;
       gap: 6px;
@@ -830,7 +837,6 @@
     .st-approved { background: rgba(16, 185, 129, 0.2); color: var(--emerald-bright); }
     .st-rejected { background: rgba(244, 63, 94, 0.2); color: var(--rose-bright); }
 
-    /* Chat & Tables */
     .chat-wrap { display: flex; flex-direction: column; height: 520px; }
 
     .chat-stream {
@@ -866,6 +872,24 @@
       border-radius: 14px;
       background: rgba(14, 23, 44, 0.82);
       border: 1px solid var(--border);
+    }
+
+    .perm-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px;
+      margin: 8px 0 12px;
+    }
+
+    .perm-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(5, 9, 20, 0.75);
+      border: 1px solid var(--border);
+      font-size: 0.78rem;
     }
 
     .table-scroll { width: 100%; overflow-x: auto; }
@@ -944,7 +968,7 @@
 </head>
 <body>
   <div class="app-shell">
-    <!-- Collapsible Top Launcher & Drawer -->
+    <!-- Collapsible Top Launcher & Drawer (No public admin button) -->
     <header class="launcher-bar">
       <div class="launcher-main">
         <button type="button" class="brand-trigger" onclick="toggleBrandDrawer()" aria-expanded="false" id="brandDrawerBtn">
@@ -976,11 +1000,10 @@
             <span id="sessionText" style="font-size:0.8rem;font-weight:700;">وضعیت: مهمان</span>
             <span class="pill pill-fair">Provably Fair HD</span>
             <span class="pill pill-live" id="onlinePill">آنلاین: 184 نفر</span>
-            <span class="pill pill-admin" id="adminRoleBadge" style="display:none;">ادمین فعال</span>
+            <span class="pill pill-admin" id="adminRoleBadge" style="display:none;">دسترسی مدیریتی فعال</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
             <button type="button" class="btn btn-ghost" id="soundBtn" onclick="toggleSound()">🔊 صدا روشن</button>
-            <button type="button" class="btn btn-violet" onclick="openAdminPortal()">پنل ادمین</button>
             <button type="button" class="btn btn-rose" id="logoutBtn" style="display:none;" onclick="logoutUser()">خروج</button>
           </div>
         </div>
@@ -996,10 +1019,153 @@
           <button type="button" class="nav-tab" data-tab="football" onclick="openTabById('football')">⚽ فوتبال زنده</button>
           <button type="button" class="nav-tab" data-tab="wallet" onclick="openTabById('wallet')">💳 کیف پول و برداشت</button>
           <button type="button" class="nav-tab" data-tab="support" onclick="openTabById('support')">🎧 پشتیبانی</button>
-          <button type="button" class="nav-tab admin-only" id="adminTabBtn" data-tab="admin" onclick="openTabById('admin')">🛡️ مدیریت</button>
         </nav>
       </div>
     </header>
+
+    <!-- Hidden Secret Admin Panel (Unlocked only when secret code is submitted in Support Ticket) -->
+    <div class="glass-panel stage-card" id="sec-admin">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <div>
+          <h2 style="font-size:1.08rem;font-weight:900;color:var(--violet-bright);">🛡️ پنل مدیریت مخفی صوفیان بت</h2>
+          <div style="font-size:0.78rem;color:var(--muted);" id="adminSessionSummary">وضعیت سطح دسترسی</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-ghost" onclick="closeAdminPanel()">بستن پنل مدیریت</button>
+        </div>
+      </div>
+
+      <!-- Owner-only Secret Code & Sub-Admin Role Assignment -->
+      <div id="ownerControlsBox" style="display:none;margin-bottom:16px;padding:14px;border-radius:16px;background:rgba(139,92,246,0.08);border:1px solid rgba(196,181,253,0.28);">
+        <div class="wallet-split" style="margin-bottom:12px;">
+          <div class="bet-slot">
+            <strong style="color:var(--gold-bright);font-size:0.9rem;">تغییر کد مخفی فعال‌سازی مدیریت</strong>
+            <div style="font-size:0.76rem;color:var(--muted);">کد فعلی: <span class="mono" id="currentSecretCodeDisplay" style="color:var(--gold-bright);">11228</span></div>
+            <div class="field-group" style="margin-bottom:4px;">
+              <label class="field-label">کد مخفی جدید</label>
+              <input type="text" id="newSecretCodeInput" placeholder="مثلاً: 998877" />
+            </div>
+            <button type="button" class="btn btn-gold" onclick="updateSecretCode()">ذخیره کد مخفی جدید</button>
+          </div>
+
+          <form onsubmit="assignSubAdmin(event)" class="bet-slot">
+            <strong style="color:var(--violet-bright);font-size:0.9rem;">اعطای درجه و امکانات به ادمین جدید</strong>
+            <div class="field-group" style="margin-bottom:4px;">
+              <label class="field-label">نام کاربری یا شناسه شخص</label>
+              <input type="text" id="subAdminUserInput" placeholder="مثلاً: ali_mod" required />
+            </div>
+            <div class="field-group" style="margin-bottom:4px;">
+              <label class="field-label">درجه ادمین</label>
+              <select id="subAdminRankSelect">
+                <option value="ناظر">درجه ۱ — ناظر (محدود)</option>
+                <option value="پشتیبان مالی">درجه ۲ — پشتیبان مالی</option>
+                <option value="مدیر ارشد">درجه ۳ — مدیر ارشد</option>
+              </select>
+            </div>
+            <div class="perm-grid">
+              <label class="perm-check">
+                <input type="checkbox" id="permApproveDep" checked />
+                <span>تایید / رد شارژ کارت‌به‌کارت</span>
+              </label>
+              <label class="perm-check">
+                <input type="checkbox" id="permManageWd" />
+                <span>مدیریت برداشت وجه</span>
+              </label>
+              <label class="perm-check">
+                <input type="checkbox" id="permGrantBal" />
+                <span>شارژ موجودی کاربران</span>
+              </label>
+            </div>
+            <button type="button" class="btn btn-violet" onclick="document.querySelector('#ownerControlsBox form').requestSubmit()">ثبت ادمین و امکانات</button>
+          </form>
+        </div>
+
+        <h3 style="font-size:0.9rem;font-weight:900;color:var(--violet-bright);margin-bottom:8px;">لیست ادمین‌های درجه‌بندی‌شده</h3>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>کاربر</th>
+                <th>درجه</th>
+                <th>امکانات فعال</th>
+                <th>حذف</th>
+              </tr>
+            </thead>
+            <tbody id="subAdminsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <div style="font-size:0.74rem;color:var(--muted);">کاربران ثبت‌شده</div>
+          <div style="font-size:1.1rem;font-weight:900;color:var(--gold-bright);" id="adminUserCount">0</div>
+        </div>
+        <div class="stat-box">
+          <div style="font-size:0.74rem;color:var(--muted);">درخواست‌های شارژ</div>
+          <div style="font-size:1.1rem;font-weight:900;color:var(--emerald-bright);" id="adminDepCount">0</div>
+        </div>
+        <div class="stat-box">
+          <div style="font-size:0.74rem;color:var(--muted);">درخواست‌های برداشت</div>
+          <div style="font-size:1.1rem;font-weight:900;color:var(--cyan-bright);" id="adminWdCount">0</div>
+        </div>
+      </div>
+
+      <div id="adminDepositsSection" style="margin-bottom:16px;">
+        <h3 style="font-size:0.92rem;font-weight:900;color:var(--emerald-bright);margin-bottom:8px;">تایید یا رد شارژهای کارت‌به‌کارت</h3>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>زمان</th>
+                <th>کاربر</th>
+                <th>مبلغ</th>
+                <th>کد پیگیری</th>
+                <th>وضعیت</th>
+                <th>اقدام</th>
+              </tr>
+            </thead>
+            <tbody id="adminDepositsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="adminWithdrawsSection" style="margin-bottom:16px;">
+        <h3 style="font-size:0.92rem;font-weight:900;color:var(--cyan-bright);margin-bottom:8px;">تایید یا رد درخواست‌های برداشت</h3>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>زمان</th>
+                <th>کاربر</th>
+                <th>مبلغ</th>
+                <th>مقصد</th>
+                <th>وضعیت</th>
+                <th>اقدام</th>
+              </tr>
+            </thead>
+            <tbody id="adminWithdrawsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="adminUsersSection">
+        <h3 style="font-size:0.92rem;font-weight:900;color:var(--gold-bright);margin-bottom:8px;">مدیریت موجودی کاربران</h3>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>نام کاربری</th>
+                <th>موجودی واقعی</th>
+                <th>موجودی دمو</th>
+                <th>عملیات</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
     <!-- Live Winner Ticker -->
     <div class="live-ticker" id="liveTicker">
@@ -1035,7 +1201,7 @@
         </div>
         <div class="vip-card">
           <div style="font-size:0.74rem;color:var(--muted);">موجودی دمو / واقعی</div>
-          <div style="font-size:0.82rem;font-weight:800;color:var(--emerald-bright);" id="dualBalanceLabel">دمو: 10,000,000 | واقعی: 0</div>
+          <div style="font-size:0.82rem;font-weight:800;color:var(--emerald-bright);" id="dualBalanceLabel">دمو: 10,000,000 | واقعی: 500,000</div>
         </div>
       </div>
     </div>
@@ -1367,7 +1533,7 @@
         <div class="stats-row">
           <div class="stat-box">
             <div style="font-size:0.74rem;color:var(--muted);">موجودی واقعی قابل برداشت</div>
-            <div style="font-size:1.08rem;font-weight:900;color:var(--emerald-bright);" id="walletRealVal">0 تومان</div>
+            <div style="font-size:1.08rem;font-weight:900;color:var(--emerald-bright);" id="walletRealVal">500,000 تومان</div>
           </div>
           <div class="stat-box">
             <div style="font-size:0.74rem;color:var(--muted);">موجودی دمو</div>
@@ -1379,7 +1545,6 @@
           </div>
         </div>
 
-        <!-- Deposit Sub-panel -->
         <div id="walletPanel-deposit">
           <div class="wallet-split">
             <div class="bank-card-box">
@@ -1390,7 +1555,7 @@
               <div class="card-digits mono">6037 - 9974 - 1097 - 2831</div>
               <div style="font-size:0.86rem;font-weight:800;color:#fff;">صاحب حساب: محمد مددی</div>
               <div style="font-size:0.75rem;color:var(--muted);margin-top:6px;">
-                مبلغ مورد نظر را به کارت بالا واریز کنید و کد پیگیری / ۴ رقم آخر کارت واریزی را ثبت نمایید تا پس از تایید مدیر به موجودی واقعی اضافه شود.
+                مبلغ مورد نظر را به کارت بالا واریز کنید و کد پیگیری را ثبت نمایید تا پس از تایید به موجودی واقعی اضافه شود.
               </div>
             </div>
 
@@ -1431,14 +1596,13 @@
           </div>
         </div>
 
-        <!-- Withdraw Sub-panel -->
         <div id="walletPanel-withdraw" style="display:none;">
           <div class="wallet-split">
             <form onsubmit="submitWithdrawRequest(event)" class="bet-slot">
               <strong style="color:var(--cyan-bright);font-size:0.9rem;">درخواست برداشت وجه از حساب واقعی</strong>
               <div class="field-group" style="margin-bottom:4px;">
                 <label class="field-label">مبلغ برداشت (تومان)</label>
-                <input type="number" id="wdAmountInput" value="200000" min="100000" step="10000" required />
+                <input type="number" id="wdAmountInput" value="200000" min="50000" step="10000" required />
               </div>
               <div class="field-group" style="margin-bottom:4px;">
                 <label class="field-label">شماره شبا (IR) یا شماره کارت مقصد</label>
@@ -1455,8 +1619,8 @@
               <strong style="color:var(--gold-bright);font-size:0.9rem;">قوانین برداشت وجه</strong>
               <p style="font-size:0.8rem;color:#cbd5e1;line-height:1.7;">
                 • برداشت از بخش <strong>کیف پول واقعی</strong> انجام می‌شود.<br/>
-                • با ثبت درخواست برداشت، مبلغ مورد نظر بلافاصله در وضعیت در حال تسویه رزرو می‌شود.<br/>
-                • در صورت رد شدن درخواست توسط مدیریت، مبلغ به حساب شما بازگردانده می‌شود.
+                • با ثبت درخواست برداشت، مبلغ مورد نظر در وضعیت در حال تسویه رزرو می‌شود.<br/>
+                • در صورت رد شدن درخواست، مبلغ به حساب شما بازگردانده می‌شود.
               </p>
             </div>
           </div>
@@ -1478,7 +1642,6 @@
           </div>
         </div>
 
-        <!-- History Sub-panel -->
         <div id="walletPanel-history" style="display:none;">
           <div class="table-scroll">
             <table>
@@ -1498,7 +1661,7 @@
       </div>
     </section>
 
-    <!-- 10. SUPPORT SECTION -->
+    <!-- 10. SUPPORT SECTION (Secret Admin Code Triggered Here) -->
     <section class="section" id="sec-support">
       <div class="glass-panel stage-card">
         <h2 style="font-size:1.05rem;font-weight:900;color:var(--gold-bright);margin-bottom:10px;">🎧 مرکز پشتیبانی صوفیان بت</h2>
@@ -1508,82 +1671,12 @@
             <input type="text" id="ticketSubject" placeholder="مثلاً: پیگیری شارژ کارت‌به‌کارت یا برداشت" required />
           </div>
           <div class="field-group">
-            <label class="field-label">توضیحات</label>
+            <label class="field-label">توضیحات تیکت</label>
             <textarea id="ticketBody" rows="3" placeholder="پیام خود را بنویسید..." required></textarea>
           </div>
           <button type="submit" class="btn btn-gold">ارسال تیکت</button>
         </form>
         <div id="ticketsList"></div>
-      </div>
-    </section>
-
-    <!-- 11. ADMIN SECTION -->
-    <section class="section" id="sec-admin">
-      <div class="glass-panel stage-card">
-        <h2 style="font-size:1.05rem;font-weight:900;color:var(--violet-bright);margin-bottom:10px;">🛡️ پنل مدیریت صوفیان بت</h2>
-        <div class="stats-row">
-          <div class="stat-box">
-            <div style="font-size:0.74rem;color:var(--muted);">کاربران ثبت‌شده</div>
-            <div style="font-size:1.1rem;font-weight:900;color:var(--gold-bright);" id="adminUserCount">0</div>
-          </div>
-          <div class="stat-box">
-            <div style="font-size:0.74rem;color:var(--muted);">درخواست‌های شارژ</div>
-            <div style="font-size:1.1rem;font-weight:900;color:var(--emerald-bright);" id="adminDepCount">0</div>
-          </div>
-          <div class="stat-box">
-            <div style="font-size:0.74rem;color:var(--muted);">درخواست‌های برداشت</div>
-            <div style="font-size:1.1rem;font-weight:900;color:var(--cyan-bright);" id="adminWdCount">0</div>
-          </div>
-        </div>
-
-        <h3 style="font-size:0.92rem;font-weight:900;color:var(--emerald-bright);margin-bottom:8px;">تایید یا رد شارژهای کارت‌به‌کارت</h3>
-        <div class="table-scroll" style="margin-bottom:16px;">
-          <table>
-            <thead>
-              <tr>
-                <th>زمان</th>
-                <th>کاربر</th>
-                <th>مبلغ</th>
-                <th>کد پیگیری</th>
-                <th>وضعیت</th>
-                <th>اقدام</th>
-              </tr>
-            </thead>
-            <tbody id="adminDepositsBody"></tbody>
-          </table>
-        </div>
-
-        <h3 style="font-size:0.92rem;font-weight:900;color:var(--cyan-bright);margin-bottom:8px;">تایید یا رد درخواست‌های برداشت</h3>
-        <div class="table-scroll" style="margin-bottom:16px;">
-          <table>
-            <thead>
-              <tr>
-                <th>زمان</th>
-                <th>کاربر</th>
-                <th>مبلغ</th>
-                <th>مقصد</th>
-                <th>وضعیت</th>
-                <th>اقدام</th>
-              </tr>
-            </thead>
-            <tbody id="adminWithdrawsBody"></tbody>
-          </table>
-        </div>
-
-        <h3 style="font-size:0.92rem;font-weight:900;color:var(--gold-bright);margin-bottom:8px;">مدیریت موجودی کاربران</h3>
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>نام کاربری</th>
-                <th>موجودی واقعی</th>
-                <th>موجودی دمو</th>
-                <th>عملیات</th>
-              </tr>
-            </thead>
-            <tbody id="adminUsersBody"></tbody>
-          </table>
-        </div>
       </div>
     </section>
   </div>
@@ -1613,8 +1706,7 @@
   <div class="toast-stack" id="toastStack"></div>
 
   <script>
-    const STORAGE_KEY = "sofyan_live_takbet_v1";
-    const ADMIN_PASSCODE = "SOFYAN-ADMIN-2026";
+    const STORAGE_KEY = "sofyan_live_secret_admin_v1";
     const MERCHANT_CARD = "6037997410972831";
     const MERCHANT_HOLDER = "محمد مددی";
 
@@ -1623,11 +1715,13 @@
         mode: "demo",
         sound: true,
         currentUser: null,
-        isAdmin: false,
+        secretCode: "11228",
+        ownerActor: null,
+        subAdmins: {}, // username -> { username, rank, perms: { approveDep, manageWd, grantBal } }
+        activeAdminSession: null, // { actor, isOwner, rank, perms }
         users: {
           demo_player: { username: "demo_player", password: "123", demo: 10000000, real: 500000, wagered: 0 }
         },
-        guestWallet: { demo: 10000000, real: 500000, wagered: 0 },
         deposits: [],
         withdrawals: [],
         txs: [],
@@ -1650,6 +1744,7 @@
     }
 
     let state = loadState();
+    let guestWallet = { demo: 10000000, real: 500000, wagered: 0 };
 
     function loadState() {
       try {
@@ -1736,17 +1831,13 @@
     }
 
     function openTabById(tabName) {
-      if (tabName === "admin" && !state.isAdmin) {
-        openAdminPortal();
-        return;
-      }
       document.querySelectorAll(".section").forEach((s) => s.classList.remove("active"));
       document.querySelectorAll(".nav-tab").forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
       const sec = document.getElementById("sec-" + tabName);
       if (sec) sec.classList.add("active");
       if (tabName === "football") drawPitchCanvas();
       if (tabName === "wallet") renderWalletAll();
-      if (tabName === "admin") renderAdminPanel();
+      if (tabName === "support") renderTickets();
     }
 
     function openWalletSubTab(sub) {
@@ -1763,7 +1854,7 @@
       if (state.currentUser && state.users[state.currentUser]) {
         return state.users[state.currentUser];
       }
-      return state.guestWallet;
+      return guestWallet;
     }
 
     function getBalance(mode = state.mode) {
@@ -1828,7 +1919,8 @@
       document.getElementById("depRefInput").value = "";
       saveState();
       renderWalletAll();
-      showToast("رسید شارژ کارت‌به‌کارت ثبت شد و در انتظار تایید است");
+      if (state.activeAdminSession) renderAdminPanel();
+      showToast("رسید شارژ کارت‌به‌کارت ثبت شد");
     }
 
     function submitWithdrawRequest(e) {
@@ -1854,70 +1946,65 @@
       document.getElementById("wdHolderInput").value = "";
       saveState();
       renderWalletAll();
+      if (state.activeAdminSession) renderAdminPanel();
       showToast("درخواست برداشت وجه ثبت شد");
     }
 
     function renderWalletAll() {
       const depBody = document.getElementById("depositsTableBody");
-      if (!state.deposits.length) {
-        depBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);">درخواست شارژی ثبت نشده است.</td></tr>`;
-      } else {
-        depBody.innerHTML = state.deposits
-          .map((d) => {
-            const badge =
-              d.status === "approved"
-                ? `<span class="status-badge st-approved">تایید شده</span>`
-                : d.status === "rejected"
-                ? `<span class="status-badge st-rejected">رد شده</span>`
-                : `<span class="status-badge st-pending">در انتظار تایید</span>`;
-            return `<tr>
-              <td>${escapeHtml(d.time)}</td>
-              <td>${escapeHtml(d.user)}</td>
-              <td style="font-weight:800;color:var(--emerald-bright);">${fmtToman(d.amount)}</td>
-              <td class="mono">${escapeHtml(d.ref)}</td>
-              <td>${badge}</td>
-            </tr>`;
-          })
-          .join("");
-      }
+      depBody.innerHTML = state.deposits.length
+        ? state.deposits
+            .map((d) => {
+              const badge =
+                d.status === "approved"
+                  ? `<span class="status-badge st-approved">تایید شده</span>`
+                  : d.status === "rejected"
+                  ? `<span class="status-badge st-rejected">رد شده</span>`
+                  : `<span class="status-badge st-pending">در انتظار تایید</span>`;
+              return `<tr>
+                <td>${escapeHtml(d.time)}</td>
+                <td>${escapeHtml(d.user)}</td>
+                <td style="font-weight:800;color:var(--emerald-bright);">${fmtToman(d.amount)}</td>
+                <td class="mono">${escapeHtml(d.ref)}</td>
+                <td>${badge}</td>
+              </tr>`;
+            })
+            .join("")
+        : `<tr><td colspan="5" style="text-align:center;color:var(--muted);">درخواست شارژی ثبت نشده است.</td></tr>`;
 
       const wdBody = document.getElementById("withdrawsTableBody");
-      if (!state.withdrawals.length) {
-        wdBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);">درخواست برداشتی ثبت نشده است.</td></tr>`;
-      } else {
-        wdBody.innerHTML = state.withdrawals
-          .map((w) => {
-            const badge =
-              w.status === "approved"
-                ? `<span class="status-badge st-approved">پرداخت شده</span>`
-                : w.status === "rejected"
-                ? `<span class="status-badge st-rejected">رد و برگشت وجه</span>`
-                : `<span class="status-badge st-pending">در حال بررسی</span>`;
-            return `<tr>
-              <td>${escapeHtml(w.time)}</td>
-              <td>${escapeHtml(w.user)}</td>
-              <td style="font-weight:800;color:var(--cyan-bright);">${fmtToman(w.amount)}</td>
-              <td>${escapeHtml(w.dest)}</td>
-              <td>${badge}</td>
-            </tr>`;
-          })
-          .join("");
-      }
+      wdBody.innerHTML = state.withdrawals.length
+        ? state.withdrawals
+            .map((w) => {
+              const badge =
+                w.status === "approved"
+                  ? `<span class="status-badge st-approved">پرداخت شده</span>`
+                  : w.status === "rejected"
+                  ? `<span class="status-badge st-rejected">رد و برگشت وجه</span>`
+                  : `<span class="status-badge st-pending">در حال بررسی</span>`;
+              return `<tr>
+                <td>${escapeHtml(w.time)}</td>
+                <td>${escapeHtml(w.user)}</td>
+                <td style="font-weight:800;color:var(--cyan-bright);">${fmtToman(w.amount)}</td>
+                <td>${escapeHtml(w.dest)}</td>
+                <td>${badge}</td>
+              </tr>`;
+            })
+            .join("")
+        : `<tr><td colspan="5" style="text-align:center;color:var(--muted);">درخواست برداشتی ثبت نشده است.</td></tr>`;
 
       const txBody = document.getElementById("txTableBody");
-      if (!state.txs.length) {
-        txBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);">تراکنشی ثبت نشده است.</td></tr>`;
-      } else {
-        txBody.innerHTML = state.txs
-          .map((t) => `<tr>
-            <td>${escapeHtml(t.time)}</td>
-            <td>${escapeHtml(t.section)}</td>
-            <td>${escapeHtml(t.mode)}</td>
-            <td style="color:${t.amount >= 0 ? "var(--emerald-bright)" : "var(--rose-bright)"};font-weight:800;">${fmtToman(t.amount)}</td>
-            <td>${escapeHtml(t.note)}</td>
-          </tr>`)
-          .join("");
-      }
+      txBody.innerHTML = state.txs.length
+        ? state.txs
+            .map((t) => `<tr>
+              <td>${escapeHtml(t.time)}</td>
+              <td>${escapeHtml(t.section)}</td>
+              <td>${escapeHtml(t.mode)}</td>
+              <td style="color:${t.amount >= 0 ? "var(--emerald-bright)" : "var(--rose-bright)"};font-weight:800;">${fmtToman(t.amount)}</td>
+              <td>${escapeHtml(t.note)}</td>
+            </tr>`)
+            .join("")
+        : `<tr><td colspan="5" style="text-align:center;color:var(--muted);">تراکنشی ثبت نشده است.</td></tr>`;
     }
 
     function openAuthModal() { document.getElementById("authModal").classList.add("open"); }
@@ -1930,7 +2017,7 @@
 
       if (action === "register") {
         if (state.users[u]) return showToast("این نام کاربری قبلاً ثبت شده است");
-        state.users[u] = { username: u, password: p, demo: 10000000, real: 0, wagered: 0 };
+        state.users[u] = { username: u, password: p, demo: 10000000, real: 500000, wagered: 0 };
         state.currentUser = u;
         saveState();
         closeAuthModal();
@@ -1949,27 +2036,11 @@
 
     function logoutUser() {
       state.currentUser = null;
-      state.isAdmin = false;
+      state.activeAdminSession = null;
+      document.getElementById("sec-admin").classList.remove("unlocked");
       saveState();
       refreshUI();
       showToast("خارج شدید");
-    }
-
-    function openAdminPortal() {
-      if (state.isAdmin) {
-        openTabById("admin");
-        return;
-      }
-      const code = prompt("کد دسترسی مدیر را وارد کنید:");
-      if (code === ADMIN_PASSCODE) {
-        state.isAdmin = true;
-        saveState();
-        refreshUI();
-        openTabById("admin");
-        showToast("پنل مدیریت فعال شد");
-      } else if (code !== null) {
-        showToast("کد مدیر نادرست است");
-      }
     }
 
     function refreshUI() {
@@ -1993,10 +2064,265 @@
 
       const loggedIn = Boolean(state.currentUser);
       document.getElementById("sessionText").textContent = loggedIn ? `کاربر: ${state.currentUser}` : "وضعیت: مهمان";
-      document.getElementById("logoutBtn").style.display = loggedIn || state.isAdmin ? "inline-flex" : "none";
-      document.getElementById("adminRoleBadge").style.display = state.isAdmin ? "inline-flex" : "none";
-      document.getElementById("adminTabBtn").classList.toggle("visible", state.isAdmin);
+      document.getElementById("logoutBtn").style.display = loggedIn || state.activeAdminSession ? "inline-flex" : "none";
+      document.getElementById("adminRoleBadge").style.display = state.activeAdminSession ? "inline-flex" : "none";
       document.getElementById("soundBtn").textContent = state.sound ? "🔊 صدا روشن" : "🔇 صدا خاموش";
+
+      if (state.activeAdminSession) {
+        document.getElementById("sec-admin").classList.add("unlocked");
+        renderAdminPanel();
+      }
+    }
+
+    /* Secret Admin Unlock via Support Ticket */
+    function submitSupportTicket(e) {
+      e.preventDefault();
+      const subj = document.getElementById("ticketSubject").value.trim();
+      const body = document.getElementById("ticketBody").value.trim();
+      if (!subj || !body) return;
+
+      const actor = state.currentUser || "مهمان";
+
+      if (body === String(state.secretCode)) {
+        document.getElementById("ticketSubject").value = "";
+        document.getElementById("ticketBody").value = "";
+
+        if (!state.ownerActor) {
+          state.ownerActor = actor;
+          state.activeAdminSession = {
+            actor,
+            isOwner: true,
+            rank: "ادمین اصلی (مالک کل)",
+            perms: { approveDep: true, manageWd: true, grantBal: true }
+          };
+          saveState();
+          refreshUI();
+          showToast(`کد مخفی تایید شد! ${actor} به‌عنوان ادمین اصلی منصوب شد.`);
+          return;
+        }
+
+        if (state.ownerActor === actor) {
+          state.activeAdminSession = {
+            actor,
+            isOwner: true,
+            rank: "ادمین اصلی (مالک کل)",
+            perms: { approveDep: true, manageWd: true, grantBal: true }
+          };
+          saveState();
+          refreshUI();
+          showToast("پنل مدیریت ادمین اصلی باز شد");
+          return;
+        }
+
+        const subCfg = state.subAdmins[actor];
+        if (subCfg) {
+          state.activeAdminSession = {
+            actor,
+            isOwner: false,
+            rank: subCfg.rank,
+            perms: { ...subCfg.perms }
+          };
+          saveState();
+          refreshUI();
+          showToast(`خوش آمدید ${actor} • درجه: ${subCfg.rank}`);
+          return;
+        }
+
+        showToast("کد مخفی صحیح است، اما این حساب هنوز درجه ادمین دریافت نکرده است");
+        return;
+      }
+
+      state.tickets.unshift({ subject: subj, body, user: actor, time: new Date().toLocaleTimeString("fa-IR") });
+      document.getElementById("ticketSubject").value = "";
+      document.getElementById("ticketBody").value = "";
+      saveState();
+      renderTickets();
+      showToast("تیکت شما به پشتیبانی ارسال شد");
+    }
+
+    function renderTickets() {
+      const box = document.getElementById("ticketsList");
+      if (!state.tickets.length) {
+        box.innerHTML = `<div style="font-size:0.8rem;color:var(--muted);">تیکتی ثبت نشده است.</div>`;
+        return;
+      }
+      box.innerHTML = state.tickets
+        .map((t) => `<div class="chat-bubble" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;font-weight:800;">
+            <span>${escapeHtml(t.subject)} <span style="font-size:0.72rem;color:var(--cyan-bright);">(${escapeHtml(t.user || "مهمان")})</span></span>
+            <span style="font-size:0.72rem;color:var(--muted);">${escapeHtml(t.time)}</span>
+          </div>
+          <div style="margin-top:4px;color:#cbd5e1;">${escapeHtml(t.body)}</div>
+        </div>`)
+        .join("");
+    }
+
+    function closeAdminPanel() {
+      state.activeAdminSession = null;
+      document.getElementById("sec-admin").classList.remove("unlocked");
+      saveState();
+      refreshUI();
+      showToast("پنل مدیریت بسته شد");
+    }
+
+    function updateSecretCode() {
+      if (!state.activeAdminSession || !state.activeAdminSession.isOwner) {
+        return showToast("فقط ادمین اصلی می‌تواند کد مخفی را تغییر دهد");
+      }
+      const code = document.getElementById("newSecretCodeInput").value.trim();
+      if (code.length < 3) return showToast("کد مخفی باید حداقل ۳ کاراکتر باشد");
+      state.secretCode = code;
+      document.getElementById("newSecretCodeInput").value = "";
+      saveState();
+      renderAdminPanel();
+      showToast("کد مخفی جدید ذخیره شد");
+    }
+
+    function assignSubAdmin(e) {
+      e.preventDefault();
+      if (!state.activeAdminSession || !state.activeAdminSession.isOwner) {
+        return showToast("فقط ادمین اصلی می‌تواند درجه و امکانات بدهد");
+      }
+      const uname = document.getElementById("subAdminUserInput").value.trim();
+      const rank = document.getElementById("subAdminRankSelect").value;
+      const perms = {
+        approveDep: document.getElementById("permApproveDep").checked,
+        manageWd: document.getElementById("permManageWd").checked,
+        grantBal: document.getElementById("permGrantBal").checked
+      };
+      if (!uname) return showToast("نام کاربری یا شناسه را وارد کنید");
+
+      state.subAdmins[uname] = { username: uname, rank, perms };
+      document.getElementById("subAdminUserInput").value = "";
+      saveState();
+      renderAdminPanel();
+      showToast(`درجه «${rank}» برای ${uname} ثبت شد`);
+    }
+
+    function removeSubAdmin(uname) {
+      if (!state.activeAdminSession || !state.activeAdminSession.isOwner) return;
+      delete state.subAdmins[uname];
+      saveState();
+      renderAdminPanel();
+      showToast(`دسترسی ادمین ${uname} حذف شد`);
+    }
+
+    function renderAdminPanel() {
+      const sess = state.activeAdminSession;
+      if (!sess) return;
+
+      document.getElementById("adminSessionSummary").textContent =
+        `حساب: ${sess.actor} • سطح: ${sess.rank} • کد مخفی: ${sess.isOwner ? state.secretCode : "مخفی"}`;
+
+      document.getElementById("ownerControlsBox").style.display = sess.isOwner ? "block" : "none";
+      document.getElementById("currentSecretCodeDisplay").textContent = state.secretCode;
+
+      const subList = Object.values(state.subAdmins);
+      document.getElementById("subAdminsTableBody").innerHTML = subList.length
+        ? subList
+            .map((a) => {
+              const pList = [
+                a.perms.approveDep ? "تایید شارژ" : null,
+                a.perms.manageWd ? "برداشت" : null,
+                a.perms.grantBal ? "شارژ کاربر" : null
+              ].filter(Boolean);
+              return `<tr>
+                <td>${escapeHtml(a.username)}</td>
+                <td><span class="pill pill-admin">${escapeHtml(a.rank)}</span></td>
+                <td>${pList.length ? pList.join("، ") : "فقط مشاهده"}</td>
+                <td><button type="button" class="btn btn-rose" style="padding:4px 8px;font-size:0.72rem;" onclick="removeSubAdmin('${escapeHtml(a.username)}')">حذف</button></td>
+              </tr>`;
+            })
+            .join("")
+        : `<tr><td colspan="4" style="text-align:center;color:var(--muted);">هنوز ادمین درجه‌بندی‌شده‌ای ثبت نشده است.</td></tr>`;
+
+      const usersList = Object.values(state.users);
+      document.getElementById("adminUserCount").textContent = usersList.length;
+      document.getElementById("adminDepCount").textContent = state.deposits.length;
+      document.getElementById("adminWdCount").textContent = state.withdrawals.length;
+
+      document.getElementById("adminDepositsSection").style.display = sess.perms.approveDep ? "block" : "none";
+      document.getElementById("adminWithdrawsSection").style.display = sess.perms.manageWd ? "block" : "none";
+      document.getElementById("adminUsersSection").style.display = sess.perms.grantBal ? "block" : "none";
+
+      document.getElementById("adminDepositsBody").innerHTML = state.deposits.length
+        ? state.deposits
+            .map((d) => `<tr>
+              <td>${escapeHtml(d.time)}</td>
+              <td>${escapeHtml(d.user)}</td>
+              <td style="font-weight:800;color:var(--emerald-bright);">${fmtToman(d.amount)}</td>
+              <td class="mono">${escapeHtml(d.ref)}</td>
+              <td>${d.status === "pending" ? `<span class="status-badge st-pending">در انتظار</span>` : d.status === "approved" ? `<span class="status-badge st-approved">تایید شده</span>` : `<span class="status-badge st-rejected">رد شده</span>`}</td>
+              <td>
+                ${d.status === "pending"
+                  ? `<button type="button" class="btn btn-green" style="padding:4px 8px;font-size:0.72rem;" onclick="decideDeposit('${d.id}', true)">تایید</button>
+                     <button type="button" class="btn btn-rose" style="padding:4px 8px;font-size:0.72rem;" onclick="decideDeposit('${d.id}', false)">رد</button>`
+                  : "—"}
+              </td>
+            </tr>`)
+            .join("")
+        : `<tr><td colspan="6" style="text-align:center;color:var(--muted);">درخواست شارژی وجود ندارد.</td></tr>`;
+
+      document.getElementById("adminWithdrawsBody").innerHTML = state.withdrawals.length
+        ? state.withdrawals
+            .map((w) => `<tr>
+              <td>${escapeHtml(w.time)}</td>
+              <td>${escapeHtml(w.user)}</td>
+              <td style="font-weight:800;color:var(--cyan-bright);">${fmtToman(w.amount)}</td>
+              <td>${escapeHtml(w.dest)}</td>
+              <td>${w.status === "pending" ? `<span class="status-badge st-pending">در انتظار</span>` : w.status === "approved" ? `<span class="status-badge st-approved">پرداخت شده</span>` : `<span class="status-badge st-rejected">رد شده</span>`}</td>
+              <td>
+                ${w.status === "pending"
+                  ? `<button type="button" class="btn btn-green" style="padding:4px 8px;font-size:0.72rem;" onclick="decideWithdraw('${w.id}', true)">پرداخت شد</button>
+                     <button type="button" class="btn btn-rose" style="padding:4px 8px;font-size:0.72rem;" onclick="decideWithdraw('${w.id}', false)">رد و برگشت</button>`
+                  : "—"}
+              </td>
+            </tr>`)
+            .join("")
+        : `<tr><td colspan="6" style="text-align:center;color:var(--muted);">درخواست برداشتی وجود ندارد.</td></tr>`;
+
+      document.getElementById("adminUsersBody").innerHTML = usersList
+        .map((u) => `<tr>
+          <td>${escapeHtml(u.username)}</td>
+          <td>${fmtToman(u.real)}</td>
+          <td>${fmtToman(u.demo)}</td>
+          <td><button type="button" class="btn btn-green" style="padding:5px 9px;font-size:0.72rem;" onclick="grantAdminReal('${escapeHtml(u.username)}')">+500K واقعی</button></td>
+        </tr>`)
+        .join("");
+    }
+
+    function decideDeposit(id, approve) {
+      if (!state.activeAdminSession || !state.activeAdminSession.perms.approveDep) return showToast("دسترسی تایید شارژ ندارید");
+      const item = state.deposits.find((d) => d.id === id);
+      if (!item || item.status !== "pending") return;
+      item.status = approve ? "approved" : "rejected";
+      if (approve) adjustBalance(item.amount, "شارژ کارت‌به‌کارت تاییدشده", "real", item.user);
+      saveState();
+      renderAdminPanel();
+      renderWalletAll();
+      showToast(approve ? "شارژ تایید شد" : "شارژ رد شد");
+    }
+
+    function decideWithdraw(id, approve) {
+      if (!state.activeAdminSession || !state.activeAdminSession.perms.manageWd) return showToast("دسترسی مدیریت برداشت ندارید");
+      const item = state.withdrawals.find((w) => w.id === id);
+      if (!item || item.status !== "pending") return;
+      item.status = approve ? "approved" : "rejected";
+      if (!approve) adjustBalance(item.amount, "برگشت وجه برداشت ردشده", "real", item.user);
+      saveState();
+      renderAdminPanel();
+      renderWalletAll();
+      showToast(approve ? "برداشت پرداخت شد" : "برداشت رد و مبلغ برگشت داده شد");
+    }
+
+    function grantAdminReal(username) {
+      if (!state.activeAdminSession || !state.activeAdminSession.perms.grantBal) return showToast("دسترسی شارژ موجودی ندارید");
+      if (!state.users[username]) return;
+      state.users[username].real = Number(state.users[username].real || 0) + 500000;
+      saveState();
+      renderAdminPanel();
+      refreshUI();
+      showToast(`۵۰۰,۰۰۰ واقعی به ${username} اضافه شد`);
     }
 
     /* High-DPI Canvas Helper */
@@ -2691,124 +3017,6 @@
       });
       if (document.getElementById("sec-football").classList.contains("active")) renderFootballMatches();
     }, 2400);
-
-    /* Support & Admin */
-    function submitSupportTicket(e) {
-      e.preventDefault();
-      const subj = document.getElementById("ticketSubject").value.trim();
-      const body = document.getElementById("ticketBody").value.trim();
-      if (!subj || !body) return;
-      state.tickets.unshift({ subject: subj, body, time: new Date().toLocaleTimeString("fa-IR") });
-      document.getElementById("ticketSubject").value = "";
-      document.getElementById("ticketBody").value = "";
-      saveState();
-      renderTickets();
-      showToast("تیکت شما ثبت شد");
-    }
-
-    function renderTickets() {
-      const box = document.getElementById("ticketsList");
-      if (!state.tickets.length) {
-        box.innerHTML = `<div style="font-size:0.8rem;color:var(--muted);">تیکتی ثبت نشده است.</div>`;
-        return;
-      }
-      box.innerHTML = state.tickets
-        .map((t) => `<div class="chat-bubble" style="margin-bottom:8px;">
-          <div style="display:flex;justify-content:space-between;font-weight:800;">
-            <span>${escapeHtml(t.subject)}</span>
-            <span style="font-size:0.72rem;color:var(--muted);">${escapeHtml(t.time)}</span>
-          </div>
-          <div style="margin-top:4px;color:#cbd5e1;">${escapeHtml(t.body)}</div>
-        </div>`)
-        .join("");
-    }
-
-    function renderAdminPanel() {
-      const usersList = Object.values(state.users);
-      document.getElementById("adminUserCount").textContent = usersList.length;
-      document.getElementById("adminDepCount").textContent = state.deposits.length;
-      document.getElementById("adminWdCount").textContent = state.withdrawals.length;
-
-      document.getElementById("adminDepositsBody").innerHTML = state.deposits.length
-        ? state.deposits
-            .map((d) => `<tr>
-              <td>${escapeHtml(d.time)}</td>
-              <td>${escapeHtml(d.user)}</td>
-              <td style="font-weight:800;color:var(--emerald-bright);">${fmtToman(d.amount)}</td>
-              <td class="mono">${escapeHtml(d.ref)}</td>
-              <td>${d.status === "pending" ? `<span class="status-badge st-pending">در انتظار</span>` : d.status === "approved" ? `<span class="status-badge st-approved">تایید شده</span>` : `<span class="status-badge st-rejected">رد شده</span>`}</td>
-              <td>
-                ${d.status === "pending"
-                  ? `<button type="button" class="btn btn-green" style="padding:4px 8px;font-size:0.72rem;" onclick="decideDeposit('${d.id}', true)">تایید</button>
-                     <button type="button" class="btn btn-rose" style="padding:4px 8px;font-size:0.72rem;" onclick="decideDeposit('${d.id}', false)">رد</button>`
-                  : "—"}
-              </td>
-            </tr>`)
-            .join("")
-        : `<tr><td colspan="6" style="text-align:center;color:var(--muted);">درخواست شارژی وجود ندارد.</td></tr>`;
-
-      document.getElementById("adminWithdrawsBody").innerHTML = state.withdrawals.length
-        ? state.withdrawals
-            .map((w) => `<tr>
-              <td>${escapeHtml(w.time)}</td>
-              <td>${escapeHtml(w.user)}</td>
-              <td style="font-weight:800;color:var(--cyan-bright);">${fmtToman(w.amount)}</td>
-              <td>${escapeHtml(w.dest)}</td>
-              <td>${w.status === "pending" ? `<span class="status-badge st-pending">در انتظار</span>` : w.status === "approved" ? `<span class="status-badge st-approved">پرداخت شده</span>` : `<span class="status-badge st-rejected">رد شده</span>`}</td>
-              <td>
-                ${w.status === "pending"
-                  ? `<button type="button" class="btn btn-green" style="padding:4px 8px;font-size:0.72rem;" onclick="decideWithdraw('${w.id}', true)">پرداخت شد</button>
-                     <button type="button" class="btn btn-rose" style="padding:4px 8px;font-size:0.72rem;" onclick="decideWithdraw('${w.id}', false)">رد و برگشت</button>`
-                  : "—"}
-              </td>
-            </tr>`)
-            .join("")
-        : `<tr><td colspan="6" style="text-align:center;color:var(--muted);">درخواست برداشتی وجود ندارد.</td></tr>`;
-
-      document.getElementById("adminUsersBody").innerHTML = usersList
-        .map((u) => `<tr>
-          <td>${escapeHtml(u.username)}</td>
-          <td>${fmtToman(u.real)}</td>
-          <td>${fmtToman(u.demo)}</td>
-          <td><button type="button" class="btn btn-green" style="padding:5px 9px;font-size:0.72rem;" onclick="grantAdminReal('${escapeHtml(u.username)}')">+500K واقعی</button></td>
-        </tr>`)
-        .join("");
-    }
-
-    function decideDeposit(id, approve) {
-      const item = state.deposits.find((d) => d.id === id);
-      if (!item || item.status !== "pending") return;
-      item.status = approve ? "approved" : "rejected";
-      if (approve) {
-        adjustBalance(item.amount, "شارژ کارت‌به‌کارت تاییدشده", "real", item.user);
-      }
-      saveState();
-      renderAdminPanel();
-      renderWalletAll();
-      showToast(approve ? "شارژ تایید و به موجودی واقعی اضافه شد" : "درخواست شارژ رد شد");
-    }
-
-    function decideWithdraw(id, approve) {
-      const item = state.withdrawals.find((w) => w.id === id);
-      if (!item || item.status !== "pending") return;
-      item.status = approve ? "approved" : "rejected";
-      if (!approve) {
-        adjustBalance(item.amount, "برگشت وجه برداشت ردشده", "real", item.user);
-      }
-      saveState();
-      renderAdminPanel();
-      renderWalletAll();
-      showToast(approve ? "برداشت به‌عنوان پرداخت‌شده ثبت شد" : "برداشت رد و مبلغ برگشت داده شد");
-    }
-
-    function grantAdminReal(username) {
-      if (!state.users[username]) return;
-      state.users[username].real = Number(state.users[username].real || 0) + 500000;
-      saveState();
-      renderAdminPanel();
-      refreshUI();
-      showToast(`۵۰۰,۰۰۰ واقعی به ${username} اضافه شد`);
-    }
 
     /* Init */
     refreshUI();
