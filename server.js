@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const http = require("http");
 const https = require("https");
 const WebSocket = require("ws");
@@ -6,6 +8,8 @@ const PORT = Number(process.env.PORT || 8080);
 const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY || "";
 const FOOTBALL_API_HOST = process.env.FOOTBALL_API_HOST || "v3.football.api-sports.io";
 const FOOTBALL_POLL_MS = Number(process.env.FOOTBALL_POLL_MS || 90000);
+const STATE_FILE_PATH = path.resolve(process.env.STATE_FILE_PATH || path.join(__dirname, "casino-state.json"));
+const AUTOSAVE_INTERVAL_MS = Number(process.env.AUTOSAVE_INTERVAL_MS || 5000);
 
 const FA_LEAGUES = {
   "Persian Gulf Pro League": "لیگ برتر خلیج فارس",
@@ -130,7 +134,7 @@ function normalizeFixture(item, fallbackIdx = 0) {
   };
 }
 
-function apiFootballRequest(path) {
+function apiFootballRequest(pathName) {
   return new Promise((resolve, reject) => {
     if (!FOOTBALL_API_KEY) {
       return reject(new Error("FOOTBALL_API_KEY is missing"));
@@ -138,7 +142,7 @@ function apiFootballRequest(path) {
     const req = https.request(
       {
         hostname: FOOTBALL_API_HOST,
-        path,
+        path: pathName,
         method: "GET",
         headers: {
           "x-apisports-key": FOOTBALL_API_KEY
@@ -180,20 +184,6 @@ async function getIranDailyMatches() {
   lastIranDailyFetch = now;
   return cachedIranDailyMatches;
 }
-
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-  res.end(
-    JSON.stringify({
-      ok: true,
-      service: "Sofyan.60bet Live Server",
-      hasFootballKey: Boolean(FOOTBALL_API_KEY),
-      footballMatchesCount: shared.footballMatches.length
-    })
-  );
-});
-
-const wss = new WebSocket.Server({ server });
 
 let secretCode = process.env.ADMIN_SECRET_CODE || "11228";
 let roundCounter = 1;
@@ -247,6 +237,147 @@ const shared = {
 const usersDb = new Map();
 const userFootballBets = new Map();
 const clientMeta = new WeakMap();
+const crashBetsByUser = new Map();
+
+/* PERSISTENT DISK STORAGE */
+let isDirty = false;
+
+function markDirty() {
+  isDirty = true;
+}
+
+function serializeState() {
+  return {
+    savedAt: new Date().toISOString(),
+    secretCode,
+    roundCounter,
+    crashHistory,
+    chatState,
+    shared: {
+      ...shared,
+      crashHistory
+    },
+    users: Array.from(usersDb.entries()),
+    footballBets: Array.from(userFootballBets.entries())
+  };
+}
+
+function saveStateToDisk(force = false) {
+  if (!force && !isDirty) return;
+  try {
+    const dir = path.dirname(STATE_FILE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    const payload = JSON.stringify(serializeState(), null, 2);
+    const tmpPath = `${STATE_FILE_PATH}.tmp`;
+    fs.writeFileSync(tmpPath, payload, "utf8");
+    fs.renameSync(tmpPath, STATE_FILE_PATH);
+    isDirty = false;
+  } catch (err) {
+    console.error("[STATE_SAVE_ERR]", err.message);
+  }
+}
+
+function loadStateFromDisk() {
+  try {
+    if (!fs.existsSync(STATE_FILE_PATH)) return;
+    const raw = fs.readFileSync(STATE_FILE_PATH, "utf8");
+    if (!raw.trim()) return;
+    const data = JSON.parse(raw);
+
+    if (typeof data.secretCode === "string" && data.secretCode.trim()) {
+      secretCode = data.secretCode.trim();
+    }
+    if (Number.isFinite(Number(data.roundCounter)) && Number(data.roundCounter) > 0) {
+      roundCounter = Number(data.roundCounter);
+      currentRound.roundIndex = roundCounter;
+    }
+    if (Array.isArray(data.crashHistory) && data.crashHistory.length) {
+      crashHistory = data.crashHistory.slice(0, 20);
+      shared.crashHistory = crashHistory;
+    }
+    if (data.chatState && typeof data.chatState === "object") {
+      chatState = {
+        locked: Boolean(data.chatState.locked),
+        slowModeSec: Number(data.chatState.slowModeSec || 0),
+        pinnedId: data.chatState.pinnedId || null,
+        mutedUsers: data.chatState.mutedUsers && typeof data.chatState.mutedUsers === "object" ? data.chatState.mutedUsers : {},
+        messages: Array.isArray(data.chatState.messages) ? data.chatState.messages.slice(-100) : []
+      };
+    }
+    if (data.shared && typeof data.shared === "object") {
+      shared.ownerActor = data.shared.ownerActor || null;
+      shared.subAdmins = data.shared.subAdmins && typeof data.shared.subAdmins === "object" ? data.shared.subAdmins : {};
+      shared.deposits = Array.isArray(data.shared.deposits) ? data.shared.deposits : [];
+      shared.withdrawals = Array.isArray(data.shared.withdrawals) ? data.shared.withdrawals : [];
+      shared.usersBalanceAdjustments =
+        data.shared.usersBalanceAdjustments && typeof data.shared.usersBalanceAdjustments === "object"
+          ? data.shared.usersBalanceAdjustments
+          : {};
+      shared.auditLogs = Array.isArray(data.shared.auditLogs) ? data.shared.auditLogs.slice(0, 100) : [];
+      if (Array.isArray(data.shared.footballMatches) && data.shared.footballMatches.length) {
+        shared.footballMatches = data.shared.footballMatches;
+      }
+    }
+    if (Array.isArray(data.users)) {
+      usersDb.clear();
+      for (const [uname, uObj] of data.users) {
+        if (uname && uObj && typeof uObj === "object") {
+          usersDb.set(String(uname), {
+            username: String(uObj.username || uname),
+            fullName: String(uObj.fullName || uname),
+            phone: String(uObj.phone || ""),
+            email: String(uObj.email || ""),
+            password: String(uObj.password || ""),
+            demo: Number(uObj.demo ?? 10000000),
+            real: Number(uObj.real ?? 500000),
+            txs: Array.isArray(uObj.txs) ? uObj.txs.slice(0, 80) : []
+          });
+        }
+      }
+    }
+    if (Array.isArray(data.footballBets)) {
+      userFootballBets.clear();
+      for (const [uname, bets] of data.footballBets) {
+        if (uname && Array.isArray(bets)) {
+          userFootballBets.set(String(uname), bets);
+        }
+      }
+    }
+    console.log(`[STATE_LOADED] ${STATE_FILE_PATH}`);
+  } catch (err) {
+    console.error("[STATE_LOAD_ERR]", err.message);
+  }
+}
+
+loadStateFromDisk();
+setInterval(() => saveStateToDisk(false), AUTOSAVE_INTERVAL_MS);
+
+function gracefulShutdown(signal) {
+  console.log(`[SHUTDOWN] Received ${signal}, saving state...`);
+  saveStateToDisk(true);
+  process.exit(0);
+}
+
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+  res.end(
+    JSON.stringify({
+      ok: true,
+      service: "Sofyan.60bet Live Server",
+      hasFootballKey: Boolean(FOOTBALL_API_KEY),
+      footballMatchesCount: shared.footballMatches.length,
+      usersCount: usersDb.size,
+      stateFile: STATE_FILE_PATH
+    })
+  );
+});
+
+const wss = new WebSocket.Server({ server });
 
 function nowFaTime() {
   return new Date().toLocaleTimeString("fa-IR");
@@ -261,6 +392,7 @@ function addAuditLog(actor, action) {
   if (shared.auditLogs.length > 100) {
     shared.auditLogs.length = 100;
   }
+  markDirty();
 }
 
 function getOrCreateUserRecord(username = "مهمان") {
@@ -276,8 +408,17 @@ function getOrCreateUserRecord(username = "مهمان") {
       real: 500000,
       txs: []
     });
+    markDirty();
   }
   return usersDb.get(key);
+}
+
+function getUserCrashSlots(username) {
+  const key = String(username || "مهمان").trim() || "مهمان";
+  if (!crashBetsByUser.has(key)) {
+    crashBetsByUser.set(key, { slot1: null, slot2: null });
+  }
+  return crashBetsByUser.get(key);
 }
 
 function pushUserTx(userObj, type, mode, amount, note) {
@@ -294,6 +435,7 @@ function pushUserTx(userObj, type, mode, amount, note) {
   if (userObj.txs.length > 80) {
     userObj.txs.length = 80;
   }
+  markDirty();
 }
 
 function sendJson(ws, payload) {
@@ -355,6 +497,56 @@ function broadcastChatSync() {
   });
 }
 
+/* FOOTBALL AUTO SETTLEMENT ON FT */
+function settleFinishedFootballMatches() {
+  const finishedMap = new Map();
+  for (const m of shared.footballMatches) {
+    if (String(m.status || "").toUpperCase() === "FT") {
+      const h = Number(m.hScore ?? 0);
+      const a = Number(m.aScore ?? 0);
+      const winner = h > a ? "home" : h < a ? "away" : "draw";
+      finishedMap.set(String(m.id), { winner, label: `${m.home} ${h}-${a} ${m.away}` });
+    }
+  }
+  if (!finishedMap.size) return;
+
+  let anySettled = false;
+  for (const [uname, bets] of userFootballBets.entries()) {
+    let userChanged = false;
+    const u = getOrCreateUserRecord(uname);
+
+    for (const bet of bets) {
+      if (bet.status !== "در انتظار") continue;
+      const fin = finishedMap.get(String(bet.matchId));
+      if (!fin) continue;
+
+      const betMode = bet.mode === "real" ? "real" : "demo";
+      if (bet.marketCode === fin.winner) {
+        const payout = Math.round(Number(bet.stake || 0) * Number(bet.odd || 1));
+        u[betMode] += payout;
+        bet.status = "برد";
+        bet.payout = payout;
+        pushUserTx(u, "تسویه فوتبال", betMode, payout, `برد شرط ${bet.match_label} (${fin.label})`);
+        userChanged = true;
+      } else {
+        bet.status = "باخت";
+        bet.payout = 0;
+        userChanged = true;
+      }
+      anySettled = true;
+    }
+
+    if (userChanged) {
+      sendWalletSyncToUser(u.username);
+    }
+  }
+
+  if (anySettled) {
+    markDirty();
+    saveStateToDisk(true);
+  }
+}
+
 /* CRASH LOOP */
 let phaseElapsed = 0;
 let waitingDuration = 3.0;
@@ -362,6 +554,7 @@ let runningDuration = 6.0;
 
 function pickCrashTarget() {
   const r = Math.random();
+  if (r < 0.04) return 1.00;
   if (r < 0.35) return Number((1.15 + Math.random() * 0.85).toFixed(2));
   if (r < 0.78) return Number((2.0 + Math.random() * 2.5).toFixed(2));
   return Number((4.5 + Math.random() * 7.5).toFixed(2));
@@ -380,6 +573,27 @@ function startNewWaitingPhase() {
     progressRatio: 0,
     remainingSec: waitingDuration
   };
+  markDirty();
+}
+
+function settleUserCrashCashout(username, slotNum, requestedMult) {
+  const slots = getUserCrashSlots(username);
+  const key = slotNum === 2 ? "slot2" : "slot1";
+  const b = slots[key];
+  if (!b || b.settled || b.roundIndex !== currentRound.roundIndex || currentRound.phase !== "running") {
+    return false;
+  }
+  const effectiveMult = Math.max(1.0, Math.min(Number(requestedMult || currentRound.mult), Number(currentRound.mult)));
+  const payout = Math.round(b.bet * effectiveMult);
+  b.settled = true;
+  slots[key] = null;
+
+  const u = getOrCreateUserRecord(username);
+  const m = b.mode === "real" ? "real" : "demo";
+  u[m] += payout;
+  pushUserTx(u, "کرش (انفجار)", m, payout, `برداشت جایگاه ${slotNum} روی ${effectiveMult.toFixed(2)}x`);
+  sendWalletSyncToUser(u.username);
+  return true;
 }
 
 setInterval(() => {
@@ -397,6 +611,16 @@ setInterval(() => {
     const ratio = Math.min(1, phaseElapsed / runningDuration);
     currentRound.progressRatio = Number(ratio.toFixed(4));
     currentRound.mult = Number((1.0 + (currentRound.target - 1.0) * Math.pow(ratio, 1.35)).toFixed(2));
+
+    for (const [uname, slots] of crashBetsByUser.entries()) {
+      for (const [sNum, sKey] of [[1, "slot1"], [2, "slot2"]]) {
+        const b = slots[sKey];
+        if (b && !b.settled && b.roundIndex === currentRound.roundIndex && b.autoMult >= 1.05 && currentRound.mult >= b.autoMult) {
+          settleUserCrashCashout(uname, sNum, b.autoMult);
+        }
+      }
+    }
+
     if (ratio >= 1) {
       currentRound.phase = "crashed";
       currentRound.mult = currentRound.target;
@@ -404,6 +628,17 @@ setInterval(() => {
       crashHistory.unshift(currentRound.target);
       if (crashHistory.length > 20) crashHistory.length = 20;
       shared.crashHistory = crashHistory;
+      markDirty();
+
+      for (const [, slots] of crashBetsByUser.entries()) {
+        for (const sKey of ["slot1", "slot2"]) {
+          const b = slots[sKey];
+          if (b && b.roundIndex === currentRound.roundIndex && !b.settled) {
+            b.settled = true;
+            slots[sKey] = null;
+          }
+        }
+      }
     }
   } else if (currentRound.phase === "crashed") {
     if (phaseElapsed >= 2.2) {
@@ -442,6 +677,8 @@ async function syncFootballMatches() {
     const sorted = Array.from(merged.values()).sort((a, b) => (a.isIran ? 0 : 1) - (b.isIran ? 0 : 1));
     if (sorted.length > 0) {
       shared.footballMatches = sorted.slice(0, 40);
+      markDirty();
+      settleFinishedFootballMatches();
       broadcastSharedSync();
     }
   } catch (err) {
@@ -455,6 +692,20 @@ setInterval(syncFootballMatches, FOOTBALL_POLL_MS);
 /* WEBSOCKET HANDLER */
 const activeMinesSessions = new Map();
 const activeBjSessions = new Map();
+
+function scoreBlackjackSoft(hand) {
+  let total = 0;
+  let aces = 0;
+  for (const c of hand) {
+    total += c.val;
+    if (c.rank === "A") aces += 1;
+  }
+  while (total > 21 && aces > 0) {
+    total -= 10;
+    aces -= 1;
+  }
+  return total;
+}
 
 wss.on("connection", (ws) => {
   clientMeta.set(ws, { username: "مهمان", lastChatAt: 0 });
@@ -507,9 +758,10 @@ wss.on("connection", (ws) => {
         real: 500000,
         txs: []
       };
+      usersDb.set(uname, newUser);
       pushUserTx(newUser, "ثبت‌نام", "demo", 10000000, "موجودی اولیه دمو");
       pushUserTx(newUser, "ثبت‌نام", "real", 500000, "هدیه خوش‌آمدگویی واقعی");
-      usersDb.set(uname, newUser);
+      saveStateToDisk(true);
 
       meta.username = uname;
       clientMeta.set(ws, meta);
@@ -557,6 +809,7 @@ wss.on("connection", (ws) => {
       const dep = { ...msg.deposit, status: msg.deposit.status || "pending" };
       shared.deposits.unshift(dep);
       addAuditLog(actor, `ثبت واریز ${dep.amount} تومان (${dep.method})`);
+      saveStateToDisk(true);
       broadcastSharedSync("درخواست واریز جدید ثبت شد");
       return;
     }
@@ -572,15 +825,74 @@ wss.on("connection", (ws) => {
       pushUserTx(u, "درخواست برداشت", "real", -Number(wd.amount || 0), `برداشت به ${wd.dest}`);
       shared.withdrawals.unshift(wd);
       addAuditLog(actor, `ثبت برداشت ${wd.amount} تومان`);
+      saveStateToDisk(true);
       sendWalletSyncToUser(u.username);
       broadcastSharedSync("درخواست برداشت جدید ثبت شد");
+      return;
+    }
+
+    /* CRASH BETS */
+    const mode = msg.mode === "real" ? "real" : "demo";
+    const u = getOrCreateUserRecord(actor);
+
+    if (msg.type === "CRASH_PLACE_BET") {
+      const slotNum = Number(msg.slot) === 2 ? 2 : 1;
+      const key = slotNum === 2 ? "slot2" : "slot1";
+      const slots = getUserCrashSlots(u.username);
+      if (slots[key] && !slots[key].settled) {
+        return sendJson(ws, { type: "TOAST", message: "در این جایگاه شرط فعال یا در صف دارید." });
+      }
+      const bet = Math.max(1000, Number(msg.bet || 0));
+      if (u[mode] < bet) {
+        return sendJson(ws, { type: "TOAST", message: "موجودی کافی نیست." });
+      }
+      const targetRound = (currentRound.phase === "waiting" || currentRound.phase === "running")
+        ? currentRound.roundIndex
+        : currentRound.roundIndex + 1;
+      const autoMult = Number(msg.autoMult || 0);
+
+      u[mode] -= bet;
+      slots[key] = {
+        roundIndex: targetRound,
+        bet,
+        mode,
+        autoMult: autoMult >= 1.05 ? autoMult : 0,
+        settled: false
+      };
+      pushUserTx(u, "کرش (انفجار)", mode, -bet, `ثبت شرط جایگاه ${slotNum} در راند #${targetRound}`);
+      sendWalletSyncToUser(u.username);
+      return;
+    }
+
+    if (msg.type === "CRASH_CANCEL_BET") {
+      const slotNum = Number(msg.slot) === 2 ? 2 : 1;
+      const key = slotNum === 2 ? "slot2" : "slot1";
+      const slots = getUserCrashSlots(u.username);
+      const b = slots[key];
+      if (!b || b.settled || currentRound.phase !== "waiting" || b.roundIndex !== currentRound.roundIndex) {
+        return;
+      }
+      b.settled = true;
+      slots[key] = null;
+      u[b.mode] += b.bet;
+      pushUserTx(u, "کرش (انفجار)", b.mode, b.bet, `لغو شرط جایگاه ${slotNum}`);
+      sendWalletSyncToUser(u.username);
+      return;
+    }
+
+    if (msg.type === "CRASH_CASHOUT") {
+      const slotNum = Number(msg.slot) === 2 ? 2 : 1;
+      settleUserCrashCashout(u.username, slotNum, msg.mult);
       return;
     }
 
     /* ADMIN ACTIONS */
     if (msg.type === "AUTH_SECRET_CODE") {
       if (String(msg.code || "").trim() === secretCode) {
-        if (!shared.ownerActor) shared.ownerActor = actor;
+        if (!shared.ownerActor) {
+          shared.ownerActor = actor;
+          markDirty();
+        }
         const isOwner = shared.ownerActor === actor;
         const sub = shared.subAdmins[actor];
         const session = isOwner
@@ -600,6 +912,7 @@ wss.on("connection", (ws) => {
     if (msg.type === "ADMIN_UPDATE_SECRET" && msg.secretCode) {
       secretCode = String(msg.secretCode).trim();
       addAuditLog(actor, "تغییر کد مخفی مدیریت");
+      saveStateToDisk(true);
       sendJson(ws, { type: "TOAST", message: "کد مخفی جدید ذخیره شد." });
       return;
     }
@@ -611,6 +924,7 @@ wss.on("connection", (ws) => {
         perms: msg.perms || {}
       };
       addAuditLog(actor, `تعیین درجه ${msg.rank} برای ${msg.username}`);
+      saveStateToDisk(true);
       broadcastSharedSync("سطح دسترسی ادمین به‌روزرسانی شد");
       return;
     }
@@ -618,6 +932,7 @@ wss.on("connection", (ws) => {
     if (msg.type === "ADMIN_REMOVE_SUBADMIN" && msg.username) {
       delete shared.subAdmins[msg.username];
       addAuditLog(actor, `حذف زیر‌ادمین ${msg.username}`);
+      saveStateToDisk(true);
       broadcastSharedSync();
       return;
     }
@@ -627,12 +942,13 @@ wss.on("connection", (ws) => {
       if (dep && dep.status === "pending") {
         dep.status = msg.approve ? "approved" : "rejected";
         if (msg.approve) {
-          const u = getOrCreateUserRecord(dep.user);
-          u.real += Number(dep.amount || 0);
-          pushUserTx(u, "تایید واریز", "real", Number(dep.amount || 0), `کد پیگیری ${dep.ref}`);
-          sendWalletSyncToUser(u.username);
+          const targetU = getOrCreateUserRecord(dep.user);
+          targetU.real += Number(dep.amount || 0);
+          pushUserTx(targetU, "تایید واریز", "real", Number(dep.amount || 0), `کد پیگیری ${dep.ref}`);
+          sendWalletSyncToUser(targetU.username);
         }
         addAuditLog(actor, `${msg.approve ? "تایید" : "رد"} واریز ${dep.id}`);
+        saveStateToDisk(true);
         broadcastSharedSync();
       }
       return;
@@ -643,12 +959,13 @@ wss.on("connection", (ws) => {
       if (wd && wd.status === "pending") {
         wd.status = msg.approve ? "approved" : "rejected";
         if (!msg.approve) {
-          const u = getOrCreateUserRecord(wd.user);
-          u.real += Number(wd.amount || 0);
-          pushUserTx(u, "برگشت برداشت ردشده", "real", Number(wd.amount || 0), `رد برداشت ${wd.id}`);
-          sendWalletSyncToUser(u.username);
+          const targetU = getOrCreateUserRecord(wd.user);
+          targetU.real += Number(wd.amount || 0);
+          pushUserTx(targetU, "برگشت برداشت ردشده", "real", Number(wd.amount || 0), `رد برداشت ${wd.id}`);
+          sendWalletSyncToUser(targetU.username);
         }
         addAuditLog(actor, `${msg.approve ? "پرداخت" : "رد"} برداشت ${wd.id}`);
+        saveStateToDisk(true);
         broadcastSharedSync();
       }
       return;
@@ -656,11 +973,12 @@ wss.on("connection", (ws) => {
 
     if (msg.type === "ADMIN_GRANT_REAL" && msg.username) {
       const amt = Number(msg.amount || 500000);
-      const u = getOrCreateUserRecord(msg.username);
-      u.real += amt;
-      pushUserTx(u, "شارژ مدیریتی", "real", amt, "شارژ توسط مدیریت");
+      const targetU = getOrCreateUserRecord(msg.username);
+      targetU.real += amt;
+      pushUserTx(targetU, "شارژ مدیریتی", "real", amt, "شارژ توسط مدیریت");
       addAuditLog(actor, `شارژ ${amt} واقعی برای ${msg.username}`);
-      sendWalletSyncToUser(u.username);
+      saveStateToDisk(true);
+      sendWalletSyncToUser(targetU.username);
       broadcastSharedSync();
       return;
     }
@@ -693,6 +1011,7 @@ wss.on("connection", (ws) => {
         deleted: false
       });
       if (chatState.messages.length > 100) chatState.messages.shift();
+      markDirty();
       broadcastChatSync();
       return;
     }
@@ -700,24 +1019,28 @@ wss.on("connection", (ws) => {
     if (msg.type === "MOD_DELETE_MSG") {
       const m = chatState.messages.find((x) => x.id === msg.msgId);
       if (m) m.deleted = true;
+      markDirty();
       broadcastChatSync();
       return;
     }
 
     if (msg.type === "MOD_PIN_MSG") {
       chatState.pinnedId = msg.msgId || null;
+      markDirty();
       broadcastChatSync();
       return;
     }
 
     if (msg.type === "MOD_TOGGLE_LOCK") {
       chatState.locked = !chatState.locked;
+      markDirty();
       broadcastChatSync();
       return;
     }
 
     if (msg.type === "MOD_TOGGLE_SLOW") {
       chatState.slowModeSec = chatState.slowModeSec > 0 ? 0 : Number(msg.seconds || 5);
+      markDirty();
       broadcastChatSync();
       return;
     }
@@ -725,26 +1048,26 @@ wss.on("connection", (ws) => {
     if (msg.type === "MOD_CLEAR_CHAT") {
       chatState.messages = [];
       chatState.pinnedId = null;
+      markDirty();
       broadcastChatSync();
       return;
     }
 
     if (msg.type === "MOD_MUTE_USER" && msg.username) {
       chatState.mutedUsers[msg.username] = Date.now() + Number(msg.minutes || 10) * 60 * 1000;
+      markDirty();
       broadcastChatSync();
       return;
     }
 
     if (msg.type === "MOD_UNMUTE_USER" && msg.username) {
       delete chatState.mutedUsers[msg.username];
+      markDirty();
       broadcastChatSync();
       return;
     }
 
     /* GAMES */
-    const mode = msg.mode === "real" ? "real" : "demo";
-    const u = getOrCreateUserRecord(actor);
-
     if (msg.type === "PLAY_DICE") {
       const bet = Math.max(1000, Number(msg.bet || 0));
       if (u[mode] < bet) return sendJson(ws, { type: "TOAST", message: "موجودی کافی نیست." });
@@ -865,9 +1188,15 @@ wss.on("connection", (ws) => {
       const player = [drawCard(), drawCard()];
       const dealer = [drawCard()];
       activeBjSessions.set(actor, { bet, mode, player, dealer, drawCard });
-      const sumHand = (h) => h.reduce((a, b) => a + b.val, 0);
       sendWalletSyncToUser(u.username);
-      sendJson(ws, { type: "BJ_STATE", status: "playing", player, dealer, playerSum: sumHand(player), dealerSum: sumHand(dealer) });
+      sendJson(ws, {
+        type: "BJ_STATE",
+        status: "playing",
+        player,
+        dealer,
+        playerSum: scoreBlackjackSoft(player),
+        dealerSum: scoreBlackjackSoft(dealer)
+      });
       return;
     }
 
@@ -875,8 +1204,8 @@ wss.on("connection", (ws) => {
       const sess = activeBjSessions.get(actor);
       if (!sess) return;
       sess.player.push(sess.drawCard());
-      const pSum = sess.player.reduce((a, b) => a + b.val, 0);
-      const dSum = sess.dealer.reduce((a, b) => a + b.val, 0);
+      const pSum = scoreBlackjackSoft(sess.player);
+      const dSum = scoreBlackjackSoft(sess.dealer);
       if (pSum > 21) {
         activeBjSessions.delete(actor);
         pushUserTx(u, "بلک‌جک", sess.mode, -sess.bet, "بیش از ۲۱");
@@ -890,12 +1219,11 @@ wss.on("connection", (ws) => {
     if (msg.type === "BJ_STAND") {
       const sess = activeBjSessions.get(actor);
       if (!sess) return;
-      let dSum = sess.dealer.reduce((a, b) => a + b.val, 0);
-      while (dSum < 17) {
+      while (scoreBlackjackSoft(sess.dealer) < 17) {
         sess.dealer.push(sess.drawCard());
-        dSum = sess.dealer.reduce((a, b) => a + b.val, 0);
       }
-      const pSum = sess.player.reduce((a, b) => a + b.val, 0);
+      const dSum = scoreBlackjackSoft(sess.dealer);
+      const pSum = scoreBlackjackSoft(sess.player);
       activeBjSessions.delete(actor);
       let outcome = "lose";
       let payout = 0;
@@ -917,9 +1245,9 @@ wss.on("connection", (ws) => {
       const stake = Math.max(1000, Number(msg.bet || 0));
       if (u[mode] < stake) return sendJson(ws, { type: "TOAST", message: "موجودی کافی نیست." });
       const mList = shared.footballMatches || [];
-      const match = mList[Number(msg.matchIdx || 0)] || mList[0] || { home: "میزبان", away: "مهمان", hOdd: 2.1, dOdd: 3.2, aOdd: 2.9 };
-      const market = msg.market === "draw" ? "draw" : msg.market === "away" ? "away" : "home";
-      const odd = market === "draw" ? Number(match.dOdd || 3.2) : market === "away" ? Number(match.aOdd || 2.9) : Number(match.hOdd || 2.1);
+      const match = mList[Number(msg.matchIdx || 0)] || mList[0] || { id: "ir0", home: "میزبان", away: "مهمان", hOdd: 2.1, dOdd: 3.2, aOdd: 2.9 };
+      const marketCode = msg.market === "draw" ? "draw" : msg.market === "away" ? "away" : "home";
+      const odd = marketCode === "draw" ? Number(match.dOdd || 3.2) : marketCode === "away" ? Number(match.aOdd || 2.9) : Number(match.hOdd || 2.1);
       const potential = Math.round(stake * odd);
 
       u[mode] -= stake;
@@ -927,18 +1255,27 @@ wss.on("connection", (ws) => {
 
       const list = userFootballBets.get(u.username) || [];
       list.unshift({
+        id: "fb_" + Date.now(),
+        matchId: match.id,
         match_label: `${match.home} - ${match.away}`,
-        market: market === "draw" ? "مساوی" : market === "away" ? "برد مهمان" : "برد میزبان",
+        marketCode,
+        market: marketCode === "draw" ? "مساوی" : marketCode === "away" ? "برد مهمان" : "برد میزبان",
         odd,
         stake,
+        mode,
         status: "در انتظار"
       });
       userFootballBets.set(u.username, list);
+      markDirty();
 
       sendWalletSyncToUser(u.username);
       sendJson(ws, { type: "FOOTBALL_BET_ACCEPTED", bet: stake, odd, potential });
     }
   });
+});
+
+server.on("error", (err) => {
+  console.error("[HTTP_SERVER_ERR]", err.message);
 });
 
 server.listen(PORT, () => {
