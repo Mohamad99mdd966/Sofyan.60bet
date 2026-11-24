@@ -659,7 +659,7 @@
       </div>
     </section>
 
-    <!-- 8. FOOTBALL (SERVER-SYNCED) -->
+    <!-- 8. FOOTBALL (SERVER-SYNCED + PERSIAN + IRAN PRIORITY) -->
     <section class="section" id="sec-football">
       <div class="fb-grid">
         <div class="glass-panel stage-card">
@@ -934,9 +934,9 @@
 
     function defaultMatches() {
       return [
-        { id: "m0", league: "لیگ برتر", home: "استقلال", away: "پرسپولیس", hScore: 1, aScore: 0, min: 34, status: "LIVE", hOdd: 2.15, dOdd: 3.10, aOdd: 3.05, ballX: 0.56, ballY: 0.48 },
-        { id: "m1", league: "لالیگا", home: "رئال مادرید", away: "بارسلونا", hScore: 0, aScore: 0, min: 19, status: "LIVE", hOdd: 2.05, dOdd: 3.40, aOdd: 2.90, ballX: 0.44, ballY: 0.52 },
-        { id: "m2", league: "لیگ قهرمانان", home: "منچستر سیتی", away: "بایرن مونیخ", hScore: 2, aScore: 1, min: 67, status: "LIVE", hOdd: 1.88, dOdd: 3.55, aOdd: 3.45, ballX: 0.62, ballY: 0.42 }
+        { id: "ir0", league: "Persian Gulf Pro League", home: "Esteghlal", away: "Persepolis", hScore: 1, aScore: 0, min: 34, status: "LIVE", hOdd: 2.15, dOdd: 3.10, aOdd: 3.05, ballX: 0.56, ballY: 0.48 },
+        { id: "m1", league: "La Liga", home: "Real Madrid", away: "Barcelona", hScore: 0, aScore: 0, min: 19, status: "LIVE", hOdd: 2.05, dOdd: 3.40, aOdd: 2.90, ballX: 0.44, ballY: 0.52 },
+        { id: "m2", league: "UEFA Champions League", home: "Manchester City", away: "Bayern Munich", hScore: 2, aScore: 1, min: 67, status: "LIVE", hOdd: 1.88, dOdd: 3.55, aOdd: 3.45, ballX: 0.62, ballY: 0.42 }
       ];
     }
 
@@ -1275,7 +1275,7 @@
       document.querySelectorAll(".nav-tab").forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
       const sec = document.getElementById("sec-" + tabName);
       if (sec) sec.classList.add("active");
-      if (tabName === "football") { drawPitchCanvas(); renderFootballBets(); }
+      if (tabName === "football") { renderFootballMatches(); drawPitchCanvas(); renderFootballBets(); }
       if (tabName === "wallet") renderWalletAll();
     }
 
@@ -1938,19 +1938,129 @@
       }
     }
 
+    /* PERSIAN FOOTBALL TRANSLATION & IRAN PRIORITY */
+    const FA_LEAGUES = {
+      "Persian Gulf Pro League": "لیگ برتر خلیج فارس",
+      "Azadegan League": "لیگ آزادگان",
+      "Hazfi Cup": "جام حذفی ایران",
+      "AFC Champions League": "لیگ قهرمانان آسیا",
+      "Premier League": "لیگ برتر انگلیس",
+      "Championship": "چمپیونشیپ انگلیس",
+      "League One": "لیگ یک انگلیس",
+      "League Two": "لیگ دو انگلیس",
+      "La Liga": "لالیگا اسپانیا",
+      "Serie A": "سری آ ایتالیا",
+      "Bundesliga": "بوندسلیگا آلمان",
+      "Ligue 1": "لوشامپیونه فرانسه",
+      "UEFA Champions League": "لیگ قهرمانان اروپا",
+      "Premiership": "لیگ برتر اسکاتلند",
+      "National League": "نشنال لیگ انگلیس"
+    };
+
+    const FA_TEAMS = {
+      "Esteghlal": "استقلال",
+      "Persepolis": "پرسپولیس",
+      "Sepahan": "سپاهان",
+      "Tractor": "تراکتور",
+      "Foolad": "فولاد",
+      "Zob Ahan": "ذوب‌آهن",
+      "Gol Gohar": "گل‌گهر",
+      "Mes Rafsanjan": "مس رفسنجان",
+      "Malavan": "ملوان",
+      "Shams Azar": "شمس‌آذر",
+      "Aluminium Arak": "آلومینیوم اراک",
+      "Chadormalu": "چادرملو",
+      "Kheybar Khorramabad": "خیبر خرم‌آباد",
+      "Havadar": "هوادار",
+      "Esteghlal Khuzestan": "استقلال خوزستان",
+      "Paykan": "پیکان",
+      "Saipa": "سایپا",
+      "Real Madrid": "رئال مادرید",
+      "Barcelona": "بارسلونا",
+      "Manchester City": "منچستر سیتی",
+      "Bayern Munich": "بایرن مونیخ",
+      "Hibernian": "هیبرنیان",
+      "Dundee": "داندی",
+      "Cardiff": "کاردیف",
+      "Preston": "پرستون",
+      "Middlesbrough": "میدلزبرو",
+      "Swansea": "سوانزی",
+      "Portsmouth": "پورتسموث",
+      "West Ham": "وستهام",
+      "Wolves": "ولورهمپتون",
+      "Derby": "دربی کانتی",
+      "Port Vale": "پورت ویل",
+      "Northampton": "نورثهمپتون",
+      "Stevenage": "استیونج",
+      "Sheffield Wednesday": "شفیلد ونزدی",
+      "Bromley": "بروملی",
+      "Wycombe": "ویکوم",
+      "AFC Fylde": "ای‌اف‌سی فیلد",
+      "FC Halifax Town": "هالیفاکس تاون",
+      "Boston United": "بوستون یونایتد",
+      "Barrow": "بارو",
+      "Eastleigh": "ایستلی",
+      "Yeovil Town": "یئوویل تاون",
+      "AFC Hornchurch": "ای‌اف‌سی هورنچرچ",
+      "Sutton Utd": "ساتون یونایتد"
+    };
+
+    function translateLeagueFa(name = "") {
+      if (FA_LEAGUES[name]) return FA_LEAGUES[name];
+      const hit = Object.keys(FA_LEAGUES).find((k) => name.toLowerCase().includes(k.toLowerCase()));
+      return hit ? FA_LEAGUES[hit] : name;
+    }
+
+    function translateTeamFa(name = "") {
+      if (FA_TEAMS[name]) return FA_TEAMS[name];
+      const hit = Object.keys(FA_TEAMS).find((k) => name.toLowerCase().includes(k.toLowerCase()));
+      return hit ? FA_TEAMS[hit] : name;
+    }
+
+    function isIranianMatch(m) {
+      const txt = `${m.league || ""} ${m.home || ""} ${m.away || ""}`.toLowerCase();
+      return (
+        txt.includes("iran") ||
+        txt.includes("persian gulf") ||
+        txt.includes("azadegan") ||
+        txt.includes("hazfi") ||
+        Object.values(FA_TEAMS).slice(0, 17).some((fa) => txt.includes(fa))
+      );
+    }
+
+    function getSortedFootballMatches() {
+      const rawMatches = localState.football.matches || defaultMatches();
+      return [...rawMatches].sort((a, b) => {
+        const aIr = isIranianMatch(a) ? 0 : 1;
+        const bIr = isIranianMatch(b) ? 0 : 1;
+        return aIr - bIr;
+      });
+    }
+
     function renderFootballMatches() {
-      const matches = localState.football.matches || defaultMatches();
+      const matches = getSortedFootballMatches();
       if (localState.football.selectedIdx >= matches.length) localState.football.selectedIdx = 0;
 
-      document.getElementById("fbMatchesRow").innerHTML = matches.map((m, i) => `<button type="button" class="match-tile ${i === localState.football.selectedIdx ? "selected" : ""}" onclick="localState.football.selectedIdx=${i};renderFootballMatches();"><div style="font-size:0.7rem;color:var(--gold-bright);">${escapeHtml(m.league)} • ${m.min}' (${escapeHtml(m.status || "LIVE")})</div><div style="font-size:0.84rem;font-weight:800;">${escapeHtml(m.home)} ${m.hScore} - ${m.aScore} ${escapeHtml(m.away)}</div></button>`).join("");
+      document.getElementById("fbMatchesRow").innerHTML = matches.map((m, i) => {
+        const leagueFa = translateLeagueFa(m.league || "");
+        const homeFa = translateTeamFa(m.home || "");
+        const awayFa = translateTeamFa(m.away || "");
+        const irBadge = isIranianMatch(m) ? " • 🇮🇷 ایرانی" : "";
+        return `<button type="button" class="match-tile ${i === localState.football.selectedIdx ? "selected" : ""}" onclick="localState.football.selectedIdx=${i};renderFootballMatches();"><div style="font-size:0.7rem;color:var(--gold-bright);">${escapeHtml(leagueFa)} • ${m.min}' (${escapeHtml(m.status || "LIVE")})${irBadge}</div><div style="font-size:0.84rem;font-weight:800;">${escapeHtml(homeFa)} ${m.hScore} - ${m.aScore} ${escapeHtml(awayFa)}</div></button>`;
+      }).join("");
+
       const cur = matches[localState.football.selectedIdx];
-      document.getElementById("fbHomeName").textContent = cur.home;
-      document.getElementById("fbAwayName").textContent = cur.away;
+      const curLeagueFa = translateLeagueFa(cur.league || "");
+      const curHomeFa = translateTeamFa(cur.home || "");
+      const curAwayFa = translateTeamFa(cur.away || "");
+
+      document.getElementById("fbHomeName").textContent = curHomeFa;
+      document.getElementById("fbAwayName").textContent = curAwayFa;
       document.getElementById("fbScoreBoard").textContent = `${cur.hScore} - ${cur.aScore}`;
       document.getElementById("oddHomeVal").textContent = Number(cur.hOdd).toFixed(2);
       document.getElementById("oddDrawVal").textContent = Number(cur.dOdd).toFixed(2);
       document.getElementById("oddAwayVal").textContent = Number(cur.aOdd).toFixed(2);
-      document.getElementById("fbEventsLog").textContent = `دقیقه ${cur.min} • ${cur.home} ${cur.hScore} - ${cur.aScore} ${cur.away} (${cur.status || "LIVE"})`;
+      document.getElementById("fbEventsLog").textContent = `${curLeagueFa} • دقیقه ${cur.min} • ${curHomeFa} ${cur.hScore} - ${cur.aScore} ${curAwayFa} (${cur.status || "LIVE"})`;
       drawPitchCanvas();
     }
 
@@ -1998,7 +2108,8 @@
       ctx.lineTo(w / 2, h - 12 * dpr);
       ctx.stroke();
 
-      const cur = (localState.football.matches || defaultMatches())[localState.football.selectedIdx];
+      const matches = getSortedFootballMatches();
+      const cur = matches[localState.football.selectedIdx] || matches[0];
       ctx.beginPath();
       ctx.arc(cur.ballX * w, cur.ballY * h, 6 * dpr, 0, Math.PI * 2);
       ctx.fillStyle = "#fde047";
