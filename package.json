@@ -1,12 +1,13 @@
 {
   "name": "sofyan-live-server",
-  "version": "1.0.0",
-  "description": "WebSocket Game & Sync Server for Sofyan Live",
+  "version": "2.0.0",
+  "description": "Persistent WebSocket & Sportsbook Server for Sofyan Live",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
+    "better-sqlite3": "^11.0.0",
     "ws": "^8.18.0"
   }
 }
