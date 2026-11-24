@@ -1,10 +1,6 @@
 {
   "$schema": "https://schema.railpack.com",
-  "steps": {
-    "setup": {
-      "packages": {
-        "node": "22"
-      }
-    }
+  "packages": {
+    "node": "22"
   }
 }
