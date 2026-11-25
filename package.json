@@ -1,28 +1,16 @@
 {
-  "name": "sofyan-60bet-server",
+  "name": "sofyan-bet-server",
   "version": "1.0.0",
-  "description": "HTTP and WebSocket game server, admin endpoints, backup sync, and integration test suite",
+  "description": "Backend HTTP and WebSocket server for Sofyan Bet casino and pre-match football predictions",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "pm2:start": "pm2 start ecosystem.config.js",
-    "pm2:reload": "pm2 reload ecosystem.config.js --update-env",
-    "pm2:stop": "pm2 stop ecosystem.config.js",
-    "pm2:logs": "pm2 logs",
-    "backup:sync": "bash ./sync-backups.sh",
-    "backup:restore": "bash ./restore-backup.sh",
-    "test": "node run-all-tests.js",
-    "test:stop-on-fail": "node run-all-tests.js --stop-on-fail",
-    "test:ci": "node run-all-tests.js --ci --json-out ./artifacts/test-report.json",
-    "test:json": "node run-all-tests.js --ci --json",
-    "test:auth": "node test-ws-auth.js",
-    "test:games": "node test-ws-dice-mines.js && node test-ws-roulette-bj.js && node test-ws-slots-plinko.js",
-    "test:chat": "node test-ws-chat-sync.js && node test-ws-chat-mod.js",
-    "test:admin": "node test-ws-admin-finance.js && node test-ws-admin-grant-real.js && node test-admin-backups.js",
-    "test:e2e": "node test-ws-e2e-flow.js",
-    "test:consistency": "node test-http-ws-restore-consistency.js"
+    "dev": "node --watch server.js"
   },
   "dependencies": {
     "ws": "^8.18.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
