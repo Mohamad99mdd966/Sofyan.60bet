@@ -1,7 +1,7 @@
 {
   "name": "sofyanbet",
-  "version": "2.1.0",
-  "description": "SofyanBet unified realtime casino, multiplayer games, pre-match football and master admin",
+  "version": "2.2.0",
+  "description": "SofyanBet complete compatible realtime casino, multiplayer games, pre-match football and master admin",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
