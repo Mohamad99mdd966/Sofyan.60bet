@@ -4,13 +4,6 @@
   "packages": {
     "node": "22"
   },
-  "steps": {
-    "install": {
-      "commands": [
-        "npm ci --omit=dev || npm install --omit=dev"
-      ]
-    }
-  },
   "deploy": {
     "startCommand": "npm start"
   }
