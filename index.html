@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>صوفیان بت — کازینو آنلاین، پیش‌بینی زنده و مدیریت یکپارچه</title>
+  <title>صوفیان بت — کازینو آنلاین، پیش‌بینی قبل از شروع بازی و مدیریت یکپارچه</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <style>
     :root {
@@ -450,24 +450,25 @@
     .fb-filter-btn.active { background: var(--gold-soft); color: var(--gold); border-color: var(--border-strong); }
     .fb-search-box { min-width: 220px; }
 
-    .matches-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 8px; margin-bottom: 12px; }
+    .matches-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(225px, 1fr)); gap: 8px; margin-bottom: 12px; }
     .match-tile {
       text-align: right;
       border: 1px solid var(--border);
       background: var(--bg-subtle);
       color: var(--text);
       border-radius: 12px;
-      padding: 8px 10px;
+      padding: 9px 11px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
     }
     .match-tile.selected { border-color: var(--gold); background: var(--gold-soft); }
     .match-live-tag { background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 1px 7px; border-radius: 999px; font-size: 0.68rem; font-weight: 800; }
-    .match-pre-tag { background: rgba(148, 163, 184, 0.2); color: var(--muted); padding: 1px 7px; border-radius: 999px; font-size: 0.68rem; font-weight: 800; }
+    .match-pre-tag { background: rgba(56, 189, 248, 0.18); color: var(--neon-primary); padding: 1px 7px; border-radius: 999px; font-size: 0.68rem; font-weight: 800; }
+    .match-kickoff-line { font-size: 0.73rem; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
 
-    .pitch-box { height: 155px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); margin: 10px 0; }
+    .pitch-box { height: 145px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); margin: 10px 0; }
 
     .market-block-title { font-size: 0.76rem; font-weight: 800; color: var(--muted); margin: 8px 0 4px; }
     .odds-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
@@ -485,6 +486,18 @@
       font-size: 0.74rem;
     }
     .odd-card.picked { border-color: var(--gold); background: var(--gold-soft); color: var(--gold); }
+    .odd-card:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .prematch-banner {
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+    }
+    .prematch-banner.open-bet { background: rgba(16, 185, 129, 0.12); color: #34d399; border-color: rgba(16, 185, 129, 0.35); }
+    .prematch-banner.locked-bet { background: rgba(244, 63, 94, 0.12); color: #fb7185; border-color: rgba(244, 63, 94, 0.35); }
 
     .slip-summary-box { background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; margin: 8px 0; font-size: 0.78rem; }
     .slip-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
@@ -893,18 +906,21 @@
         <div class="fb-filter-group">
           <button type="button" class="fb-filter-btn active" data-filter="all" onclick="setMatchFilter('all')">همه مسابقات</button>
           <button type="button" class="fb-filter-btn" data-filter="iran" onclick="setMatchFilter('iran')"><i class="fa-solid fa-flag"></i><span>بازی‌های ایرانی</span></button>
-          <button type="button" class="fb-filter-btn" data-filter="live" onclick="setMatchFilter('live')"><i class="fa-solid fa-circle-play"></i><span>زنده</span></button>
-          <button type="button" class="fb-filter-btn" data-filter="upcoming" onclick="setMatchFilter('upcoming')"><i class="fa-solid fa-clock"></i><span>پیش از بازی</span></button>
+          <button type="button" class="fb-filter-btn" data-filter="prematch" onclick="setMatchFilter('prematch')"><i class="fa-solid fa-clock"></i><span>قبل از شروع (قابل پیش‌بینی)</span></button>
+          <button type="button" class="fb-filter-btn" data-filter="started" onclick="setMatchFilter('started')"><i class="fa-solid fa-lock"></i><span>شروع‌شده / پایان</span></button>
         </div>
-        <div class="fb-search-box">
-          <input type="text" id="fbSearchInput" placeholder="جست‌وجوی تیم یا لیگ..." oninput="renderFootballMatches()" />
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button type="button" class="btn btn-neon btn-sm" id="fbRefreshBtn" onclick="fetchApiFootballToday(true)"><i class="fa-solid fa-rotate"></i><span>دریافت بازی‌های امروز (API-Football)</span></button>
+          <div class="fb-search-box">
+            <input type="text" id="fbSearchInput" placeholder="جست‌وجوی تیم یا لیگ..." oninput="renderFootballMatches()" />
+          </div>
         </div>
       </div>
 
       <div class="fb-grid">
         <div class="app-card stage-card">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-            <h2 style="font-size:1rem;font-weight:900;color:var(--gold);"><i class="fa-solid fa-futbol"></i> پیش‌بینی فوتبال زنده و پیش از بازی</h2>
+            <h2 style="font-size:1rem;font-weight:900;color:var(--gold);margin:0;"><i class="fa-solid fa-futbol"></i> مسابقات امروز (API-Football)</h2>
             <span class="pill pill-info" id="fbMatchesCountBadge">0 مسابقه</span>
           </div>
 
@@ -916,13 +932,22 @@
             <strong id="fbAwayName">مهمان</strong>
           </div>
 
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:0.78rem;color:var(--muted);">
+            <span id="fbKickoffReadout"><i class="fa-regular fa-clock"></i> ساعت شروع: --:--</span>
+            <span id="fbStatusReadout">وضعیت: --</span>
+          </div>
+
           <div class="pitch-box"><canvas class="hd-canvas" id="pitchCanvas"></canvas></div>
-          <div id="fbEventsLog" style="font-size:0.78rem;color:var(--muted);">در حال دریافت اطلاعات مسابقه...</div>
+          <div id="fbEventsLog" style="font-size:0.78rem;color:var(--muted);">در حال اتصال به API-Football برای دریافت بازی‌های امروز...</div>
         </div>
 
         <div class="app-card stage-card">
-          <h3 style="font-size:0.95rem;font-weight:900;color:var(--gold);margin-bottom:4px;"><i class="fa-solid fa-receipt"></i> برگه شرط و بازارهای مسابقه</h3>
+          <h3 style="font-size:0.95rem;font-weight:900;color:var(--gold);margin-bottom:4px;"><i class="fa-solid fa-receipt"></i> پیش‌بینی قبل از شروع بازی</h3>
           <div style="font-size:0.75rem;color:var(--muted);margin-bottom:8px;" id="fbSelectedMatchLabel">مسابقه‌ای انتخاب نشده است</div>
+
+          <div class="prematch-banner open-bet" id="fbPrematchBanner">
+            پیش‌بینی فقط قبل از شروع بازی باز است.
+          </div>
 
           <div class="market-block-title">نتیجه مسابقه (1X2)</div>
           <div class="odds-row">
@@ -986,16 +1011,17 @@
 
           <div class="slip-summary-box">
             <div class="slip-row"><span>انتخاب:</span><strong id="slipSelectionText" style="color:var(--gold);">برد میزبان (1)</strong></div>
+            <div class="slip-row"><span>ساعت شروع بازی:</span><strong id="slipKickoffText" class="mono" style="color:var(--neon-primary);">--:--</strong></div>
             <div class="slip-row"><span>ضریب قطعی:</span><strong id="slipOddText" class="mono" style="color:var(--text);">2.15</strong></div>
             <div class="slip-row"><span>مبلغ کل بازگشت:</span><strong id="slipPotentialText" style="color:#34d399;">215,000 تومان</strong></div>
           </div>
 
-          <button type="button" class="btn btn-gold" style="width:100%;" onclick="placeFootballBet()">ثبت سریع شرط</button>
+          <button type="button" class="btn btn-gold" style="width:100%;" id="fbPlaceBetBtn" onclick="placeFootballBet()">ثبت پیش‌بینی قبل از شروع</button>
           <div style="margin-top:10px;font-size:0.76rem;color:var(--muted);" id="fbActiveBetSummary">شرط فعالی ثبت نشده است.</div>
 
           <div class="table-scroll" style="margin-top:10px;">
             <table>
-              <thead><tr><th>مسابقه</th><th>بازار</th><th>مبلغ</th><th>وضعیت</th></tr></thead>
+              <thead><tr><th>مسابقه</th><th>شروع</th><th>بازار</th><th>مبلغ</th><th>وضعیت</th></tr></thead>
               <tbody id="fbUserBetsBody"></tbody>
             </table>
           </div>
@@ -1128,7 +1154,7 @@
         </div>
 
         <div class="bet-slot" style="margin-bottom:14px;">
-          <strong style="color:var(--neon-primary);">تنظیمات آدرس سرور و کلید فوتبال</strong>
+          <strong style="color:var(--neon-primary);">تنظیمات آدرس سرور و کلید API-Football</strong>
           <div class="conn-grid">
             <div class="field-group" style="margin-bottom:0;">
               <label class="field-label">آدرس HTTP سرور</label>
@@ -1139,7 +1165,7 @@
               <input type="text" id="cfgWsUrl" class="mono" />
             </div>
             <div class="field-group" style="margin-bottom:0;">
-              <label class="field-label">کلید/شناسه فوتبال</label>
+              <label class="field-label">کلید API-Football (x-apisports-key)</label>
               <input type="text" id="cfgFootballKey" class="mono" />
             </div>
             <div class="field-group" style="margin-bottom:0;">
@@ -1149,6 +1175,7 @@
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
             <button type="button" class="btn btn-neon btn-sm" onclick="saveServerConnectionConfig()">ذخیره و اتصال مجدد</button>
+            <button type="button" class="btn btn-gold btn-sm" onclick="fetchApiFootballToday(true)">دریافت فوری بازی‌های امروز</button>
             <button type="button" class="btn btn-emerald btn-sm" onclick="httpCreateBackup()">ایجاد پشتیبان HTTP</button>
             <button type="button" class="btn btn-ghost btn-sm" onclick="httpListBackups()">لیست پشتیبان‌های HTTP</button>
             <button type="button" class="btn btn-ghost btn-sm" onclick="clearEventLog()">پاک‌سازی لاگ</button>
@@ -1307,6 +1334,7 @@
   <script>
     const DEFAULT_HTTP_URL = "https://sofyan60bet-production.up.railway.app";
     const DEFAULT_WS_URL = "wss://sofyan60bet-production.up.railway.app";
+    const API_FOOTBALL_BASE_URL = "https://v3.football.api-sports.io";
     const DEFAULT_FOOTBALL_KEY = "16b56f006580350bec61c8985d302223";
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -1315,7 +1343,7 @@
     let footballApiKey = urlParams.get("footballKey") || localStorage.getItem("SOFYAN_FOOTBALL_KEY") || DEFAULT_FOOTBALL_KEY;
     let adminHttpToken = urlParams.get("adminToken") || localStorage.getItem("SOFYAN_ADMIN_TOKEN") || "";
 
-    const LOCAL_USER_KEY = "sofyan_local_user_v4";
+    const LOCAL_USER_KEY = "sofyan_local_user_v5";
     const MERCHANT_CARD = "6037997410972831";
     const MERCHANT_HOLDER = "محمد مددی";
 
@@ -1335,13 +1363,13 @@
       deposits: [],
       withdrawals: [],
       usersBalanceAdjustments: {},
-      auditLogs: [],
-      footballMatches: defaultMatches()
+      auditLogs: []
     };
     let serverSecretCode = null;
     let appliedServerAdjTracker = new Map();
     let serverFootballBets = [];
     let eventLogItems = [];
+    let lastFootballFetchAt = 0;
 
     let wsClient = null;
     let wsReconnectTimer = null;
@@ -1383,6 +1411,7 @@
       localStorage.setItem("SOFYAN_ADMIN_TOKEN", adminHttpToken);
       syncConnectionInputs();
       reconnectServerNow();
+      fetchApiFootballToday(true);
       showToast("تنظیمات اتصال ذخیره شد");
     }
 
@@ -1474,7 +1503,7 @@
 
     function loadLocalState() {
       try {
-        const raw = localStorage.getItem(LOCAL_USER_KEY) || localStorage.getItem("sofyan_local_user_v3");
+        const raw = localStorage.getItem(LOCAL_USER_KEY) || localStorage.getItem("sofyan_local_user_v4");
         if (!raw) {
           return {
             mode: "demo",
@@ -1485,7 +1514,7 @@
             users: {},
             txs: [],
             tickets: [],
-            football: { selectedIdx: 0, market: "home", activeBet: null, matches: defaultMatches(), localBets: [] }
+            football: { selectedIdx: 0, market: "home", activeBet: null, matches: [], localBets: [] }
           };
         }
         const p = JSON.parse(raw);
@@ -1498,9 +1527,9 @@
           users: p.users || {},
           txs: p.txs || [],
           tickets: p.tickets || [],
-          football: p.football && Array.isArray(p.football.matches) && p.football.matches.length
+          football: p.football && Array.isArray(p.football.matches)
             ? { localBets: [], ...p.football }
-            : { selectedIdx: 0, market: "home", activeBet: null, matches: defaultMatches(), localBets: [] }
+            : { selectedIdx: 0, market: "home", activeBet: null, matches: [], localBets: [] }
         };
       } catch {
         return {
@@ -1512,17 +1541,9 @@
           users: {},
           txs: [],
           tickets: [],
-          football: { selectedIdx: 0, market: "home", activeBet: null, matches: defaultMatches(), localBets: [] }
+          football: { selectedIdx: 0, market: "home", activeBet: null, matches: [], localBets: [] }
         };
       }
-    }
-
-    function defaultMatches() {
-      return [
-        { id: "ir0", league: "Persian Gulf Pro League", home: "Esteghlal", away: "Persepolis", hScore: 1, aScore: 0, min: 34, status: "LIVE", hOdd: 2.15, dOdd: 3.10, aOdd: 3.05, ballX: 0.56, ballY: 0.48 },
-        { id: "m1", league: "La Liga", home: "Real Madrid", away: "Barcelona", hScore: 0, aScore: 0, min: 19, status: "LIVE", hOdd: 2.05, dOdd: 3.40, aOdd: 2.90, ballX: 0.44, ballY: 0.52 },
-        { id: "m2", league: "UEFA Champions League", home: "Manchester City", away: "Bayern Munich", hScore: 2, aScore: 1, min: 67, status: "LIVE", hOdd: 1.88, dOdd: 3.55, aOdd: 3.45, ballX: 0.62, ballY: 0.42 }
-      ];
     }
 
     function saveLocalState() {
@@ -1641,12 +1662,6 @@
       serverShared = { ...serverShared, ...shared };
       if (shared.chat) serverChat = shared.chat;
       if (Array.isArray(shared.crashHistory)) serverCrashHistory = shared.crashHistory;
-      if (Array.isArray(shared.footballMatches) && shared.footballMatches.length) {
-        localState.football.matches = shared.footballMatches;
-        settleLocalFinishedBets();
-        renderFootballMatches();
-        renderFootballBets();
-      }
       applyServerBalanceAdjustments();
     }
 
@@ -1869,7 +1884,12 @@
       document.querySelectorAll(".nav-tab").forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
       const sec = document.getElementById("sec-" + tabName);
       if (sec) sec.classList.add("active");
-      if (tabName === "football") { renderFootballMatches(); drawPitchCanvas(); renderFootballBets(); }
+      if (tabName === "football") {
+        if (!localState.football.matches.length) fetchApiFootballToday(false);
+        else renderFootballMatches();
+        drawPitchCanvas();
+        renderFootballBets();
+      }
       if (tabName === "wallet") renderWalletAll();
       if (tabName === "admin") renderAdminPanel();
     }
@@ -2787,7 +2807,7 @@
       }
     }
 
-    /* ================= FOOTBALL ================= */
+    /* ================= FOOTBALL (API-FOOTBALL TODAY + PRE-MATCH ONLY) ================= */
     const FA_LEAGUES = {
       "Persian Gulf Pro League": "لیگ برتر خلیج فارس",
       "Azadegan League": "لیگ آزادگان",
@@ -2823,12 +2843,55 @@
       "Havadar": "هوادار",
       "Esteghlal Khuzestan": "استقلال خوزستان",
       "Paykan": "پیکان",
-      "Saipa": "سایپا",
-      "Real Madrid": "رئال مادرید",
-      "Barcelona": "بارسلونا",
-      "Manchester City": "منچستر سیتی",
-      "Bayern Munich": "بایرن مونیخ"
+      "Saipa": "سایپا"
     };
+
+    function getTodayDateIsoTehran() {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Tehran",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(new Date());
+      const y = parts.find((p) => p.type === "year")?.value || "2026";
+      const m = parts.find((p) => p.type === "month")?.value || "11";
+      const d = parts.find((p) => p.type === "day")?.value || "25";
+      return `${y}-${m}-${d}`;
+    }
+
+    function formatKickoffTehran(isoStr, timestampSec) {
+      let dt = null;
+      if (typeof timestampSec === "number" && timestampSec > 0) dt = new Date(timestampSec * 1000);
+      else if (isoStr) {
+        const parsed = new Date(isoStr);
+        if (!Number.isNaN(parsed.getTime())) dt = parsed;
+      }
+      if (!dt) return { timeLabel: "--:--", dateTimeLabel: "--:--", kickoffMs: null };
+      const timeLabel = new Intl.DateTimeFormat("fa-IR", {
+        timeZone: "Asia/Tehran",
+        hour: "2-digit",
+        minute: "2-digit"
+      }).format(dt);
+      const dateTimeLabel = new Intl.DateTimeFormat("fa-IR", {
+        timeZone: "Asia/Tehran",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      }).format(dt);
+      return { timeLabel, dateTimeLabel, kickoffMs: dt.getTime() };
+    }
+
+    function isPreMatchBetAllowed(m) {
+      if (!m) return false;
+      const st = String(m.status || "NS").toUpperCase();
+      if (st !== "NS" && st !== "TBD") return false;
+      if (typeof m.kickoffMs === "number" && m.kickoffMs > 0 && Date.now() >= m.kickoffMs) {
+        return false;
+      }
+      return true;
+    }
 
     function translateLeagueFa(name = "") {
       if (!name) return "فوتبال";
@@ -2851,30 +2914,111 @@
         txt.includes("persian gulf") ||
         txt.includes("azadegan") ||
         txt.includes("hazfi") ||
-        Object.values(FA_TEAMS).slice(0, 17).some((fa) => txt.includes(fa))
+        Object.values(FA_TEAMS).some((fa) => txt.includes(fa))
       );
     }
 
-    function isLiveMatch(m) {
-      const st = String(m.status || "LIVE").toUpperCase();
-      return !["NS", "FT", "AET", "PEN", "PST", "CANC"].includes(st);
+    function mapApiFixtureToMatch(item) {
+      const f = item.fixture || {};
+      const l = item.league || {};
+      const teams = item.teams || {};
+      const goals = item.goals || {};
+      const statusShort = String(f.status?.short || "NS").toUpperCase();
+      const ko = formatKickoffTehran(f.date, f.timestamp);
+      const idNum = Number(f.id || Math.floor(Math.random() * 1e7));
+      const hOdd = Number((1.75 + ((idNum % 14) * 0.11)).toFixed(2));
+      const dOdd = Number((2.95 + ((idNum % 9) * 0.08)).toFixed(2));
+      const aOdd = Number((1.85 + (((idNum >> 2) % 15) * 0.12)).toFixed(2));
+
+      return {
+        id: String(f.id || idNum),
+        league: l.name || "Football",
+        home: teams.home?.name || "Home",
+        away: teams.away?.name || "Away",
+        hScore: Number(goals.home ?? 0),
+        aScore: Number(goals.away ?? 0),
+        min: Number(f.status?.elapsed ?? 0),
+        status: statusShort,
+        statusLong: f.status?.long || statusShort,
+        kickoffTime: ko.timeLabel,
+        kickoffFull: ko.dateTimeLabel,
+        kickoffMs: ko.kickoffMs,
+        hOdd,
+        dOdd,
+        aOdd,
+        ballX: 0.5,
+        ballY: 0.5
+      };
+    }
+
+    async function fetchApiFootballToday(notifyUser = false) {
+      const todayIso = getTodayDateIsoTehran();
+      const btn = document.getElementById("fbRefreshBtn");
+      if (btn) btn.disabled = true;
+      document.getElementById("fbEventsLog").textContent = `در حال دریافت مسابقات واقعی تاریخ ${todayIso} از API-Football...`;
+      pushEventLog("API-FOOTBALL ->", `/fixtures?date=${todayIso}`);
+
+      try {
+        const res = await fetch(`${API_FOOTBALL_BASE_URL}/fixtures?date=${encodeURIComponent(todayIso)}`, {
+          method: "GET",
+          headers: {
+            "x-apisports-key": footballApiKey
+          }
+        });
+        const data = await res.json().catch(() => null);
+        pushEventLog("API-FOOTBALL <-", `${res.status} results=${Array.isArray(data?.response) ? data.response.length : 0}`);
+
+        if (!res.ok) {
+          const errMsg = data?.message || (typeof data?.errors === "object" ? Object.values(data.errors).join(" | ") : "") || `خطای ${res.status} از API-Football`;
+          throw new Error(errMsg);
+        }
+
+        if (data?.errors && Object.keys(data.errors).length > 0) {
+          const errDetail = Object.values(data.errors).join(" | ");
+          throw new Error(errDetail);
+        }
+
+        const list = Array.isArray(data?.response) ? data.response.map(mapApiFixtureToMatch) : [];
+        localState.football.matches = list;
+        localState.football.selectedIdx = 0;
+        lastFootballFetchAt = Date.now();
+        saveLocalState();
+        settleLocalFinishedBets();
+        renderFootballMatches();
+        renderFootballBets();
+
+        if (!list.length) {
+          document.getElementById("fbEventsLog").textContent = `برای تاریخ ${todayIso} مسابقه‌ای در API-Football ثبت نشده است.`;
+          if (notifyUser) showToast("برای امروز مسابقه‌ای یافت نشد");
+        } else if (notifyUser) {
+          showToast(`${list.length} مسابقه امروز دریافت شد`);
+        }
+      } catch (err) {
+        const msg = err?.message || "خطا در ارتباط با API-Football";
+        document.getElementById("fbEventsLog").textContent = `خطا در دریافت مسابقات: ${msg}`;
+        if (notifyUser) showToast(msg);
+      } finally {
+        if (btn) btn.disabled = false;
+      }
     }
 
     function getFilteredSortedMatches() {
       const q = (document.getElementById("fbSearchInput")?.value || "").trim().toLowerCase();
-      const rawMatches = localState.football.matches || defaultMatches();
+      const rawMatches = Array.isArray(localState.football.matches) ? localState.football.matches : [];
       const sorted = [...rawMatches].sort((a, b) => {
         const irDiff = (isIranianMatch(a) ? 0 : 1) - (isIranianMatch(b) ? 0 : 1);
         if (irDiff !== 0) return irDiff;
-        return (isLiveMatch(a) ? 0 : 1) - (isLiveMatch(b) ? 0 : 1);
+        const preDiff = (isPreMatchBetAllowed(a) ? 0 : 1) - (isPreMatchBetAllowed(b) ? 0 : 1);
+        if (preDiff !== 0) return preDiff;
+        return Number(a.kickoffMs || 0) - Number(b.kickoffMs || 0);
       });
 
       return sorted.filter((m) => {
         if (currentMatchFilter === "iran" && !isIranianMatch(m)) return false;
-        if (currentMatchFilter === "live" && !isLiveMatch(m)) return false;
-        if (currentMatchFilter === "upcoming" && isLiveMatch(m)) return false;
+        if (currentMatchFilter === "prematch" && !isPreMatchBetAllowed(m)) return false;
+        if (currentMatchFilter === "started" && isPreMatchBetAllowed(m)) return false;
         if (q) {
-          const hay = `${translateLeagueFa(m.league)} ${translateTeamFa(m.home)} ${translateTeamFa(m.away)} ${m.league} ${m.home} ${m.away}`.toLowerCase();
+          const hay = `${translateLeagueFa(m.league)} ${translateTeamFa(m.home)} ${translateTeamFa(m.away)} ${m.kickoffTime || ""} ${m.league} ${m.home} ${m.away}`.toLowerCase();
           if (!hay.includes(q)) return false;
         }
         return true;
@@ -2909,8 +3053,18 @@
       const matches = getFilteredSortedMatches();
       document.getElementById("fbMatchesCountBadge").textContent = `${matches.length} مسابقه`;
 
+      const banner = document.getElementById("fbPrematchBanner");
+      const placeBtn = document.getElementById("fbPlaceBetBtn");
+
       if (!matches.length) {
-        document.getElementById("fbMatchesRow").innerHTML = `<div style="font-size:0.8rem;color:var(--muted);">مسابقه‌ای با این فیلتر یافت نشد.</div>`;
+        document.getElementById("fbMatchesRow").innerHTML = `<div style="font-size:0.8rem;color:var(--muted);">مسابقه‌ای برای نمایش وجود ندارد. روی «دریافت بازی‌های امروز» بزنید.</div>`;
+        document.getElementById("fbKickoffReadout").innerHTML = `<i class="fa-regular fa-clock"></i> ساعت شروع: --:--`;
+        document.getElementById("fbStatusReadout").textContent = `وضعیت: بدون مسابقه`;
+        document.getElementById("slipKickoffText").textContent = `--:--`;
+        banner.className = "prematch-banner locked-bet";
+        banner.textContent = "ابتدا یک مسابقه قبل از شروع انتخاب کنید.";
+        placeBtn.disabled = true;
+        document.querySelectorAll(".odd-card").forEach((btn) => (btn.disabled = true));
         return;
       }
 
@@ -2921,9 +3075,10 @@
         const homeFa = translateTeamFa(m.home || "");
         const awayFa = translateTeamFa(m.away || "");
         const irBadge = isIranianMatch(m) ? " • ایران" : "";
-        const stBadge = isLiveMatch(m)
-          ? `<span class="match-live-tag">${m.min}'</span>`
-          : `<span class="match-pre-tag">${escapeHtml(m.status || "NS")}</span>`;
+        const canBet = isPreMatchBetAllowed(m);
+        const stBadge = canBet
+          ? `<span class="match-pre-tag">قبل از شروع</span>`
+          : `<span class="match-live-tag">${escapeHtml(m.status || "شروع‌شده")}</span>`;
 
         return `<button type="button" class="match-tile ${i === localState.football.selectedIdx ? "selected" : ""}" onclick="localState.football.selectedIdx=${i};renderFootballMatches();">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:4px;">
@@ -2931,6 +3086,10 @@
             ${stBadge}
           </div>
           <div style="font-size:0.84rem;font-weight:800;">${escapeHtml(homeFa)} ${m.hScore} - ${m.aScore} ${escapeHtml(awayFa)}</div>
+          <div class="match-kickoff-line">
+            <span><i class="fa-regular fa-clock"></i> شروع: <strong class="mono">${escapeHtml(m.kickoffTime || "--:--")}</strong></span>
+            <span>${canBet ? "باز" : "بسته"}</span>
+          </div>
         </button>`;
       }).join("");
 
@@ -2939,12 +3098,20 @@
       const curHomeFa = translateTeamFa(cur.home || "");
       const curAwayFa = translateTeamFa(cur.away || "");
       const mkts = computeMarketsForMatch(cur);
+      const canBet = isPreMatchBetAllowed(cur);
 
       document.getElementById("fbHomeName").textContent = curHomeFa;
       document.getElementById("fbAwayName").textContent = curAwayFa;
       document.getElementById("fbScoreBoard").textContent = `${cur.hScore} - ${cur.aScore}`;
+      document.getElementById("fbKickoffReadout").innerHTML = `<i class="fa-regular fa-clock"></i> ساعت شروع (تهران): <strong class="mono">${escapeHtml(cur.kickoffFull || cur.kickoffTime || "--:--")}</strong>`;
+      document.getElementById("fbStatusReadout").textContent = `وضعیت: ${canBet ? "آماده پیش‌بینی (قبل از شروع)" : (cur.statusLong || cur.status || "شروع‌شده")}`;
       document.getElementById("fbSelectedMatchLabel").textContent = `${curLeagueFa} • ${curHomeFa} - ${curAwayFa}`;
-      document.getElementById("fbEventsLog").textContent = `${curLeagueFa} • دقیقه ${cur.min} • ${curHomeFa} ${cur.hScore} - ${cur.aScore} ${curAwayFa} (${cur.status || "LIVE"})`;
+      document.getElementById("slipKickoffText").textContent = cur.kickoffTime || "--:--";
+
+      const syncNote = lastFootballFetchAt
+        ? ` • آخرین دریافت: ${new Date(lastFootballFetchAt).toLocaleTimeString("fa-IR")}`
+        : "";
+      document.getElementById("fbEventsLog").textContent = `${curLeagueFa} • شروع: ${cur.kickoffFull || cur.kickoffTime || "--:--"} • ${curHomeFa} ${cur.hScore} - ${cur.aScore} ${curAwayFa}${syncNote}`;
 
       document.getElementById("oddHomeVal").textContent = mkts.home.odd.toFixed(2);
       document.getElementById("oddDrawVal").textContent = mkts.draw.odd.toFixed(2);
@@ -2955,6 +3122,17 @@
       document.getElementById("oddOver25Val").textContent = mkts.over_25.odd.toFixed(2);
       document.getElementById("oddUnder25Val").textContent = mkts.under_25.odd.toFixed(2);
       document.getElementById("oddBttsYesVal").textContent = mkts.btts_yes.odd.toFixed(2);
+
+      document.querySelectorAll(".odd-card").forEach((btn) => (btn.disabled = !canBet));
+      if (canBet) {
+        banner.className = "prematch-banner open-bet";
+        banner.textContent = `پیش‌بینی این بازی تا ساعت شروع (${cur.kickoffTime || "--:--"}) باز است.`;
+        placeBtn.disabled = false;
+      } else {
+        banner.className = "prematch-banner locked-bet";
+        banner.textContent = `این بازی شروع شده یا به ساعت شروع (${cur.kickoffTime || "--:--"}) رسیده است؛ پیش‌بینی بسته شد.`;
+        placeBtn.disabled = true;
+      }
 
       pickFbMarket(localState.football.market || "home", false);
       drawPitchCanvas();
@@ -3027,11 +3205,12 @@
       body.innerHTML = rows.length
         ? rows.map((b) => `<tr>
             <td>${escapeHtml(b.match_label)}</td>
+            <td class="mono">${escapeHtml(b.kickoffTime || "--:--")}</td>
             <td>${escapeHtml(b.marketLabel || b.market)} (${Number(b.odd).toFixed(2)})</td>
             <td>${fmtToman(b.stake)}</td>
             <td>${escapeHtml(b.status)}</td>
           </tr>`).join("")
-        : `<tr><td colspan="4" style="text-align:center;color:var(--muted);">شرطی ثبت نشده است</td></tr>`;
+        : `<tr><td colspan="5" style="text-align:center;color:var(--muted);">شرطی ثبت نشده است</td></tr>`;
     }
 
     function placeFootballBet() {
@@ -3039,6 +3218,7 @@
       const cur = matches[localState.football.selectedIdx] || matches[0];
       const amt = Math.round(Number(document.getElementById("fbBetInput").value || 0));
       if (!cur) return showToast("مسابقه‌ای انتخاب نشده است");
+      if (!isPreMatchBetAllowed(cur)) return showToast("پیش‌بینی فقط قبل از شروع بازی امکان‌پذیر است");
       if (amt < 1000 || getBalance() < amt) return showToast("مبلغ نامعتبر یا موجودی ناکافی");
 
       const mkts = computeMarketsForMatch(cur);
@@ -3048,6 +3228,8 @@
       const sent = wsSend({
         type: "PLACE_FOOTBALL_BET",
         bet: amt,
+        matchId: cur.id,
+        kickoffTime: cur.kickoffTime || "--:--",
         matchIdx: localState.football.selectedIdx,
         market: serverMarket,
         mode: localState.mode,
@@ -3055,12 +3237,13 @@
       }, true);
 
       if (!sent) {
-        adjustLocalBalance(localState.mode, -amt, "فوتبال", `${chosen.label} • ${translateTeamFa(cur.home)} - ${translateTeamFa(cur.away)}`);
+        adjustLocalBalance(localState.mode, -amt, "فوتبال (قبل از شروع)", `${chosen.label} • ${translateTeamFa(cur.home)} - ${translateTeamFa(cur.away)}`);
       }
       localState.football.localBets = localState.football.localBets || [];
       localState.football.localBets.unshift({
         id: "fb_" + Date.now(),
         matchId: cur.id,
+        kickoffTime: cur.kickoffTime || "--:--",
         match_label: `${translateTeamFa(cur.home)} - ${translateTeamFa(cur.away)}`,
         market: localState.football.market,
         marketLabel: chosen.label,
@@ -3072,8 +3255,8 @@
       saveLocalState();
       refreshUI();
       renderFootballBets();
-      document.getElementById("fbActiveBetSummary").textContent = `شرط ثبت شد: ${chosen.label} • مبلغ ${fmtToman(amt)} (بازگشت احتمالی: ${fmtToman(amt * chosen.odd)})`;
-      showToast(sent ? "پیش‌بینی به سرور ارسال شد" : "پیش‌بینی ثبت شد");
+      document.getElementById("fbActiveBetSummary").textContent = `شرط ثبت شد (شروع: ${cur.kickoffTime || "--:--"}): ${chosen.label} • مبلغ ${fmtToman(amt)} (بازگشت احتمالی: ${fmtToman(amt * chosen.odd)})`;
+      showToast(sent ? "پیش‌بینی قبل از شروع به سرور ارسال شد" : "پیش‌بینی ثبت شد");
     }
 
     function drawPitchCanvas() {
@@ -3109,7 +3292,14 @@
     renderWalletAll();
     renderTickets();
     connectWebSocket();
+    fetchApiFootballToday(false);
     requestAnimationFrame(renderServerCrashFrame);
+
+    setInterval(() => {
+      if (document.getElementById("sec-football")?.classList.contains("active")) {
+        renderFootballMatches();
+      }
+    }, 15000);
 
     if (!localState.currentUser) {
       openAuthModal("login");
