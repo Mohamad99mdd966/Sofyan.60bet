@@ -1,10 +1,10 @@
 const https = require("https");
 
 const API_FOOTBALL_HOST = "v3.football.api-sports.io";
-const DEFAULT_FOOTBALL_API_KEY = "16b56f006580350bec61c8985d302223";
-const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes cache
+const DEFAULT_FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY || "16b56f006580350bec61c8985d302223";
+const CACHE_TTL_MS = 2 * 60 * 1000;
 
-const fixturesCache = new Map(); // key: `${dateIso}:${apiKey}` -> { fetchedAt, matches }
+const fixturesCache = new Map();
 
 function getTodayDateIsoTehran() {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -75,16 +75,28 @@ function isPreMatchBetAllowed(match, nowMs = Date.now()) {
 
 function buildMarkets(match) {
   const h = Math.max(1.15, Number(match?.hOdd || 2.15));
-  const d = Math.max(1.50, Number(match?.dOdd || 3.15));
+  const d = Math.max(1.5, Number(match?.dOdd || 3.15));
   const a = Math.max(1.15, Number(match?.aOdd || 2.95));
 
   return {
     home: { key: "home", label: "برد میزبان (1)", odd: h },
     draw: { key: "draw", label: "مساوی (X)", odd: d },
     away: { key: "away", label: "برد مهمان (2)", odd: a },
-    dc_1x: { key: "dc_1x", label: "میزبان یا مساوی (1X)", odd: Number(Math.max(1.08, ((h * d) / (h + d)) * 1.15).toFixed(2)) },
-    dc_12: { key: "dc_12", label: "برد یکی از دو تیم (12)", odd: Number(Math.max(1.08, ((h * a) / (h + a)) * 1.15).toFixed(2)) },
-    dc_x2: { key: "dc_x2", label: "مساوی یا مهمان (X2)", odd: Number(Math.max(1.08, ((d * a) / (d + a)) * 1.15).toFixed(2)) },
+    dc_1x: {
+      key: "dc_1x",
+      label: "میزبان یا مساوی (1X)",
+      odd: Number(Math.max(1.08, ((h * d) / (h + d)) * 1.15).toFixed(2))
+    },
+    dc_12: {
+      key: "dc_12",
+      label: "برد یکی از دو تیم (12)",
+      odd: Number(Math.max(1.08, ((h * a) / (h + a)) * 1.15).toFixed(2))
+    },
+    dc_x2: {
+      key: "dc_x2",
+      label: "مساوی یا مهمان (X2)",
+      odd: Number(Math.max(1.08, ((d * a) / (d + a)) * 1.15).toFixed(2))
+    },
     over_25: { key: "over_25", label: "بالاتر از ۲.۵ گل", odd: 1.9 },
     under_25: { key: "under_25", label: "پایین‌تر از ۲.۵ گل", odd: 1.85 },
     btts_yes: { key: "btts_yes", label: "هر دو تیم گل می‌زنند", odd: 1.78 }
@@ -100,9 +112,9 @@ function mapFixtureItem(item) {
   const ko = formatKickoffTehran(f?.date, f?.timestamp);
   const idNum = Number(f?.id || Math.floor(Math.random() * 1e7));
 
-  const hOdd = Number((1.75 + ((idNum % 14) * 0.11)).toFixed(2));
-  const dOdd = Number((2.95 + ((idNum % 9) * 0.08)).toFixed(2));
-  const aOdd = Number((1.85 + (((idNum >> 2) % 15) * 0.12)).toFixed(2));
+  const hOdd = Number((1.75 + (idNum % 14) * 0.11).toFixed(2));
+  const dOdd = Number((2.95 + (idNum % 9) * 0.08).toFixed(2));
+  const aOdd = Number((1.85 + ((idNum >> 2) % 15) * 0.12).toFixed(2));
 
   const match = {
     id: String(f?.id || idNum),
@@ -129,7 +141,7 @@ function mapFixtureItem(item) {
   return match;
 }
 
-function requestApiFootballFixtures(dateIso, apiKey = DEFAULT_FOOTBALL_API_KEY) {
+function requestApiFootballFixtures(dateIso, apiKey) {
   return new Promise((resolve, reject) => {
     const reqPath = `/fixtures?date=${encodeURIComponent(dateIso)}`;
     const options = {
@@ -138,7 +150,7 @@ function requestApiFootballFixtures(dateIso, apiKey = DEFAULT_FOOTBALL_API_KEY) 
       path: reqPath,
       method: "GET",
       headers: {
-        "x-apisports-key": String(apiKey || process.env.FOOTBALL_API_KEY || DEFAULT_FOOTBALL_API_KEY)
+        "x-apisports-key": String(apiKey || DEFAULT_FOOTBALL_API_KEY)
       }
     };
 
@@ -214,9 +226,7 @@ function validateAndPricePreMatchBet(matches, { matchId, marketKey, stake }) {
     return { ok: false, message: "حداقل مبلغ پیش‌بینی ۱,۰۰۰ تومان است." };
   }
 
-  const match = Array.isArray(matches)
-    ? matches.find((m) => String(m.id) === String(matchId))
-    : null;
+  const match = Array.isArray(matches) ? matches.find((m) => String(m.id) === String(matchId)) : null;
 
   if (!match) {
     return {
